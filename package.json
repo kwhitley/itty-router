@@ -1,5 +1,5 @@
 {
-  "name": "lil-router",
+  "name": "itty-router",
   "version": "0.1.0",
   "description": "",
   "main": "src/Router.js",
@@ -11,14 +11,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/kwhitley/lil-router.git"
+    "url": "git+https://github.com/kwhitley/itty-router.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/kwhitley/lil-router/issues"
+    "url": "https://github.com/kwhitley/itty-router/issues"
   },
-  "homepage": "https://github.com/kwhitley/lil-router#readme",
+  "homepage": "https://github.com/kwhitley/itty-router#readme",
   "devDependencies": {
     "jest": "^25.3.0",
     "yarn-release": "^1.10.2"
