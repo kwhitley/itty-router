@@ -1,5 +1,5 @@
-# lil-router
-It's a little router.
+# itty-router
+It's an itty bitty router. That means small.  It's tiny.  For reals.
 
 ## Our Goals
 - [ ] have a simple express-like (or better) interface
