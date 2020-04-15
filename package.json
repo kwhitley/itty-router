@@ -5,7 +5,9 @@
   "main": "src/Router.js",
   "type": "module",
   "scripts": {
-    "test": "jest --watch"
+    "test": "jest --watch",
+    "prerelease": "echo releasing...",
+    "release": "release --push --tag"
   },
   "repository": {
     "type": "git",
