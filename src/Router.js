@@ -10,15 +10,20 @@ class Router {
   }
 
   constructor() {
-    const methods = 'del,delete,get,patch,post,put'.split(',')
+    const methods = 'delete,get,patch,post,put'.split(',')
 
     for (var method of methods) {
-      this[method] = this.addPath(method.toUpperCase())
+      this[method] = this.addRoute(method.toUpperCase())
     }
+
+    this.del = this.delete
   }
   
-  addPath = method => (path, callback, options) =>
+  addRoute = method => (path, callback, options) => {
     this.paths[method].push({ path, callback, options })
+
+    return this
+  }
 
   match(method, path) {
     let targets = this.paths[method]
@@ -47,6 +52,4 @@ class Router {
   }
 }
 
-module.exports = {
-  Router,
-}
+module.exports = { Router }

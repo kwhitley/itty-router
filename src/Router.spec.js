@@ -26,7 +26,13 @@ describe('Router', () => {
     expect(router).toBeInstanceOf(Router)
   })
 
-  describe('match(method, path)', () => {
+  describe('.get(path, callback) // or other methods like delete, patch, put, post', () => {
+    it('is chainable', () => {
+      expect(router.get('/xyz', () => {})).toEqual(router)
+    })
+  })
+
+  describe('.match(method, path)', () => {
     it('earlier routes that match intercept later routes', () => {
       const route = routes.find(r => r.path === '/foo/first')
       const match = router.match('GET', '/foo/first')
@@ -54,7 +60,7 @@ describe('Router', () => {
     })
   })
 
-  describe('handle(event)', () => {
+  describe('.handle(event)', () => {
     it('returns with correct route params and query params', () => {
       const event = { 
         request: { 
