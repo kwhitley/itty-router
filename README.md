@@ -1,5 +1,16 @@
 # itty-router
-It's an itty bitty router. That means small.  It's tiny.  For reals.
+It's an itty bitty router. That means small.  It's tiny.  For reals.|
+
+## Installation
+
+```
+yarn add itty-router
+```
+
+or if you've been transported back to 2017...
+```
+npm install itty-router
+```
 
 ## Our Goals
 - [ ] have a simple express-like (or better) interface
@@ -34,3 +45,10 @@ router.get('/search', async ({ query }) => new Response(JSON.stringify(query)) ?
 // Example for CloudFlare Functions... warning this will definitely change.
 addEventListener('fetch', router.handle(event))
 ```
+
+## Testing & Contributing
+1. fork repo
+2. add code
+3. run tests (and add your own) `yarn test`
+4. submit PR
+5. profit
