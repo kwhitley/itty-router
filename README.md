@@ -1,5 +1,5 @@
 # itty-router
-It's an itty bitty router. That means small.  It's tiny.  For reals.|
+It's an itty bitty router. That means small.  It's tiny.  For reals.
 
 ## Installation
 
