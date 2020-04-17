@@ -15,12 +15,7 @@ const Router = () => new Proxy({}, {
         }
       }
     } 
-    : (path, handler) => { 
-        obj[prop] 
-        ? obj[prop].push([path, handler])
-        : obj[prop] = [[path, handler]]
-        return obj
-      }
+    : (path, handler) => (obj[prop] = obj[prop] || []).push([path, handler]) & obj
 })
 
 module.exports = {
