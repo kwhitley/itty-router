@@ -3,6 +3,16 @@
   "version": "0.4.0",
   "description": "",
   "main": "src/Router.js",
+  "keywords": [
+    "router",
+    "serverless",
+    "express",
+    "regexp",
+    "routing",
+    "api",
+    "handler",
+    "params"
+  ],
   "scripts": {
     "test": "jest --watch",
     "prerelease": "echo releasing..."

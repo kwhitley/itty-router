@@ -4,6 +4,8 @@
 
 It's an itty bitty router. Like... super tiny, with zero dependencies. For reals.
 
+Did we mention it supports route/query params like in Express.js?
+
 ## Installation
 
 ```
@@ -15,18 +17,19 @@ or if you've been transported back to 2017...
 npm install itty-router
 ```
 
-## Our Goals
-- [x] have a simple express-like (or better) interface
-- [x] have a chainable interface!
+## Project Goals
 - [x] be tiny
-- [x] be easy to use/implement
-- [x] have as few dependencies as possible (ZERO)
-- [x] have test coverage
-- [x] have a README
-- [x] have a way to release
-- [ ] have pretty code (right...)
+- [x] be easy to use/implement (simple express-like or better interface)
+- [x] support route params (e.g. `/api/:collection/:id`)
+- [x] support optional route params (e.g. `/todos/:id?`)
+- [x] support automatic query param parsing
+- [x] chainable route declarations
+- [x] pass parsed route params to route handler (e.g. `{ params: { foo: 'bar' }}`)
+- [x] pass parsed query params to route handler (e.g. `{ query: { page: '3' }}` from `/foo?page=3`)
 - [ ] handle all the basics of routing within a serverless function
 - [ ] be platform agnostic (or handle the responses of the major platforms)
+- [x] zero dependencies
+- [ ] have pretty code (yeah right...)
 
 ## Example
 ```js
@@ -42,6 +45,7 @@ router.get('/todos/:id', console.log)
 router
   .get('/todos/oops', () => console.log('you will never see this'))
   .get('/chainable', () => console.log('because why not?')) // this may be dropped to save characters...
+  .get('/optional/:support?', () => console.log('optionals!')) // will match /optional and /optional/14 both
 
 // works with POST, DELETE, PATCH, etc
 router.post('/todos', () => console.log('posted a todo'))
