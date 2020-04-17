@@ -1,6 +1,6 @@
 {
   "name": "itty-router",
-  "version": "0.4.2",
+  "version": "0.5.0",
   "description": "",
   "main": "src/Router.js",
   "keywords": [
@@ -15,7 +15,8 @@
   ],
   "scripts": {
     "test": "jest --watch",
-    "prerelease": "echo releasing..."
+    "prerelease": "echo releasing...",
+    "release": "release --tag --push"
   },
   "repository": {
     "type": "git",
