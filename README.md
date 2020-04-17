@@ -1,6 +1,6 @@
 # itty-router
 [![minified + gzipped size](https://badgen.net/bundlephobia/minzip/itty-router)](https://bundlephobia.com/result?p=itty-router)
-[![Build Status via Travis CI](https://travis-ci.org/kwhitley/itty-router.svg?branch=master)](https://travis-ci.org/kwhitley/itty-router)  
+[![Build Status via Travis CI](https://travis-ci.org/kwhitley/itty-router.svg?branch=v0.x)](https://travis-ci.org/kwhitley/itty-router)  
 
 It's an itty bitty router. That means small.  It's tiny.  For reals.
 
