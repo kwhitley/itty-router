@@ -83,20 +83,15 @@ const Router = () => new Proxy({}, {
       let { pathname: path, searchParams } = new URL(req.url)
       for (let [route, handler] of obj[req.method.toLowerCase()] || []) {
         if (hit = match(route, { decode: decodeURIComponent })(path)) {
-          return handler({ 
-            ...req,
+          return handler({
             ...hit,
+            ...req,
             path,
             query: Object.fromEntries(searchParams.entries()) 
           })
         }
       }
     } 
-    : (path, handler) => { 
-        obj[prop] 
-        ? obj[prop].push([path, handler])
-        : obj[prop] = [[path, handler]]
-        return obj
-      }
+    : (path, handler) => (obj[prop] = obj[prop] || []).push([path, handler]) && obj
 })
 ```
