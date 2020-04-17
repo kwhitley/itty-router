@@ -20,8 +20,5 @@
   "devDependencies": {
     "jest": "^25.3.0",
     "yarn-release": "^1.10.2"
-  },
-  "dependencies": {
-    "path-to-regexp": "^6.1.0"
   }
 }

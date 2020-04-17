@@ -1,21 +1,20 @@
-const { match } = require('path-to-regexp')
-
 const Router = () => new Proxy({}, {
   get: (obj, prop) => prop === 'handle'
     ? (req) => {
       let { pathname: path, searchParams } = new URL(req.url)
       for (let [route, handler] of obj[req.method.toLowerCase()] || []) {
-        if (hit = match(route, { decode: decodeURIComponent })(path)) {
+        if (hit = path.match(route)) {
           return handler({
-            ...hit,
             ...req,
+            params: hit.groups,
             path,
             query: Object.fromEntries(searchParams.entries()) 
           })
         }
       }
     } 
-    : (path, handler) => (obj[prop] = obj[prop] || []).push([path, handler]) && obj
+    : (path, handler) => 
+        (obj[prop] = obj[prop] || []).push([path.replace(/(\/:([^\/\?]+)(\?)?)/gi, '/$3(?<$2>[^\/]+)$3'), handler]) && obj
 })
 
 module.exports = {

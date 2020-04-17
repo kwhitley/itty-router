@@ -2,7 +2,7 @@
 [![minified + gzipped size](https://badgen.net/bundlephobia/minzip/itty-router)](https://bundlephobia.com/result?p=itty-router)
 [![Build Status via Travis CI](https://travis-ci.org/kwhitley/itty-router.svg?branch=v0.x)](https://travis-ci.org/kwhitley/itty-router)  
 
-It's an itty bitty router. That means small.  It's tiny.  For reals.
+It's an itty bitty router. Like... super tiny, with zero dependencies. For reals.
 
 ## Installation
 
@@ -16,15 +16,15 @@ npm install itty-router
 ```
 
 ## Our Goals
-- [ ] have a simple express-like (or better) interface
+- [x] have a simple express-like (or better) interface
 - [x] have a chainable interface!
 - [x] be tiny
 - [x] be easy to use/implement
-- [ ] have as few dependencies as possible (or none)
+- [x] have as few dependencies as possible (ZERO)
 - [x] have test coverage
 - [x] have a README
 - [x] have a way to release
-- [ ] have pretty code
+- [ ] have pretty code (right...)
 - [ ] handle all the basics of routing within a serverless function
 - [ ] be platform agnostic (or handle the responses of the major platforms)
 
@@ -75,23 +75,29 @@ addEventListener('fetch', ({ request }) => router.handle(request))
 
 ## Entire Router Code (latest...)
 ```js
-const { match } = require('path-to-regexp')
-
 const Router = () => new Proxy({}, {
   get: (obj, prop) => prop === 'handle'
     ? (req) => {
       let { pathname: path, searchParams } = new URL(req.url)
       for (let [route, handler] of obj[req.method.toLowerCase()] || []) {
-        if (hit = match(route, { decode: decodeURIComponent })(path)) {
+        if (hit = path.match(route)) {
           return handler({
-            ...hit,
             ...req,
+            params: hit.groups,
             path,
             query: Object.fromEntries(searchParams.entries()) 
           })
         }
       }
     } 
-    : (path, handler) => (obj[prop] = obj[prop] || []).push([path, handler]) && obj
+    : (path, handler) => 
+        (obj[prop] = obj[prop] || []).push([path.replace(/(\/:([^\/\?]+)(\?)?)/gi, '/$3(?<$2>[^\/]+)$3'), handler]) && obj
 })
 ```
+
+## Special Thanks
+This repo goes out to my past and present colleagues at Arundo - who have brought me such inspiration, fun, 
+and drive over the last couple years.  In particular, the absurd brevity of this code is thanks to a 
+clever [abuse] of `Proxy`, courtesy of the brilliant [@mvasigh](https://github.com/mvasigh).  
+This trick allows methods (e.g. "get", "post") to by defined dynamically by the router as they are requested, 
+**drastically** reducing boilerplate.
