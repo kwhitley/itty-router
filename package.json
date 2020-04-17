@@ -21,8 +21,8 @@
     "type": "git",
     "url": "git+https://github.com/kwhitley/itty-router.git"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "Kevin R. Whitley <krwhitley@gmail.com>",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/kwhitley/itty-router/issues"
   },
