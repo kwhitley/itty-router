@@ -2,7 +2,7 @@ const { Router } = require('./Router')
 
 describe('Router', () => {
   const router = Router()
-  const buildRequest = ({ method = 'GET', path, url = 'https://example.com' + path }) => ({ method, path, url })
+  const buildRequest = ({ method = 'GET', path, url = 'https://example.com' + path, ...other }) => ({ method, path, url, ...other })
   const extract = ({ params, query }) => ({ params, query })
 
   let routes = [
@@ -10,6 +10,7 @@ describe('Router', () => {
     { path: '/foo/:id', callback: jest.fn(extract), method: 'get' },
     { path: '/foo', callback: jest.fn(extract), method: 'post' },
     { path: '/optional/:id?', callback: jest.fn(extract), method: 'get' },
+    { path: '/passthrough', callback: jest.fn(({ path, name }) => ({ path, name })), method: 'get' },
   ]
 
   for (var route of routes) {
@@ -53,6 +54,16 @@ describe('Router', () => {
 
       router.handle(buildRequest({ path: '/optional/13' }))
       expect(route.callback).toHaveBeenCalledTimes(2)
+    })
+
+    it('passes the entire original request through to the handler', () => {
+      const route = routes.find(r => r.path === '/passthrough')
+      router.handle(buildRequest({ path: '/passthrough', name: 'miffles' }))
+
+      expect(route.callback).toHaveReturnedWith({
+        path: '/passthrough',
+        name: 'miffles',
+      })
     })
   })
 })
