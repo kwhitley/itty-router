@@ -1,4 +1,7 @@
 # itty-router
+[![minified + gzipped size](https://badgen.net/bundlephobia/minzip/itty-router)](https://bundlephobia.com/result?p=itty-router)
+[![Build Status via Travis CI](https://travis-ci.org/kwhitley/itty-router.svg?branch=master)](https://travis-ci.org/kwhitley/itty-router)  
+
 It's an itty bitty router. That means small.  It's tiny.  For reals.
 
 ## Installation
@@ -15,8 +18,8 @@ npm install itty-router
 ## Our Goals
 - [ ] have a simple express-like (or better) interface
 - [x] have a chainable interface!
-- [ ] be tiny
-- [ ] be easy to use/implement
+- [x] be tiny
+- [x] be easy to use/implement
 - [ ] have as few dependencies as possible (or none)
 - [x] have test coverage
 - [x] have a README
@@ -29,21 +32,38 @@ npm install itty-router
 ```js
 import { Router } from 'itty-router'
 
-const router = new Router()
+// create a Router
+const router = Router()
 
 // basic GET routs
-router.get('/todos', async () => new Response('list of todos'))
-router.get('/todos/:id', async ({ params }) => new Response(`details for todo #${params.id}`))
+router.get('/todos/:id', console.log)
+  
+// first match always wins, so be careful with order of registering routes
+router
+  .get('/todos/oops', () => console.log('you will never see this'))
+  .get('/chainable', () => console.log('because why not?')) // this may be dropped to save characters...
 
-// plus DELETE, PATCH, PUT, POST, etc
-router.post('/todos', async () => new Response('created a new todo!'))
+// works with POST, DELETE, PATCH, etc
+router.post('/todos', () => console.log('posted a todo'))
 
-// doesn't lose query params...
-router.get('/search', async ({ query }) => new Response(JSON.stringify(query)) ?q=foo ---> { q: 'foo' }
+// ...or any other method we haven't yet thought of (thanks to @mvasigh implementation of Proxy <3)
+router.future('/todos', () => console.log(`this caught using the FUTURE method!`))
 
-// USE IT! (with some sort of event with request object on it)
-// Example for CloudFlare Functions... warning this will definitely change.
-addEventListener('fetch', router.handle(event))
+// then handle a request!
+router.handle({ method: 'GET', url: 'https://foo.com/todos/13?foo=bar' })
+// {
+//   method: 'GET',
+//   url: 'http://foo.com/todos/13?foo=bar',
+//   path: '/todos/13',
+//   index: 0,
+//   params: { id: '13' },
+//   query: { foo: 'bar' }
+// }
+```
+
+## Example Usage With Cloudflare Functions
+```js
+addEventListener('fetch', ({ request }) => router.handle(request))
 ```
 
 ## Testing & Contributing
@@ -52,3 +72,31 @@ addEventListener('fetch', router.handle(event))
 3. run tests (and add your own) `yarn test`
 4. submit PR
 5. profit
+
+## Entire Router Code (latest...)
+```js
+const { match } = require('path-to-regexp')
+
+const Router = () => new Proxy({}, {
+  get: (obj, prop) => prop === 'handle'
+    ? (req) => {
+      let { pathname: path, searchParams } = new URL(req.url)
+      for (let [route, handler] of obj[req.method.toLowerCase()] || []) {
+        if (hit = match(route, { decode: decodeURIComponent })(path)) {
+          return handler({ 
+            ...req,
+            ...hit,
+            path,
+            query: Object.fromEntries(searchParams.entries()) 
+          })
+        }
+      }
+    } 
+    : (path, handler) => { 
+        obj[prop] 
+        ? obj[prop].push([path, handler])
+        : obj[prop] = [[path, handler]]
+        return obj
+      }
+})
+```

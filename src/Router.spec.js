@@ -1,86 +1,47 @@
 const { Router } = require('./Router')
 
 describe('Router', () => {
-  const router = new Router()
-
+  const router = Router()
+  const buildRequest = ({ method = 'GET', path, url = 'https://example.com' + path }) => ({ method, path, url })
   const extract = ({ params, query }) => ({ params, query })
 
   let routes = [
     { path: '/foo/first', callback: jest.fn(extract), method: 'get' },
     { path: '/foo/:id', callback: jest.fn(extract), method: 'get' },
-    { path: '/foo/:id', callback: jest.fn(extract), method: 'post' },
-    { path: '/foo/:id', callback: jest.fn(extract), method: 'delete' },
-    { path: '/foo/:id', callback: jest.fn(extract), method: 'put' },
-    { path: '/foo/:id', callback: jest.fn(extract), method: 'patch' },
+    { path: '/foo', callback: jest.fn(extract), method: 'post' },
   ]
 
   for (var route of routes) {
-    router[route.method || 'get'](route.path, route.callback)
+    router[route.method](route.path, route.callback)
   }
 
   it('is exported via { Router } from Router.js', () => {
     expect(typeof Router).toBe('function')
   })
 
-  it('new Router() returns instance of Router', () => {
-    expect(router).toBeInstanceOf(Router)
-  })
-
-  describe('.get(path, callback) // or other methods like delete, patch, put, post', () => {
-    it('is chainable', () => {
-      expect(router.get('/xyz', () => {})).toEqual(router)
-    })
-  })
-
-  describe('.match(method, path)', () => {
+  describe('.handle({ method, url })', () => {
     it('earlier routes that match intercept later routes', () => {
       const route = routes.find(r => r.path === '/foo/first')
-      const match = router.match('GET', '/foo/first')
-
-      expect(match.callback).toEqual(route.callback)
-    })
-
-    it('returns { path } from match', () => {
-      const match = router.match('GET', '/foo/first')
-
-      expect(match.path).toEqual('/foo/first')
-    })
-
-    it('returns { params } from match (e.g. /foo/bar when matched against /foo/:id returns { params: { id: "bar" } }', () => {
-      const match = router.match('GET', '/foo/bar')
-
-      expect(match.params).toEqual({ id: 'bar' })
-    })
-
-    it('honors the correct method (e.g. DELETE', () => {
-      const route = routes.find(r => r.method === 'delete')
-      const match = router.match('DELETE', '/foo/first')
-
-      expect(match.callback).toEqual(route.callback)
-    })
-  })
-
-  describe('.handle(event)', () => {
-    it('returns with correct route params and query params', () => {
-      const event = { 
-        request: { 
-          method: 'DELETE',
-          url: 'https://somewhere.com/foo/bar?cat=miffles&dog=fido',
-        } 
-      }
-      const route = routes.find(r => r.path === '/foo/:id' && r.method === 'delete')
-      
-      const match = router.handle(event)
+      router.handle(buildRequest({ path: '/foo/first' }))
 
       expect(route.callback).toHaveBeenCalled()
-      expect(route.callback).toHaveReturnedWith({ 
-        params: {
-          id: 'bar',
-        },
-        query: {
-          cat: 'miffles', dog: 'fido' 
-        }
+    })
+
+    it('returns { path, query } from match', () => {
+      const route = routes.find(r => r.path === '/foo/:id')
+      router.handle(buildRequest({ path: '/foo/13?foo=bar&cat=dog' }))
+
+      expect(route.callback).toHaveReturnedWith({
+        params: { id: '13' },
+        query: { foo: 'bar', cat: 'dog' },
       })
+    })
+
+    it('honors correct method', () => {
+      const route = routes.find(r => r.path === '/foo' && r.method === 'post')
+      router.handle(buildRequest({ method: 'POST', path: '/foo' }))
+
+      expect(route.callback).toHaveBeenCalled()
     })
   })
 })
