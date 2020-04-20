@@ -6,6 +6,7 @@ describe('Router', () => {
   const extract = ({ params, query }) => ({ params, query })
 
   let routes = [
+    { path: '/', callback: jest.fn(extract), method: 'get' },
     { path: '/foo/first', callback: jest.fn(extract), method: 'get' },
     { path: '/foo/:id', callback: jest.fn(extract), method: 'get' },
     { path: '/foo', callback: jest.fn(extract), method: 'post' },
@@ -30,6 +31,14 @@ describe('Router', () => {
         params: { id: '13' },
         query: { foo: 'bar', cat: 'dog' },
       })
+    })
+
+    it('requires exact route match', () => {
+      const route = routes.find(r => r.path === '/')
+
+      router.handle(buildRequest({ path: '/foo' }))
+
+      expect(route.callback).not.toHaveBeenCalled()
     })
 
     it('match earliest routes that match', () => {
