@@ -4,12 +4,11 @@ const Router = () => new Proxy({}, {
       let { pathname: path, searchParams } = new URL(req.url)
       for (let [route, handler] of obj[req.method.toLowerCase()] || []) {
         if (hit = path.match(route)) {
-          return handler({
-            ...req,
+          return handler(Object.assign(req, {
             params: hit.groups,
             path,
             query: Object.fromEntries(searchParams.entries()) 
-          })
+          }))
         }
       }
     } 
