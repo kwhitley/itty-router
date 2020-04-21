@@ -13,7 +13,7 @@ const Router = () => new Proxy({}, {
       }
     } 
     : (path, handler) => 
-        (obj[prop] = obj[prop] || []).push([`^${path.replace(/(\/:([^\/\?]+)(\?)?)/gi, '/$3(?<$2>[^\/]+)$3')}$`, handler]) && obj
+        (obj[prop] = obj[prop] || []).push([`^${path.replace('*', '.*').replace(/(\/:([^\/\?]+)(\?)?)/gi, '/$3(?<$2>[^\/]+)$3')}$`, handler]) && obj
 })
 
 module.exports = {

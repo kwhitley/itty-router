@@ -12,6 +12,7 @@ describe('Router', () => {
     { path: '/foo', callback: jest.fn(extract), method: 'post' },
     { path: '/optional/:id?', callback: jest.fn(extract), method: 'get' },
     { path: '/passthrough', callback: jest.fn(({ path, name }) => ({ path, name })), method: 'get' },
+    { path: '*', callback: jest.fn(), method: 'get' },
   ]
 
   for (var route of routes) {
@@ -73,6 +74,13 @@ describe('Router', () => {
         path: '/passthrough',
         name: 'miffles',
       })
+    })
+
+    it('accepts * as a wildcard route (e.g. for use in 404)', () => {
+      const route = routes.find(r => r.path === '*')
+      router.handle(buildRequest({ path: '/missing' }))
+
+      expect(route.callback).toHaveBeenCalled()
     })
   })
 })
