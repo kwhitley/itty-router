@@ -14,7 +14,8 @@
     "params"
   ],
   "scripts": {
-    "test": "jest --watch",
+    "test": "jest --verbose",
+    "dev": "yarn test - --watch",
     "prerelease": "echo releasing...",
     "release": "release --tag --push"
   },
