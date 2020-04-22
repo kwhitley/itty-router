@@ -1,7 +1,7 @@
 ![image](https://user-images.githubusercontent.com/865416/79531114-fa0d8200-8036-11ea-824d-70d84164b00a.png)
 
 [![minified + gzipped size](https://badgen.net/bundlephobia/minzip/itty-router)](https://bundlephobia.com/result?p=itty-router)
-[![Build Status via Travis CI](https://travis-ci.org/kwhitley/itty-router.svg?branch=v0.x)](https://travis-ci.org/kwhitley/itty-router)  
+[![Build Status via Travis CI](https://travis-ci.org/kwhitley/itty-router.svg?branch=v0.x)](https://travis-ci.org/kwhitley/itty-router)
 [![Coverage Status](https://coveralls.io/repos/github/kwhitley/itty-router/badge.svg?branch=pr/travis-fix)](https://coveralls.io/github/kwhitley/itty-router?branch=v0.x)
 
 It's an itty bitty router. Like... super tiny, with zero dependencies. For reals.
@@ -22,10 +22,11 @@ npm install itty-router
 ## Features
 - [x] tiny (< 390 bytes)
 - [x] zero dependencies!
-- [x] be easy to use/implement (simple express-like or better interface)
-- [x] parses route params, with optionals (e.g. `/api/:collection/:id?` --> `{ params: { collection: 'todos', id: '13' }}`)
-- [x] parses query params (e.g. `/foo?bar=baz&page=3` --> `{ query: { bar: 'baz', page: '3' }}`)
-- [x] chainable route declarations (quality of life)
+- [x] dead-simple usage
+- [x] route params, with optionals (e.g. `/api/:foo/:id?`)
+- [x] query parsing (e.g. `?page=3`)
+- [x] outputs to route handler: `{ params: { foo: 'bar' }, query: { page: '3' }}`
+- [x] chainable route declarations (why not?)
 - [ ] have pretty code (yeah right...)
 
 # Examples
