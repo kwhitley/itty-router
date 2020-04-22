@@ -12,6 +12,7 @@ describe('Router', () => {
     { path: '/foo', callback: jest.fn(extract), method: 'post' },
     { path: '/optional/:id?', callback: jest.fn(extract), method: 'get' },
     { path: '/passthrough', callback: jest.fn(({ path, name }) => ({ path, name })), method: 'get' },
+    { path: '/passthrough', callback: jest.fn(({ path, name }) => ({ path, name })) },
     { path: '*', callback: jest.fn(), method: 'get' },
   ]
 
@@ -79,6 +80,13 @@ describe('Router', () => {
     it('accepts * as a wildcard route (e.g. for use in 404)', () => {
       const route = routes.find(r => r.path === '*')
       router.handle(buildRequest({ path: '/missing' }))
+
+      expect(route.callback).toHaveBeenCalled()
+    })
+
+    it(`defaults to GET assumption when handling new requests without { method: 'METHOD' }`, () => {
+      const route = routes.find(r => r.path === '/foo')
+      router.handle({ url: 'https://example.com/foo' }) // no method listed
 
       expect(route.callback).toHaveBeenCalled()
     })

@@ -1,7 +1,7 @@
 ![image](https://user-images.githubusercontent.com/865416/79531114-fa0d8200-8036-11ea-824d-70d84164b00a.png)
 
-[![minified + gzipped size](https://badgen.net/bundlephobia/minzip/itty-router)](https://bundlephobia.com/result?p=itty-router)
-[![Build Status via Travis CI](https://travis-ci.org/kwhitley/itty-router.svg?branch=v0.x)](https://travis-ci.org/kwhitley/itty-router)  
+[![minified + gzipped size](https://img.shields.io/bundlephobia/minzip/itty-router)](https://bundlephobia.com/result?p=itty-router)
+[![Build Status via Travis CI](https://img.shields.io/travis/kwhitley/itty-router/v0.x)](https://travis-ci.org/kwhitley/itty-router)  
 
 It's an itty bitty router. Like... super tiny, with zero dependencies. For reals.
 
@@ -18,18 +18,13 @@ or if you've been transported back to 2017...
 npm install itty-router
 ```
 
-## Project Goals
-- [x] be tiny
-- [x] be easy to use/implement (simple express-like or better interface)
-- [x] support route params (e.g. `/api/:collection/:id`)
-- [x] support optional route params (e.g. `/todos/:id?`)
-- [x] support automatic query param parsing
-- [x] chainable route declarations
-- [x] pass parsed route params to route handler (e.g. `{ params: { foo: 'bar' }}`)
-- [x] pass parsed query params to route handler (e.g. `{ query: { page: '3' }}` from `/foo?page=3`)
-- [ ] handle all the basics of routing within a serverless function
-- [ ] be platform agnostic (or handle the responses of the major platforms)
+## Features
+- [x] tiny (< 390B)
 - [x] zero dependencies
+- [x] be easy to use/implement (simple express-like or better interface)
+- [x] parses route params, including optionals (e.g. `/api/:collection/:id?` --> `{ params: { collection: 'todos', id: '13' }}`)
+- [x] parses query params (e.g. `/foo?bar=baz&page=3` --> `{ query: { bar: 'baz', page: '3' }}`)
+- [x] chainable route declarations (optional)
 - [ ] have pretty code (yeah right...)
 
 ## Example
@@ -94,20 +89,19 @@ addEventListener('fetch', event => event.respondWith(router.handle(event.request
 const Router = () => new Proxy({}, {
   get: (obj, prop) => prop === 'handle'
     ? (req) => {
-      let { pathname: path, searchParams } = new URL(req.url)
-      for (let [route, handler] of obj[req.method.toLowerCase()] || []) {
+      let { url, method = 'GET' } = req
+      let { pathname: path, searchParams } = new URL(url)
+      for (let [route, handler] of obj[method.toLowerCase()] || []) {
         if (hit = path.match(route)) {
           return handler(Object.assign(req, {
             params: hit.groups,
-            path,
             query: Object.fromEntries(searchParams.entries()) 
           }))
         }
       }
     } 
     : (path, handler) => 
-        (obj[prop] = obj[prop] || [])
-          .push([`^${path.replace('*', '.*').replace(/(\/:([^\/\?]+)(\?)?)/gi, '/$3(?<$2>[^\/]+)$3')}$`, handler]) && obj
+        (obj[prop] = obj[prop] || []).push([`^${path.replace('*', '.*').replace(/(\/:([^\/\?]+)(\?)?)/gi, '/$3(?<$2>[^\/]+)$3')}$`, handler]) && obj
 })
 ```
 
@@ -117,3 +111,10 @@ and drive over the last couple years.  In particular, the absurd brevity of this
 clever [abuse] of `Proxy`, courtesy of the brilliant [@mvasigh](https://github.com/mvasigh).  
 This trick allows methods (e.g. "get", "post") to by defined dynamically by the router as they are requested, 
 **drastically** reducing boilerplate.
+
+## Changelog
+Until this library makes it to a production release of v1.x, **minor versions may contain breaking changes to the API**.  After v1.x, semantic versioning will be honored, and breaking changes will only occur under the umbrella of a major version bump.
+
+- **v0.7.0** - removed { path } from  request handler context, travis build fixed
+- **v0.6.0** - added types to project for vscode intellisense (thanks [@mvasigh](https://github.com/mvasigh))
+- **v0.5.4** - fix: wildcard routes properly supported

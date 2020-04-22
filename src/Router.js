@@ -1,12 +1,12 @@
 const Router = () => new Proxy({}, {
   get: (obj, prop) => prop === 'handle'
     ? (req) => {
-      let { pathname: path, searchParams } = new URL(req.url)
-      for (let [route, handler] of obj[req.method.toLowerCase()] || []) {
+      let { url, method = 'GET' } = req
+      let { pathname: path, searchParams } = new URL(url)
+      for (let [route, handler] of obj[method.toLowerCase()] || []) {
         if (hit = path.match(route)) {
           return handler(Object.assign(req, {
             params: hit.groups,
-            path,
             query: Object.fromEntries(searchParams.entries()) 
           }))
         }
