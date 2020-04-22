@@ -12,6 +12,8 @@ describe('Router', () => {
     { path: '/foo', callback: jest.fn(extract), method: 'post' },
     { path: '/optional/:id?', callback: jest.fn(extract), method: 'get' },
     { path: '/passthrough', callback: jest.fn(({ path, name }) => ({ path, name })), method: 'get' },
+    { path: '/passthrough', callback: jest.fn(({ path, name }) => ({ path, name })) },
+    { path: '/wildcards/*', callback: jest.fn(), method: 'get' },
     { path: '*', callback: jest.fn(), method: 'get' },
   ]
 
@@ -23,7 +25,7 @@ describe('Router', () => {
     expect(typeof Router).toBe('function')
   })
 
-  describe('.handle({ method, url })', () => {
+  describe(`.handle({ method = 'GET', url })`, () => {
     it('returns { path, query } from match', () => {
       const route = routes.find(r => r.path === '/foo/:id')
       router.handle(buildRequest({ path: '/foo/13?foo=bar&cat=dog' }))
@@ -79,6 +81,18 @@ describe('Router', () => {
     it('accepts * as a wildcard route (e.g. for use in 404)', () => {
       const route = routes.find(r => r.path === '*')
       router.handle(buildRequest({ path: '/missing' }))
+
+      expect(route.callback).toHaveBeenCalled()
+
+      const route2 = routes.find(r => r.path === '/wildcards/*')
+      router.handle(buildRequest({ path: '/wildcards/missing' }))
+
+      expect(route2.callback).toHaveBeenCalled()
+    })
+
+    it(`defaults to GET assumption when handling new requests without { method: 'METHOD' }`, () => {
+      const route = routes.find(r => r.path === '/foo')
+      router.handle({ url: 'https://example.com/foo' }) // no method listed
 
       expect(route.callback).toHaveBeenCalled()
     })
