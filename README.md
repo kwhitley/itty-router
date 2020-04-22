@@ -88,14 +88,14 @@ addEventListener('fetch', event => event.respondWith(router.handle(event.request
 ```js
 const Router = () => new Proxy({}, {
   get: (obj, prop) => prop === 'handle'
-    ? (req) => {
+    ? req => {
       let { url, method = 'GET' } = req
-      let { pathname: path, searchParams } = new URL(url)
+      let u = new URL(url)
       for (let [route, handler] of obj[method.toLowerCase()] || []) {
-        if (hit = path.match(route)) {
+        if (hit = u.pathname.match(route)) {
           return handler(Object.assign(req, {
             params: hit.groups,
-            query: Object.fromEntries(searchParams.entries()) 
+            query: Object.fromEntries(u.searchParams.entries()) 
           }))
         }
       }

@@ -13,6 +13,7 @@ describe('Router', () => {
     { path: '/optional/:id?', callback: jest.fn(extract), method: 'get' },
     { path: '/passthrough', callback: jest.fn(({ path, name }) => ({ path, name })), method: 'get' },
     { path: '/passthrough', callback: jest.fn(({ path, name }) => ({ path, name })) },
+    { path: '/wildcards/*', callback: jest.fn(), method: 'get' },
     { path: '*', callback: jest.fn(), method: 'get' },
   ]
 
@@ -82,6 +83,11 @@ describe('Router', () => {
       router.handle(buildRequest({ path: '/missing' }))
 
       expect(route.callback).toHaveBeenCalled()
+
+      const route2 = routes.find(r => r.path === '/wildcards/*')
+      router.handle(buildRequest({ path: '/wildcards/missing' }))
+
+      expect(route2.callback).toHaveBeenCalled()
     })
 
     it(`defaults to GET assumption when handling new requests without { method: 'METHOD' }`, () => {
