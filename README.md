@@ -2,6 +2,7 @@
 
 [![minified + gzipped size](https://badgen.net/bundlephobia/minzip/itty-router)](https://bundlephobia.com/result?p=itty-router)
 [![Build Status via Travis CI](https://travis-ci.org/kwhitley/itty-router.svg?branch=v0.x)](https://travis-ci.org/kwhitley/itty-router)  
+[![Coverage Status](https://coveralls.io/repos/github/kwhitley/itty-router/badge.svg?branch=v0.x)](https://coveralls.io/github/kwhitley/itty-router?branch=v0.x)
 
 It's an itty bitty router. Like... super tiny, with zero dependencies. For reals.
 

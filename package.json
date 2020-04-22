@@ -15,7 +15,8 @@
   ],
   "scripts": {
     "test": "jest --verbose",
-    "dev": "yarn test - --watch",
+    "dev": "yarn test - --watch --ci --collectCoverage",
+    "jest:ci": "jest --ci --collectCoverage",
     "prerelease": "echo releasing...",
     "release": "release --tag --push"
   },
