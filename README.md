@@ -56,19 +56,30 @@ router.future('/todos', () => console.log(`this caught using the FUTURE method!`
 
 // then handle a request!
 router.handle({ method: 'GET', url: 'https://foo.com/todos/13?foo=bar' })
+
+// THE FOLLOWING PAYLOAD IS PASSED TO ROUTE HANDLER
 // {
-//   method: 'GET',
-//   url: 'http://foo.com/todos/13?foo=bar',
 //   path: '/todos/13',
-//   index: 0,
 //   params: { id: '13' },
-//   query: { foo: 'bar' }
+//   query: { foo: 'bar' },
+//   ...whatever else was in the original request object/class (e.g. method, url, etc)
 // }
 ```
 
 ## Example Usage With Cloudflare Functions
 ```js
-addEventListener('fetch', ({ request }) => router.handle(request))
+import { Router } from 'itty-router'
+
+// create a router
+const router = Router() // note the intentional lack of "new"
+
+// register some routes
+router
+  .get('/foo', () => new Response('Foo Index!'))
+  .get('/foo/:id', ({ params }) => new Response(`Details for item ${params.id}.`))
+
+// attach the router handle to the event handler
+addEventListener('fetch', event => event.respondWith(router.handle(event.request)))
 ```
 
 ## Testing & Contributing
