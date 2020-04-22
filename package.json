@@ -14,9 +14,9 @@
     "params"
   ],
   "scripts": {
-    "test": "jest --verbose",
-    "dev": "yarn test - --watch --ci --collectCoverage",
-    "jest:ci": "jest --ci --collectCoverage",
+    "test": "jest --verbose --coverage",
+    "dev": "yarn test - --watch",
+    "coveralls": "cat ./coverage/lcov.info | node node_modules/.bin/coveralls",
     "prerelease": "echo releasing...",
     "release": "release --tag --push"
   },
@@ -31,6 +31,7 @@
   },
   "homepage": "https://github.com/kwhitley/itty-router#readme",
   "devDependencies": {
+    "coveralls": "^3.0.13",
     "jest": "^25.3.0",
     "yarn-release": "^1.10.2"
   }

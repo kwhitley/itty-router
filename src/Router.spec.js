@@ -25,7 +25,7 @@ describe('Router', () => {
     expect(typeof Router).toBe('function')
   })
 
-  describe('.handle({ method, url })', () => {
+  describe(`.handle({ method = 'GET', url })`, () => {
     it('returns { path, query } from match', () => {
       const route = routes.find(r => r.path === '/foo/:id')
       router.handle(buildRequest({ path: '/foo/13?foo=bar&cat=dog' }))
