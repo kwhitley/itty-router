@@ -20,15 +20,16 @@ npm install itty-router
 ```
 
 ## Features
-- [x] tiny (< 390B)
-- [x] zero dependencies
+- [x] tiny (< 390 bytes)
+- [x] zero dependencies!
 - [x] be easy to use/implement (simple express-like or better interface)
 - [x] parses route params, with optionals (e.g. `/api/:collection/:id?` --> `{ params: { collection: 'todos', id: '13' }}`)
 - [x] parses query params (e.g. `/foo?bar=baz&page=3` --> `{ query: { bar: 'baz', page: '3' }}`)
 - [x] chainable route declarations (quality of life)
 - [ ] have pretty code (yeah right...)
 
-## Example
+# Examples
+### Kitchen Sink
 ```js
 import { Router } from 'itty-router'
 
@@ -53,16 +54,15 @@ router.future('/todos', () => console.log(`this caught using the FUTURE method!`
 // then handle a request!
 router.handle({ method: 'GET', url: 'https://foo.com/todos/13?foo=bar' })
 
-// THE FOLLOWING PAYLOAD/CONTEXT IS PASSED TO ROUTE HANDLER
+// ...and viola! the following payload/context is passed to the matching route handler:
 // {
-//   path: '/todos/13',
 //   params: { id: '13' },
 //   query: { foo: 'bar' },
 //   ...whatever else was in the original request object/class (e.g. method, url, etc)
 // }
 ```
 
-## Example Usage With Cloudflare Functions
+### Within a Cloudflare Function
 ```js
 import { Router } from 'itty-router'
 
@@ -73,9 +73,43 @@ const router = Router() // note the intentional lack of "new"
 router
   .get('/foo', () => new Response('Foo Index!'))
   .get('/foo/:id', ({ params }) => new Response(`Details for item ${params.id}.`))
+  .get('*', () => new Response('Not Found.', { status: 404 })
 
 // attach the router handle to the event handler
 addEventListener('fetch', event => event.respondWith(router.handle(event.request)))
+```
+
+# Usage 
+### 1. Create a Router
+```js
+import { Router } from 'itty-router'
+
+const router = Router() // no "new", as this is not a real ES6 class/constructor!
+```
+
+### 2. Register Route(s)
+##### `.methodName(route:string, handler:function)`
+The "instantiated" router translates any attribute (e.g. `.get`, `.post`, `.patch`, `.whatever`) as a function that binds a "route" (string) to a route handler (function) on that method type.  When the url fed to `.handle({ url })` matches the route and method, the handler is fired with the original request/context, with the addition of any parsed route/query params.  This allows ANY method to be handled, including completely custom methods (we're very curious how creative individuals will abuse this flexibility!).  The only "method" currently off-limits is `handle`, as that's used for route handling (see below).
+```js
+router.get('/todos/:user/:item?', (req) => {
+  let { params, query, url } = req
+  let { user, item } = params
+  
+  console.log('GET TODOS from', url, { user, item })
+})
+```
+
+### 3. Handle Incoming Request(s)
+##### `.handle(request = { method:string = 'GET', url:string })`
+The only requirement for the `.handle(request)` method is an object with a valid **full** url (e.g. `https://example.com/foo`).  The `method` property is optional and defaults to `GET` (which maps to routes registered with `router.get()`).
+```js
+router.handle({
+  method: 'GET',                              // optional, default = 'GET'
+  url: 'https://example.com/todos/jane/13',   // required
+})
+
+// matched handler from step #2 (above) will execute, with the following output:
+// GET TODOS from https://example.com/todos/jane/13 { user: 'jane', item: '13' }
 ```
 
 ## Testing & Contributing
@@ -116,6 +150,6 @@ This trick allows methods (e.g. "get", "post") to by defined dynamically by the 
 ## Changelog
 Until this library makes it to a production release of v1.x, **minor versions may contain breaking changes to the API**.  After v1.x, semantic versioning will be honored, and breaking changes will only occur under the umbrella of a major version bump.
 
-- **v0.7.0** - removed { path } from  request handler context, travis build fixed
+- **v0.7.0** - removed { path } from  request handler context, travis build fixed, added coveralls, improved README docs
 - **v0.6.0** - added types to project for vscode intellisense (thanks [@mvasigh](https://github.com/mvasigh))
 - **v0.5.4** - fix: wildcard routes properly supported
