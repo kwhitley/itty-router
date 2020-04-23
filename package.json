@@ -2,7 +2,7 @@
   "name": "itty-router",
   "version": "0.7.3",
   "description": "Tiny, zero-dependency router with route param and query parsing.",
-  "main": "src/Router.js",
+  "main": "dist/itty-router.min",
   "keywords": [
     "router",
     "serverless",
@@ -18,6 +18,8 @@
     "dev": "yarn test - --watch",
     "coveralls": "cat ./coverage/lcov.info | node node_modules/.bin/coveralls",
     "prerelease": "echo releasing...",
+    "prebuild": "rimraf dist && mkdir dist && node prebuild.js",
+    "build": "terser -c -m toplevel -- dist/itty-router.js  > dist/itty-router.min.js",
     "release": "release --tag --push"
   },
   "repository": {
@@ -32,7 +34,10 @@
   "homepage": "https://github.com/kwhitley/itty-router#readme",
   "devDependencies": {
     "coveralls": "^3.0.13",
+    "fs-extra": "^9.0.0",
     "jest": "^25.3.0",
+    "rimraf": "^3.0.2",
+    "terser": "^4.6.11",
     "yarn-release": "^1.10.2"
   }
 }

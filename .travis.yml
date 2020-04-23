@@ -4,6 +4,7 @@ node_js:
 install:
   - npm install
 script:
+  - npm run build
   - npm run test
 after_script:
   - COVERALLS_REPO_TOKEN=$COVERALLS_REPO_TOKEN npm run coveralls
