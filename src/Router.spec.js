@@ -96,5 +96,11 @@ describe('Router', () => {
 
       expect(route.callback).toHaveBeenCalled()
     })
+
+    it(`won't throw on unknown method`, () => {
+      expect(() =>
+        router.handle({ method: 'CUSTOM', url: 'https://example.com/foo' }) // no method listed
+      ).not.toThrow()
+    })
   })
 })
