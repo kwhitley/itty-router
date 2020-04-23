@@ -1,4 +1,4 @@
-const { Router } = require('../dist/itty-router')
+const { Router } = require('./itty-router')
 
 describe('Router', () => {
   const router = Router()
