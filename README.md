@@ -124,19 +124,16 @@ router.handle({
 ```js
 const Router = () => new Proxy({}, {
   get: (obj, prop) => prop === 'handle'
-    ? req => {
-      let { url, method = 'GET' } = req
-      let u = new URL(url)
-      for (let [route, handler] of obj[method.toLowerCase()] || []) {
-        if (hit = u.pathname.match(route)) {
+    ? (req) => {
+      for ([route, handler] of obj[(req.method || 'GET').toLowerCase()] || []) {
+        if (hit = (u = new URL(req.url)).pathname.match(route)) {
           return handler(Object.assign(req, {
             params: hit.groups,
             query: Object.fromEntries(u.searchParams.entries()) 
           }))
         }
       }
-    } 
-    : (path, handler) => 
+    } : (path, handler) => 
         (obj[prop] = obj[prop] || []).push([`^${path.replace('*', '.*').replace(/(\/:([^\/\?]+)(\?)?)/gi, '/$3(?<$2>[^\/]+)$3')}$`, handler]) && obj
 })
 ```
