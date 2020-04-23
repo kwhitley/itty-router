@@ -123,18 +123,18 @@ router.handle({
 ## Entire Router Code (latest...)
 ```js
 const Router = () => new Proxy({}, {
-  get: (obj, prop) => prop === 'handle'
-    ? (req) => {
-      for ([route, handler] of obj[(req.method || 'GET').toLowerCase()] || []) {
-        if (hit = (u = new URL(req.url)).pathname.match(route)) {
-          return handler(Object.assign(req, {
-            params: hit.groups,
+  get: (o, k) => k === 'handle'
+    ? (c) => {
+      for ([r, h] of o[(c.method || 'GET').toLowerCase()] || []) {
+        if (m = (u = new URL(c.url)).pathname.match(r)) {
+          return h(Object.assign(c, {
+            params: m.groups,
             query: Object.fromEntries(u.searchParams.entries()) 
           }))
         }
       }
-    } : (path, handler) => 
-        (obj[prop] = obj[prop] || []).push([`^${path.replace('*', '.*').replace(/(\/:([^\/\?]+)(\?)?)/gi, '/$3(?<$2>[^\/]+)$3')}$`, handler]) && obj
+    } : (p, h) => 
+        (o[k] = o[k] || []).push([`^${p.replace('*', '.*').replace(/(\/:([^\/\?]+)(\?)?)/gi, '/$3(?<$2>[^\/]+)$3')}$`, h]) && o
 })
 ```
 
