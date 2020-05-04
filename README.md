@@ -124,7 +124,9 @@ import { Router } from 'itty-router'
 const router = Router() // note the intentional lack of "new"
 
 // withUser modifies original request, then continues without returning
-const withUser = (req) => req.user = { name: 'Mittens', age: 3 }
+const withUser = (req) => {
+  req.user = { name: 'Mittens', age: 3 }
+}
 
 // requireUser optionally returns (early) if user not found on request
 const requireUser = (req) => {

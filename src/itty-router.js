@@ -18,11 +18,9 @@ const Router = () =>
           `^${route
             .replace('*', '.*')
             .replace(/(\/:([^\/\?]+)(\?)?)/gi, '/$3(?<$2>[^/]+)$3')}$`,
-          handlers,
-        ]) && obj,
+          handlers
+        ]) && obj
     }
   )
 
-module.exports = {
-  Router,
-}
+module.exports = { Router }
