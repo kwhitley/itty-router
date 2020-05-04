@@ -151,20 +151,27 @@ router.handle({ url: 'https://example.com/fail/user' }) // --> STATUS 401: Not A
 
 ## Entire Router Code (latest...)
 ```js
-const Router = () => new Proxy({}, {
-  get: (o, k) => k === 'handle'
-    ? (c) => {
-      for ([r, h] of o[(c.method || 'GET').toLowerCase()] || []) {
-        if (m = (u = new URL(c.url)).pathname.match(r)) {
-          return h(Object.assign(c, {
-            params: m.groups,
-            query: Object.fromEntries(u.searchParams.entries()) 
-          }))
+const Router = () =>
+  new Proxy({}, {
+    get: (o, k) => k === 'handle' 
+      ? async (c) => {
+        for ([r, hs] of o[(c.method || 'GET').toLowerCase()] || []) {
+          if (m = (u = new URL(c.url)).pathname.match(r)) { // r matched
+            Object.assign(c, {
+              params: m.groups,
+              query: Object.fromEntries(u.searchParams.entries()),
+            })
+
+            for (h of hs) {
+              if ((response = await h(c)) !== undefined) return response
+            }
+          }
         }
       }
-    } : (p, h) => 
-        (o[k] = o[k] || []).push([`^${p.replace('*', '.*').replace(/(\/:([^\/\?]+)(\?)?)/gi, '/$3(?<$2>[^\/]+)$3')}$`, h]) && o
-})
+    : (p, ...hs) =>
+        (o[k] = o[k] || []).push([`^${p.replace('*', '.*').replace(/(\/:([^\/\?]+)(\?)?)/gi, '/$3(?<$2>[^/]+)$3')}$`, hs]) && o
+    }
+  )
 ```
 
 ## Special Thanks
