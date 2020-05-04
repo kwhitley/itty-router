@@ -1,6 +1,6 @@
 ![image](https://user-images.githubusercontent.com/865416/79531114-fa0d8200-8036-11ea-824d-70d84164b00a.png)
 
-[![minified + gzipped size](https://badgen.net/bundlephobia/minzip/itty-router)](https://bundlephobia.com/result?p=itty-router)
+[![minified + gzipped size](https://badgen.net/bundlephobia/minzip/itty-router@latest)](https://bundlephobia.com/result?p=itty-router)
 [![Build Status via Travis CI](https://travis-ci.org/kwhitley/itty-router.svg?branch=v0.x)](https://travis-ci.org/kwhitley/itty-router)
 [![Coverage Status](https://coveralls.io/repos/github/kwhitley/itty-router/badge.svg?branch=pr/travis-fix)](https://coveralls.io/github/kwhitley/itty-router?branch=v0.x)
 
@@ -20,14 +20,14 @@ npm install itty-router
 ```
 
 ## Features
-- [x] tiny (< 390 bytes)
+- [x] tiny (~400 bytes)
 - [x] zero dependencies!
 - [x] dead-simple usage
 - [x] route params, with optionals (e.g. `/api/:foo/:id?`)
-- [x] query parsing (e.g. `?page=3`)
-- [x] outputs to route handler: `{ params: { foo: 'bar' }, query: { page: '3' }}`
+- [x] bonus query parsing (e.g. `?page=3`)
+- [x] adds params & query to request: `{ params: { foo: 'bar' }, query: { page: '3' }}`
 - [x] chainable route declarations (why not?)
-- [x] multiple (sync or async) handlers for passthrough logic
+- [x] multiple (sync or async) handlers per route for passthrough logic, auth, errors, etc
 - [ ] have pretty code (yeah right...)
 
 # Examples
@@ -117,6 +117,7 @@ addEventListener('fetch', event => event.respondWith(router.handle(event.request
 ```
 
 ### Multiple Route Handlers as Middleware
+###### Note: Any of these handlers may be awaitable async functions!
 ```js
 import { Router } from 'itty-router'
 
