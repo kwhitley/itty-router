@@ -157,10 +157,8 @@ const Router = () =>
       ? async (c) => {
         for ([r, hs] of o[(c.method || 'GET').toLowerCase()] || []) {
           if (m = (u = new URL(c.url)).pathname.match(r)) { // r matched
-            Object.assign(c, {
-              params: m.groups,
-              query: Object.fromEntries(u.searchParams.entries()),
-            })
+            c.params = m.groups
+            c.query = Object.fromEntries(u.searchParams.entries())
 
             for (h of hs) {
               if ((response = await h(c)) !== undefined) return response
@@ -169,7 +167,12 @@ const Router = () =>
         }
       }
     : (p, ...hs) =>
-        (o[k] = o[k] || []).push([`^${p.replace('*', '.*').replace(/(\/:([^\/\?]+)(\?)?)/gi, '/$3(?<$2>[^/]+)$3')}$`, hs]) && o
+        (o[k] = o[k] || []).push([
+          `^${p
+            .replace('*', '.*')
+            .replace(/(\/:([^\/\?]+)(\?)?)/gi, '/$3(?<$2>[^/]+)$3')}$`,
+          hs,
+        ]) && o,
     }
   )
 ```
