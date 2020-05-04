@@ -27,6 +27,7 @@ npm install itty-router
 - [x] query parsing (e.g. `?page=3`)
 - [x] outputs to route handler: `{ params: { foo: 'bar' }, query: { page: '3' }}`
 - [x] chainable route declarations (why not?)
+- [x] multiple (sync or async) handlers for passthrough logic
 - [ ] have pretty code (yeah right...)
 
 # Examples
@@ -63,6 +64,41 @@ router.handle({ method: 'GET', url: 'https://foo.com/todos/13?foo=bar' })
 // }
 ```
 
+# Usage 
+### 1. Create a Router
+```js
+import { Router } from 'itty-router'
+
+const router = Router() // no "new", as this is not a real ES6 class/constructor!
+```
+
+### 2. Register Route(s)
+##### `.{methodName}(route:string, handler1:function, handler2:function, ...)`
+The "instantiated" router translates any attribute (e.g. `.get`, `.post`, `.patch`, `.whatever`) as a function that binds a "route" (string) to route handlers (functions) on that method type (e.g. `router.get --> GET`, `router.post --> POST`).  When the url fed to `.handle({ url })` matches the route and method, the handlers are fired sequentially.  Each is given the original request/context, with any parsed route/query params injected as well.  The first handler that returns (anything) will end the chain, allowing early exists from errors, inauthenticated requests, etc.  This mechanism allows ANY method to be handled, including completely custom methods (we're very curious how creative individuals will abuse this flexibility!).  The only "method" currently off-limits is `handle`, as that's used for route handling (see below).
+```js
+// register a route on the "GET" method
+router.get('/todos/:user/:item?', (req) => {
+  let { params, query, url } = req
+  let { user, item } = params
+  
+  console.log('GET TODOS from', url, { user, item })
+})
+```
+
+### 3. Handle Incoming Request(s)
+##### `.handle(request = { method:string = 'GET', url:string })`
+The only requirement for the `.handle(request)` method is an object with a valid **full** url (e.g. `https://example.com/foo`).  The `method` property is optional and defaults to `GET` (which maps to routes registered with `router.get()`).  This method will return the first route handler that actually returns something.  For async/middleware examples, please see below.
+```js
+router.handle({
+  method: 'GET',                              // optional, default = 'GET'
+  url: 'https://example.com/todos/jane/13',   // required
+})
+
+// matched handler from step #2 (above) will execute, with the following output:
+// GET TODOS from https://example.com/todos/jane/13 { user: 'jane', item: '13' }
+```
+
+# Examples
 ### Within a Cloudflare Function
 ```js
 import { Router } from 'itty-router'
@@ -80,37 +116,30 @@ router
 addEventListener('fetch', event => event.respondWith(router.handle(event.request)))
 ```
 
-# Usage 
-### 1. Create a Router
+### Multiple Route Handlers as Middleware
 ```js
 import { Router } from 'itty-router'
 
-const router = Router() // no "new", as this is not a real ES6 class/constructor!
-```
+// create a router
+const router = Router() // note the intentional lack of "new"
 
-### 2. Register Route(s)
-##### `.methodName(route:string, handler:function)`
-The "instantiated" router translates any attribute (e.g. `.get`, `.post`, `.patch`, `.whatever`) as a function that binds a "route" (string) to a route handler (function) on that method type.  When the url fed to `.handle({ url })` matches the route and method, the handler is fired with the original request/context, with the addition of any parsed route/query params.  This allows ANY method to be handled, including completely custom methods (we're very curious how creative individuals will abuse this flexibility!).  The only "method" currently off-limits is `handle`, as that's used for route handling (see below).
-```js
-router.get('/todos/:user/:item?', (req) => {
-  let { params, query, url } = req
-  let { user, item } = params
-  
-  console.log('GET TODOS from', url, { user, item })
-})
-```
+// withUser modifies original request, then continues without returning
+const withUser = (req) => req.user = { name: 'Mittens', age: 3 }
 
-### 3. Handle Incoming Request(s)
-##### `.handle(request = { method:string = 'GET', url:string })`
-The only requirement for the `.handle(request)` method is an object with a valid **full** url (e.g. `https://example.com/foo`).  The `method` property is optional and defaults to `GET` (which maps to routes registered with `router.get()`).
-```js
-router.handle({
-  method: 'GET',                              // optional, default = 'GET'
-  url: 'https://example.com/todos/jane/13',   // required
-})
+// requireUser optionally returns (early) if user not found on request
+const requireUser = (req) => {
+  if (!req.user) return new Response('Not Authenticated', { status: 401 })
+}
 
-// matched handler from step #2 (above) will execute, with the following output:
-// GET TODOS from https://example.com/todos/jane/13 { user: 'jane', item: '13' }
+// showUser returns a response with the user, as it is assumed to exist at this point
+const showUser = (req) => new Response(JSON.stringify(req.user))
+
+router
+  .get('/pass/user', withUser, requireUser, showUser) // withUser injects user, allowing requireUser to not return/continue
+  .get('/fail/user', requireUser, showUser) // requireUser returns early because req.user doesn't exist
+
+router.handle({ url: 'https://example.com/pass/user' }) // --> STATUS 200: { name: 'Mittens', age: 3 }
+router.handle({ url: 'https://example.com/fail/user' }) // --> STATUS 401: Not Authenticated
 ```
 
 ## Testing & Contributing
@@ -148,6 +177,7 @@ This trick allows methods (e.g. "get", "post") to by defined dynamically by the 
 ## Changelog
 Until this library makes it to a production release of v1.x, **minor versions may contain breaking changes to the API**.  After v1.x, semantic versioning will be honored, and breaking changes will only occur under the umbrella of a major version bump.
 
+- **v0.9.0** - added support for multiple handlers (middleware)
 - **v0.8.0** - deep minification pass and build steps for final module
 - **v0.7.0** - removed { path } from  request handler context, travis build fixed, added coveralls, improved README docs
 - **v0.6.0** - added types to project for vscode intellisense (thanks [@mvasigh](https://github.com/mvasigh))

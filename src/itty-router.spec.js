@@ -2,7 +2,12 @@ const { Router } = require('./itty-router')
 
 describe('Router', () => {
   const router = Router()
-  const buildRequest = ({ method = 'GET', path, url = 'https://example.com' + path, ...other }) => ({ method, path, url, ...other })
+  const buildRequest = ({
+    method = 'GET',
+    path,
+    url = 'https://example.com' + path,
+    ...other
+  }) => ({ method, path, url, ...other })
   const extract = ({ params, query }) => ({ params, query })
 
   let routes = [
@@ -11,8 +16,15 @@ describe('Router', () => {
     { path: '/foo/:id', callback: jest.fn(extract), method: 'get' },
     { path: '/foo', callback: jest.fn(extract), method: 'post' },
     { path: '/optional/:id?', callback: jest.fn(extract), method: 'get' },
-    { path: '/passthrough', callback: jest.fn(({ path, name }) => ({ path, name })), method: 'get' },
-    { path: '/passthrough', callback: jest.fn(({ path, name }) => ({ path, name })) },
+    {
+      path: '/passthrough',
+      callback: jest.fn(({ path, name }) => ({ path, name })),
+      method: 'get',
+    },
+    {
+      path: '/passthrough',
+      callback: jest.fn(({ path, name }) => ({ path, name })),
+    },
     { path: '/wildcards/*', callback: jest.fn(), method: 'get' },
     { path: '*', callback: jest.fn(), method: 'get' },
   ]
@@ -25,9 +37,29 @@ describe('Router', () => {
     expect(typeof Router).toBe('function')
   })
 
+  describe(`.{method}(route: string, handler1: function, ..., handlerN: function)`, () => {
+    it('can accept multiple handlers (each mutates request)', async () => {
+      const r = Router()
+      const handler1 = (req) => { req.a = 1 }
+      const handler2 = jest.fn((req) => {
+        req = { b: 2, ...req }
+
+        return req
+      })
+      const handler3 = jest.fn((req) => ({ c: 3, ...req }))
+      r.get('/multi/:id', handler1, handler2, handler3)
+
+      await r.handle(buildRequest({ path: '/multi/foo' }))
+
+      // expect(handler1).toHaveBeenCalled()
+      expect(handler2).toHaveBeenCalled()
+      expect(handler3).not.toHaveBeenCalled()
+    })
+  })
+
   describe(`.handle({ method = 'GET', url })`, () => {
     it('returns { path, query } from match', () => {
-      const route = routes.find(r => r.path === '/foo/:id')
+      const route = routes.find((r) => r.path === '/foo/:id')
       router.handle(buildRequest({ path: '/foo/13?foo=bar&cat=dog' }))
 
       expect(route.callback).toHaveReturnedWith({
@@ -37,7 +69,7 @@ describe('Router', () => {
     })
 
     it('requires exact route match', () => {
-      const route = routes.find(r => r.path === '/')
+      const route = routes.find((r) => r.path === '/')
 
       router.handle(buildRequest({ path: '/foo' }))
 
@@ -45,21 +77,21 @@ describe('Router', () => {
     })
 
     it('match earliest routes that match', () => {
-      const route = routes.find(r => r.path === '/foo/first')
+      const route = routes.find((r) => r.path === '/foo/first')
       router.handle(buildRequest({ path: '/foo/first' }))
 
       expect(route.callback).toHaveBeenCalled()
     })
 
     it('honors correct method (e.g. GET, POST, etc)', () => {
-      const route = routes.find(r => r.path === '/foo' && r.method === 'post')
+      const route = routes.find((r) => r.path === '/foo' && r.method === 'post')
       router.handle(buildRequest({ method: 'POST', path: '/foo' }))
 
       expect(route.callback).toHaveBeenCalled()
     })
 
     it('handles optional params (e.g. /foo/:id?)', () => {
-      const route = routes.find(r => r.path === '/optional/:id?')
+      const route = routes.find((r) => r.path === '/optional/:id?')
 
       router.handle(buildRequest({ path: '/optional' }))
       expect(route.callback).toHaveBeenCalled()
@@ -69,7 +101,7 @@ describe('Router', () => {
     })
 
     it('passes the entire original request through to the handler', () => {
-      const route = routes.find(r => r.path === '/passthrough')
+      const route = routes.find((r) => r.path === '/passthrough')
       router.handle(buildRequest({ path: '/passthrough', name: 'miffles' }))
 
       expect(route.callback).toHaveReturnedWith({
@@ -79,27 +111,28 @@ describe('Router', () => {
     })
 
     it('accepts * as a wildcard route (e.g. for use in 404)', () => {
-      const route = routes.find(r => r.path === '*')
+      const route = routes.find((r) => r.path === '*')
       router.handle(buildRequest({ path: '/missing' }))
 
       expect(route.callback).toHaveBeenCalled()
 
-      const route2 = routes.find(r => r.path === '/wildcards/*')
+      const route2 = routes.find((r) => r.path === '/wildcards/*')
       router.handle(buildRequest({ path: '/wildcards/missing' }))
 
       expect(route2.callback).toHaveBeenCalled()
     })
 
     it(`defaults to GET assumption when handling new requests without { method: 'METHOD' }`, () => {
-      const route = routes.find(r => r.path === '/foo')
+      const route = routes.find((r) => r.path === '/foo')
       router.handle({ url: 'https://example.com/foo' }) // no method listed
 
       expect(route.callback).toHaveBeenCalled()
     })
 
     it(`won't throw on unknown method`, () => {
-      expect(() =>
-        router.handle({ method: 'CUSTOM', url: 'https://example.com/foo' }) // no method listed
+      expect(
+        () =>
+          router.handle({ method: 'CUSTOM', url: 'https://example.com/foo' }), // no method listed
       ).not.toThrow()
     })
   })

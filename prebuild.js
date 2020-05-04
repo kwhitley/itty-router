@@ -1,7 +1,8 @@
 const { readFileSync, writeFileSync } = require('fs-extra')
 
 const base = readFileSync('./src/itty-router.js', { encoding: 'utf-8' })
-const minifiedBase = base.replace(/\bhandler\b/g, 'h')
+const minifiedBase = base.replace(/\bhandlers\b/g, 'hs')
+  .replace(/\bhandler\b/g, 'h')
   .replace(/([^\.])obj\b/g, '$1o')
   .replace(/([^\.])path\b/g, '$1p')
   .replace(/([^\.])route\b/g, '$1r')
