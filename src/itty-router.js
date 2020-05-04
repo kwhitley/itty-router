@@ -13,9 +13,9 @@ const Router = () =>
           }
         }
       }
-    : (path, ...handlers) =>
+    : (route, ...handlers) =>
         (obj[prop] = obj[prop] || []).push([
-          `^${path
+          `^${route
             .replace('*', '.*')
             .replace(/(\/:([^\/\?]+)(\?)?)/gi, '/$3(?<$2>[^/]+)$3')}$`,
           handlers,

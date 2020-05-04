@@ -154,27 +154,25 @@ router.handle({ url: 'https://example.com/fail/user' }) // --> STATUS 401: Not A
 const Router = () =>
   new Proxy({}, {
     get: (o, k) => k === 'handle' 
-      ? async (c) => {
-        for ([r, hs] of o[(c.method || 'GET').toLowerCase()] || []) {
-          if (m = (u = new URL(c.url)).pathname.match(r)) { // r matched
-            c.params = m.groups
-            c.query = Object.fromEntries(u.searchParams.entries())
+      ? async (q) => {
+        for ([p, hs] of o[(q.method || 'GET').toLowerCase()] || []) {
+          if (m = (u = new URL(q.url)).pathname.match(p)) {
+            q.params = m.groups
+            q.query = Object.fromEntries(u.searchParams.entries())
 
             for (h of hs) {
-              if ((response = await h(c)) !== undefined) return response
+              if ((s = await h(q)) !== undefined) return s
             }
           }
         }
       }
-    : (p, ...hs) =>
-        (o[k] = o[k] || []).push([
-          `^${p
-            .replace('*', '.*')
-            .replace(/(\/:([^\/\?]+)(\?)?)/gi, '/$3(?<$2>[^/]+)$3')}$`,
-          hs,
-        ]) && o,
-    }
-  )
+    : (p, ...hs) => (o[k] = o[k] || []).push([
+        `^${p
+          .replace('*', '.*')
+          .replace(/(\/:([^\/\?]+)(\?)?)/gi, '/$3(?<$2>[^/]+)$3')}$`,
+        hs
+      ]) && o
+  })
 ```
 
 ## Special Thanks
