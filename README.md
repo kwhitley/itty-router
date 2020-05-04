@@ -197,6 +197,7 @@ This trick allows methods (e.g. "get", "post") to by defined dynamically by the 
 ## Changelog
 Until this library makes it to a production release of v1.x, **minor versions may contain breaking changes to the API**.  After v1.x, semantic versioning will be honored, and breaking changes will only occur under the umbrella of a major version bump.
 
+- **v1.0.0** - production release, stamped into gold from x0.9.7
 - **v0.9.0** - added support for multiple handlers (middleware)
 - **v0.8.0** - deep minification pass and build steps for final module
 - **v0.7.0** - removed { path } from  request handler context, travis build fixed, added coveralls, improved README docs
