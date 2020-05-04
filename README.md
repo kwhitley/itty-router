@@ -119,11 +119,6 @@ addEventListener('fetch', event => event.respondWith(router.handle(event.request
 ### Multiple Route Handlers as Middleware
 ###### Note: Any of these handlers may be awaitable async functions!
 ```js
-import { Router } from 'itty-router'
-
-// create a router
-const router = Router() // note the intentional lack of "new"
-
 // withUser modifies original request, then continues without returning
 const withUser = (req) => {
   req.user = { name: 'Mittens', age: 3 }
@@ -143,6 +138,20 @@ router
 
 router.handle({ url: 'https://example.com/pass/user' }) // --> STATUS 200: { name: 'Mittens', age: 3 }
 router.handle({ url: 'https://example.com/fail/user' }) // --> STATUS 401: Not Authenticated
+```
+
+### Multi-route (Upstream) Middleware
+```js
+// withUser modifies original request, then continues without returning
+const withUser = (req) => {
+  req.user = { name: 'Mittens', age: 3 }
+}
+
+router
+  .get('*', withUser) // embeds user before all other matching routes
+  .get('/user', (req) => new Response(JSON.stringify(req.user))) // user embedded already!
+
+router.handle({ url: 'https://example.com/user' }) // --> STATUS 200: { name: 'Mittens', age: 3 }
 ```
 
 ## Testing & Contributing

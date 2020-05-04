@@ -135,5 +135,23 @@ describe('Router', () => {
           router.handle({ method: 'CUSTOM', url: 'https://example.com/foo' }), // no method listed
       ).not.toThrow()
     })
+
+    it('can match multiple routes if earlier handlers do not return (as middleware)', async () => {
+      const r = Router()
+
+      const middleware = req => {
+        req.user = { id: 13 }
+      }
+
+      const handler = jest.fn((req) => req.user.id)
+      
+      r.get('/middleware/*', middleware)
+      r.get('/middleware/:id', handler)
+
+      await r.handle(buildRequest({ path: '/middleware/foo' }))
+
+      expect(handler).toHaveBeenCalled()
+      expect(handler).toHaveReturnedWith(13)
+    })
   })
 })
