@@ -46,7 +46,7 @@ describe('Router', () => {
   describe(`.{method}(route: string, handler1: function, ..., handlerN: function)`, () => {
     it('can accept multiple handlers (each mutates request)', async () => {
       const r = Router()
-      const handler1 = (req) => { req.a = 1 }
+      const handler1 = jest.fn((req) => { req.a = 1 })
       const handler2 = jest.fn((req) => {
         req = { b: 2, ...req }
 
@@ -208,8 +208,26 @@ describe('Router', () => {
       router1.get('/foo/*', router2.handle)
       router2.get('/bar/:id?', handler)
 
-      router1.handle(buildRequest({ path: '/api/foo/bar' }))
+      await router1.handle(buildRequest({ path: '/api/foo/bar' }))
       expect(handler).toHaveBeenCalled()
+    })
+
+    it('stops at a handler that throws', async () => {
+      const router = Router()
+      const handler1 = jest.fn(() => {})
+      const handler2 = jest.fn(() => { throw new Error() })
+      const handler3 = jest.fn(() => {})
+      router.get('/foo', handler1, handler2, handler3)
+
+      const escape = err => err
+
+      await router
+        .handle(buildRequest({ path: '/foo' }))
+        .catch(escape)
+
+      expect(handler1).toHaveBeenCalled()
+      expect(handler2).toHaveBeenCalled()
+      expect(handler3).not.toHaveBeenCalled()
     })
   })
 })
