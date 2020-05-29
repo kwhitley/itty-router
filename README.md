@@ -40,13 +40,10 @@ import { Router } from 'itty-router'
 // create a Router
 const router = Router()
 
-// basic GET route
-router.get('/todos/:id', console.log)
-
-// first match always wins, so be careful with order of registering routes
-router.get('/todos/oops', () => console.log('you will never see this, thanks to upstream /todos/:id'))
-router.get('/features/chainable-route-declaration', () => console.log('yep!'))
-router.get('/features/:optionals?', () => console.log('check!')) // will match /features and /features/14 both
+// basic GET route (with optional ? flag)... delivers route params and query params as objects to handler
+router.get('/todos/:id?', ({ params, query }) =>
+  console.log('will match both /todos and /todos/13', `id=${params.id}`, `limit=${query.limit}`)
+)
 
 // works with POST, DELETE, PATCH, etc
 router.post('/todos', () => console.log('posted a todo'))
