@@ -229,5 +229,20 @@ describe('Router', () => {
       expect(handler2).toHaveBeenCalled()
       expect(handler3).not.toHaveBeenCalled()
     })
+
+    it('requires exact path match unless wildcard', async () => {
+      const router = Router()
+      const handler = jest.fn()
+      router.get('/foo', handler)
+
+      await router.handle(buildRequest({ path: '/a/foo' })) // test prefix
+      expect(handler).not.toHaveBeenCalled()
+
+      await router.handle(buildRequest({ path: '/foo/d' })) // test suffix
+      expect(handler).not.toHaveBeenCalled()
+
+      await router.handle(buildRequest({ path: '/foo' })) // test exact
+      expect(handler).toHaveBeenCalled()
+    })
   })
 })

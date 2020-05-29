@@ -20,15 +20,14 @@ npm install itty-router
 ```
 
 ## Features
-- [x] tiny (~400 bytes)
+- [x] tiny (~430 bytes)
 - [x] zero dependencies!
 - [x] dead-simple usage
 - [x] route params, with optionals (e.g. `/api/:foo/:id?`)
 - [x] bonus query parsing (e.g. `?page=3`)
 - [x] adds params & query to request: `{ params: { foo: 'bar' }, query: { page: '3' }}`
-- [x] chainable route declarations (why not?)
 - [x] multiple (sync or async) [middleware handlers](#multiple-route-handlers-as-middleware) per route for passthrough logic, auth, errors, etc
-- [x] handler functions "stop" at the first handler to return [anything]
+- [x] handler functions "stop" at the first handler to return anything at all
 - [x] supports [nested routers](#nested-routers)
 - [x] supports [base path](#base-path) option to prefix all routes
 - [ ] have pretty code (yeah right...)
@@ -45,10 +44,9 @@ const router = Router()
 router.get('/todos/:id', console.log)
 
 // first match always wins, so be careful with order of registering routes
-router
-  .get('/todos/oops', () => console.log('you will never see this, thanks to upstream /todos/:id'))
-  .get('/features/chainable-route-declaration', () => console.log('yep!'))
-  .get('/features/:optionals?', () => console.log('check!')) // will match /features and /features/14 both
+router.get('/todos/oops', () => console.log('you will never see this, thanks to upstream /todos/:id'))
+router.get('/features/chainable-route-declaration', () => console.log('yep!'))
+router.get('/features/:optionals?', () => console.log('check!')) // will match /features and /features/14 both
 
 // works with POST, DELETE, PATCH, etc
 router.post('/todos', () => console.log('posted a todo'))
@@ -110,10 +108,9 @@ import { Router } from 'itty-router'
 const router = Router() // note the intentional lack of "new"
 
 // register some routes
-router
-  .get('/foo', () => new Response('Foo Index!'))
-  .get('/foo/:id', ({ params }) => new Response(`Details for item ${params.id}.`))
-  .get('*', () => new Response('Not Found.', { status: 404 })
+router.get('/foo', () => new Response('Foo Index!'))
+router.get('/foo/:id', ({ params }) => new Response(`Details for item ${params.id}.`))
+router.get('*', () => new Response('Not Found.', { status: 404 })
 
 // attach the router handle to the event handler
 addEventListener('fetch', event => event.respondWith(router.handle(event.request)))
@@ -135,9 +132,8 @@ const requireUser = (req) => {
 // showUser returns a response with the user, as it is assumed to exist at this point
 const showUser = (req) => new Response(JSON.stringify(req.user))
 
-router
-  .get('/pass/user', withUser, requireUser, showUser) // withUser injects user, allowing requireUser to not return/continue
-  .get('/fail/user', requireUser, showUser) // requireUser returns early because req.user doesn't exist
+router.get('/pass/user', withUser, requireUser, showUser) // withUser injects user, allowing requireUser to not return/continue
+router.get('/fail/user', requireUser, showUser) // requireUser returns early because req.user doesn't exist
 
 router.handle({ url: 'https://example.com/pass/user' }) // --> STATUS 200: { name: 'Mittens', age: 3 }
 router.handle({ url: 'https://example.com/fail/user' }) // --> STATUS 401: Not Authenticated
@@ -150,9 +146,8 @@ const withUser = (req) => {
   req.user = { name: 'Mittens', age: 3 }
 }
 
-router
-  .get('*', withUser) // embeds user before all other matching routes
-  .get('/user', (req) => new Response(JSON.stringify(req.user))) // user embedded already!
+router.get('*', withUser) // embeds user before all other matching routes
+router.get('/user', (req) => new Response(JSON.stringify(req.user))) // user embedded already!
 
 router.handle({ url: 'https://example.com/user' }) // --> STATUS 200: { name: 'Mittens', age: 3 }
 ```
@@ -225,6 +220,7 @@ This trick allows methods (e.g. "get", "post") to by defined dynamically by the 
 ## Changelog
 Until this library makes it to a production release of v1.x, **minor versions may contain breaking changes to the API**.  After v1.x, semantic versioning will be honored, and breaking changes will only occur under the umbrella of a major version bump.
 
+- **v1.1.1** - updated README to remove chaining feature that was never actually working... (not a breaking change, as no code could have been using it)
 - **v1.1.0** - feature: added single option `{ base: '/some/path' }` to `Router` for route prefixing, fix: trailing wildcard issue (e.g. `/foo/*` should match `/foo`)
 - **v1.0.0** - production release, stamped into gold from x0.9.7
 - **v0.9.0** - added support for multiple handlers (middleware)
