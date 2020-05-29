@@ -29,9 +29,15 @@ describe('Router', () => {
     { path: '*', callback: jest.fn(), method: 'get' },
   ]
 
-  for (var route of routes) {
-    router[route.method](route.path, route.callback)
+  const applyRoutes = (router, routes) => {
+    for (var route of routes) {
+      router[route.method](route.path, route.callback)
+    }
+
+    return router
   }
+
+  applyRoutes(router, routes)
 
   it(`is exported as { Router } from module`, () => {
     expect(typeof Router).toBe('function')
@@ -144,7 +150,7 @@ describe('Router', () => {
       }
 
       const handler = jest.fn((req) => req.user.id)
-      
+
       r.get('/middleware/*', middleware)
       r.get('/middleware/:id', handler)
 
@@ -152,6 +158,58 @@ describe('Router', () => {
 
       expect(handler).toHaveBeenCalled()
       expect(handler).toHaveReturnedWith(13)
+    })
+
+    it('can accept a basepath for routes', async () => {
+      const router = Router({ base: '/api' })
+      const handler = jest.fn()
+      router.get('/foo/:id?', handler)
+
+      router.handle(buildRequest({ path: '/api/foo' }))
+      expect(handler).toHaveBeenCalled()
+
+      router.handle(buildRequest({ path: '/api/foo/13' }))
+      expect(handler).toHaveBeenCalledTimes(2)
+    })
+
+    it('gracefully handles trailing slashes', async () => {
+      const r = Router()
+
+      const middleware = req => {
+        req.user = { id: 13 }
+      }
+
+      const handler = jest.fn((req) => req.user.id)
+
+      r.get('/middleware/*', middleware)
+      r.get('/middleware', handler)
+
+      await r.handle(buildRequest({ path: '/middleware' }))
+
+      expect(handler).toHaveBeenCalled()
+      expect(handler).toHaveReturnedWith(13)
+    })
+
+    it('allow wildcards in the middle of paths', async () => {
+      const r = Router()
+      const handler = jest.fn()
+
+      r.get('/foo/*/end', handler)
+
+      await r.handle(buildRequest({ path: '/foo/bar/baz/13/end' }))
+
+      expect(handler).toHaveBeenCalled()
+    })
+
+    it('can handle nested routers', async () => {
+      const router1 = Router({ base: '/api' })
+      const router2 = Router({ base: '/api/foo' })
+      const handler = jest.fn()
+      router1.get('/foo/*', router2.handle)
+      router2.get('/bar/:id?', handler)
+
+      router1.handle(buildRequest({ path: '/api/foo/bar' }))
+      expect(handler).toHaveBeenCalled()
     })
   })
 })

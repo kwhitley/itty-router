@@ -27,7 +27,10 @@ npm install itty-router
 - [x] bonus query parsing (e.g. `?page=3`)
 - [x] adds params & query to request: `{ params: { foo: 'bar' }, query: { page: '3' }}`
 - [x] chainable route declarations (why not?)
-- [x] multiple (sync or async) handlers per route for passthrough logic, auth, errors, etc
+- [x] multiple (sync or async) [middleware handlers](#multiple-route-handlers-as-middleware) per route for passthrough logic, auth, errors, etc
+- [x] handler functions "stop" at the first handler to return [anything]
+- [x] supports [nested routers](#nested-routers)
+- [x] supports [base path](#base-path) option to prefix all routes
 - [ ] have pretty code (yeah right...)
 
 # Examples
@@ -40,7 +43,7 @@ const router = Router()
 
 // basic GET route
 router.get('/todos/:id', console.log)
-  
+
 // first match always wins, so be careful with order of registering routes
 router
   .get('/todos/oops', () => console.log('you will never see this, thanks to upstream /todos/:id'))
@@ -64,7 +67,7 @@ router.handle({ method: 'GET', url: 'https://foo.com/todos/13?foo=bar' })
 // }
 ```
 
-# Usage 
+# Usage
 ### 1. Create a Router
 ```js
 import { Router } from 'itty-router'
@@ -80,7 +83,7 @@ The "instantiated" router translates any attribute (e.g. `.get`, `.post`, `.patc
 router.get('/todos/:user/:item?', (req) => {
   let { params, query, url } = req
   let { user, item } = params
-  
+
   console.log('GET TODOS from', url, { user, item })
 })
 ```
@@ -154,49 +157,75 @@ router
 router.handle({ url: 'https://example.com/user' }) // --> STATUS 200: { name: 'Mittens', age: 3 }
 ```
 
+### Nested Routers
+```js
+  const parentRouter = Router()
+  const todosRouter = Router()
+
+  todosRouter.get('/todos/:id?', ({ params }) => console.log({ id: params.id }))
+
+  parentRouter.get('/todos/*', todosRouter.handle) // all /todos/* routes will route through the todosRouter
+```
+
+### Base Path
+```js
+  const router = Router({ base: '/api/v0' })
+
+  router.get('/todos', indexHandler)
+  router.get('/todos/:id', itemHandler)
+
+  router.handle({ url: 'https://example.com/api/v0/todos' }) // --> fires indexHandler
+```
+
+
 ## Testing & Contributing
 1. fork repo
 2. add code
-3. run tests (and add your own) `yarn test`
-4. submit PR
-5. profit
+3. run tests (add your own if needed) `yarn dev`
+4. verify tests run once minified `yarn verify`
+5. commit files (do not manually modify version numbers)
+6. submit PR
+7. we'll add you to the credits :)
 
 ## Entire Router Code (latest...)
 ```js
-const Router = () =>
+const Router = (o = {}) =>
   new Proxy({}, {
-    get: (o, k) => k === 'handle' 
+    get: (t, k) => k === 'handle'
       ? async (q) => {
-        for ([p, hs] of o[(q.method || 'GET').toLowerCase()] || []) {
-          if (m = (u = new URL(q.url)).pathname.match(p)) {
-            q.params = m.groups
-            q.query = Object.fromEntries(u.searchParams.entries())
+          for ([p, hs] of t[(q.method || 'GET').toLowerCase()] || []) {
+            if (m = (u = new URL(q.url)).pathname.match(p)) {
+              q.params = m.groups
+              q.query = Object.fromEntries(u.searchParams.entries())
 
-            for (h of hs) {
-              if ((s = await h(q)) !== undefined) return s
+              for (h of hs) {
+                if ((s = await h(q)) !== undefined) return s
+              }
             }
           }
         }
-      }
-    : (p, ...hs) => (o[k] = o[k] || []).push([
-        `^${p
-          .replace('*', '.*')
-          .replace(/(\/:([^\/\?]+)(\?)?)/gi, '/$3(?<$2>[^/]+)$3')}$`,
-        hs
-      ]) && o
+      : (p, ...hs) =>
+          (t[k] = t[k] || []).push([
+            `^${(o.base || '')+p
+              .replace(/(\/?)\*/g, '($1.*)?')
+              .replace(/(\/:([^\/\?]+)(\?)?)/gi, '/$3(?<$2>[^/]+)$3')
+            }$`,
+            hs
+          ]) && t
   })
 ```
 
 ## Special Thanks
-This repo goes out to my past and present colleagues at Arundo - who have brought me such inspiration, fun, 
-and drive over the last couple years.  In particular, the absurd brevity of this code is thanks to a 
-clever [abuse] of `Proxy`, courtesy of the brilliant [@mvasigh](https://github.com/mvasigh).  
-This trick allows methods (e.g. "get", "post") to by defined dynamically by the router as they are requested, 
+This repo goes out to my past and present colleagues at Arundo - who have brought me such inspiration, fun,
+and drive over the last couple years.  In particular, the absurd brevity of this code is thanks to a
+clever [abuse] of `Proxy`, courtesy of the brilliant [@mvasigh](https://github.com/mvasigh).
+This trick allows methods (e.g. "get", "post") to by defined dynamically by the router as they are requested,
 **drastically** reducing boilerplate.
 
 ## Changelog
 Until this library makes it to a production release of v1.x, **minor versions may contain breaking changes to the API**.  After v1.x, semantic versioning will be honored, and breaking changes will only occur under the umbrella of a major version bump.
 
+- **v1.1.0** - feature: added single option `{ base: '/some/path' }` to `Router` for route prefixing, fix: trailing wildcard issue (e.g. `/foo/*` should match `/foo`)
 - **v1.0.0** - production release, stamped into gold from x0.9.7
 - **v0.9.0** - added support for multiple handlers (middleware)
 - **v0.8.0** - deep minification pass and build steps for final module

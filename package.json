@@ -19,6 +19,7 @@
   ],
   "scripts": {
     "test": "jest --verbose --coverage",
+    "verify": "yarn build && yarn test",
     "dev": "yarn test - --watch",
     "coveralls": "cat ./coverage/lcov.info | node node_modules/.bin/coveralls",
     "prerelease": "echo releasing...",

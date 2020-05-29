@@ -1,16 +1,18 @@
 const { readFileSync, writeFileSync } = require('fs-extra')
 
 const base = readFileSync('./src/itty-router.js', { encoding: 'utf-8' })
-const minifiedBase = base.replace(/\bhandlers\b/g, 'hs')
-  .replace(/\bhandler\b/g, 'h')
-  .replace(/([^\.])obj\b/g, '$1o')
-  .replace(/([^\.])attr\b/g, '$1a')
-  .replace(/([^\.])route\b/g, '$1p')
-  .replace(/([^\.])request\b/g, '$1q')
-  .replace(/([^\.])response\b/g, '$1s')
-  .replace(/([^\.])match\b/g, '$1m')
-  .replace(/([^\.])prop\b/g, '$1k')
-  .replace(/([^\.])url\b/g, '$1u')
+const minifiedBase = base
+  .replace(/\bhandlers\b/g, 'hs') // Handler(S)
+  .replace(/\bhandler\b/g, 'h') // Handler
+  .replace(/([^\.])obj\b/g, '$1t') // Target
+  .replace(/([^\.])options\b/g, '$1o') // Options
+  .replace(/([^\.])attr\b/g, '$1a') // Attr
+  .replace(/([^\.])route\b/g, '$1p') // Path
+  .replace(/([^\.])request\b/g, '$1q') // reQuest
+  .replace(/([^\.])response\b/g, '$1s') // reSponse
+  .replace(/([^\.])match\b/g, '$1m') // Match
+  .replace(/([^\.])prop\b/g, '$1k') // Key
+  .replace(/([^\.])url\b/g, '$1u') // Url
 writeFileSync('./dist/itty-router.js', minifiedBase)
 console.log('minifying variables --> dist/itty-router.js')
 
