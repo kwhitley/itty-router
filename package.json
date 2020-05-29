@@ -1,6 +1,6 @@
 {
   "name": "itty-router",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Tiny, zero-dependency router with route param and query parsing.",
   "main": "dist/itty-router.min.js",
   "files": [
