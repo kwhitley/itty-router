@@ -244,5 +244,16 @@ describe('Router', () => {
       await router.handle(buildRequest({ path: '/foo' })) // test exact
       expect(handler).toHaveBeenCalled()
     })
+
+    it('allows chaining', async () => {
+      const router = Router()
+
+      expect(() => {
+        router
+          .get('/foo', jest.fn())
+          .get('/foo', jest.fn())
+
+      }).not.toThrow()
+    })
   })
 })

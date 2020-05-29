@@ -1,6 +1,6 @@
 const Router = (options = {}) =>
   new Proxy(options, {
-    get: (obj, prop) => prop === 'handle'
+    get: (obj, prop, receiver) => prop === 'handle'
       ? async request => {
           for ([route, handlers] of obj[(request.method || 'GET').toLowerCase()] || []) {
             if (match = (url = new URL(request.url)).pathname.match(route)) {
@@ -20,7 +20,7 @@ const Router = (options = {}) =>
               .replace(/(\/:([^\/\?]+)(\?)?)/g, '/$3(?<$2>[^/]+)$3')
             }$`,
             handlers
-          ])
+          ]) && receiver
   })
 
 module.exports = { Router }
