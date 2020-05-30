@@ -1,8 +1,8 @@
 ![image](https://user-images.githubusercontent.com/865416/79531114-fa0d8200-8036-11ea-824d-70d84164b00a.png)
 
 [![minified + gzipped size](https://badgen.net/bundlephobia/minzip/itty-router@latest)](https://bundlephobia.com/result?p=itty-router)
-[![Build Status via Travis CI](https://travis-ci.org/kwhitley/itty-router.svg?branch=v0.x)](https://travis-ci.org/kwhitley/itty-router)
-[![Coverage Status](https://coveralls.io/repos/github/kwhitley/itty-router/badge.svg?branch=pr/travis-fix)](https://coveralls.io/github/kwhitley/itty-router?branch=v0.x)
+[![Build Status via Travis CI](https://travis-ci.org/kwhitley/itty-router.svg?branch=v1.x)](https://travis-ci.org/kwhitley/itty-router)
+[![Coverage Status](https://coveralls.io/repos/github/kwhitley/itty-router/badge.svg?branch=v1.x)](https://coveralls.io/github/kwhitley/itty-router?branch=v1.x)
 
 It's an itty bitty router. Like... super tiny, with zero dependencies. For reals.
 
@@ -187,12 +187,12 @@ router.handle({ url: 'https://example.com/user' }) // --> STATUS 200: { name: 'M
 6. submit PR
 7. we'll add you to the credits :)
 
-## Entire Router Code (latest...)
+## The Entire Code (for more legibility, [see src on GitHub](https://github.com/kwhitley/itty-router/blob/v1.x/src/itty-router.js))
 ```js
 const Router = (o = {}) =>
-  new Proxy({}, {
-    get: (t, k) => k === 'handle'
-      ? async (q) => {
+  new Proxy(o, {
+    get: (t, k, c) => k === 'handle'
+      ? async q => {
           for ([p, hs] of t[(q.method || 'GET').toLowerCase()] || []) {
             if (m = (u = new URL(q.url)).pathname.match(p)) {
               q.params = m.groups
@@ -208,10 +208,10 @@ const Router = (o = {}) =>
           (t[k] = t[k] || []).push([
             `^${(o.base || '')+p
               .replace(/(\/?)\*/g, '($1.*)?')
-              .replace(/(\/:([^\/\?]+)(\?)?)/gi, '/$3(?<$2>[^/]+)$3')
+              .replace(/(\/:([^\/\?]+)(\?)?)/g, '/$3(?<$2>[^/]+)$3')
             }$`,
             hs
-          ]) && t
+          ]) && c
   })
 ```
 
@@ -225,6 +225,7 @@ This trick allows methods (e.g. "get", "post") to by defined dynamically by the 
 ## Changelog
 Until this library makes it to a production release of v1.x, **minor versions may contain breaking changes to the API**.  After v1.x, semantic versioning will be honored, and breaking changes will only occur under the umbrella of a major version bump.
 
+- **v1.2.2** - fix: require verify/build pass before publishing and fixed README badges (should point to v1.x branch)
 - **v1.2.0** - feature: chainable route declarations (with test)... that didn't take long...
 - **v1.1.1** - updated README to reflect that chaining actually never was working... (not a breaking change, as no code could have been using it)
 - **v1.1.0** - feature: added single option `{ base: '/some/path' }` to `Router` for route prefixing, fix: trailing wildcard issue (e.g. `/foo/*` should match `/foo`)

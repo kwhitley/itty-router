@@ -1,6 +1,6 @@
 {
   "name": "itty-router",
-  "version": "1.2.0",
+  "version": "1.2.2",
   "description": "Tiny, zero-dependency router with route param and query parsing.",
   "main": "dist/itty-router.min.js",
   "files": [
@@ -19,10 +19,10 @@
   ],
   "scripts": {
     "test": "jest --verbose --coverage",
-    "verify": "yarn build && yarn test",
+    "verify": "echo 'verifying module...' && yarn build && yarn test",
     "dev": "yarn test - --watch",
     "coveralls": "cat ./coverage/lcov.info | node node_modules/.bin/coveralls",
-    "prerelease": "echo releasing...",
+    "prerelease": "yarn verify",
     "prebuild": "rimraf dist && mkdir dist && node prebuild.js",
     "build": "terser -c -m toplevel -- dist/itty-router.js  > dist/itty-router.min.js",
     "release": "release --tag --push"
