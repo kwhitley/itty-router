@@ -1,12 +1,13 @@
 {
   "name": "itty-router",
-  "version": "1.2.8",
+  "version": "1.2.9",
   "description": "Tiny, zero-dependency router with route param and query parsing.",
   "main": "./dist/itty-router.min.js",
   "types": "./dist/itty-router.d.ts",
   "files": [
     "dist/itty-router.js",
-    "dist/itty-router.min.js"
+    "dist/itty-router.min.js",
+    "dist/itty-router.d.ts"
   ],
   "keywords": [
     "router",
