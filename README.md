@@ -1,6 +1,6 @@
 ![image](https://user-images.githubusercontent.com/865416/79531114-fa0d8200-8036-11ea-824d-70d84164b00a.png)
 
-[![npm version](https://badge.fury.io/js/apicache.svg)](https://www.npmjs.com/package/apicache)
+[![npm version](https://badge.fury.io/js/apicache.svg)](https://www.npmjs.com/package/itty-router)
 [![Build Status via Travis CI](https://travis-ci.org/kwhitley/itty-router.svg?branch=v1.x)](https://travis-ci.org/kwhitley/itty-router)
 [![Coverage Status](https://coveralls.io/repos/github/kwhitley/itty-router/badge.svg?branch=v1.x)](https://coveralls.io/github/kwhitley/itty-router?branch=v1.x)
 [![minified + gzipped size](https://badgen.net/bundlephobia/minzip/itty-router@latest)](https://bundlephobia.com/result?p=itty-router)
