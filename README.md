@@ -1,4 +1,4 @@
-![image][logo]  
+![Logo][logo-image]
 
 [![npm package][npm-image]][npm-url]
 [![minified + gzipped size][gzip-image]][gzip-url]
@@ -225,7 +225,7 @@ This trick allows methods (e.g. "get", "post") to by defined dynamically by the 
 **drastically** reducing boilerplate.
 
 [twitter-image]:https://img.shields.io/twitter/url?style=social&url=https%3A%2F%2Fwww.npmjs.com%2Fpackage%2Fitty-router
-[logo]:https://img.shields.io/npm/v/itty-router.svg
+[logo-image]:https://user-images.githubusercontent.com/865416/79531114-fa0d8200-8036-11ea-824d-70d84164b00a.png
 [gzip-image]:https://img.shields.io/bundlephobia/minzip/itty-router
 [gzip-url]:https://bundlephobia.com/result?p=itty-router
 [issues-image]:https://img.shields.io/github/issues/kwhitley/itty-router
