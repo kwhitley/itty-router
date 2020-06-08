@@ -1,10 +1,10 @@
-![image](https://user-images.githubusercontent.com/865416/79531114-fa0d8200-8036-11ea-824d-70d84164b00a.png)
+![image][logo]  
 
-[![npm version](https://badge.fury.io/js/apicache.svg)](https://www.npmjs.com/package/itty-router)
-[![Build Status via Travis CI](https://travis-ci.org/kwhitley/itty-router.svg?branch=v1.x)](https://travis-ci.org/kwhitley/itty-router)
-[![Coverage Status](https://coveralls.io/repos/github/kwhitley/itty-router/badge.svg?branch=v1.x)](https://coveralls.io/github/kwhitley/itty-router?branch=v1.x)
-[![minified + gzipped size](https://badgen.net/bundlephobia/minzip/itty-router@latest)](https://bundlephobia.com/result?p=itty-router)
-[![Open Issues](https://img.shields.io/github/issues/kwhitley/itty-router)](https://github.com/kwhitley/itty-router/issues)
+[![npm package][npm-image]][npm-url]
+[![minified + gzipped size][gzip-image]][gzip-url]
+[![Build Status][travis-image]][travis-url] 
+[![Coverage Status][coveralls-image]][coveralls-url] 
+[![Open Issues][issues-image]][issues-url]
 
 It's an itty bitty router. Like... super tiny, with zero dependencies. For reals.
 
@@ -223,3 +223,18 @@ and drive over the last couple years.  In particular, the absurd brevity of this
 clever [abuse] of `Proxy`, courtesy of the brilliant [@mvasigh](https://github.com/mvasigh).
 This trick allows methods (e.g. "get", "post") to by defined dynamically by the router as they are requested,
 **drastically** reducing boilerplate.
+
+[twitter-image]:https://img.shields.io/twitter/url?style=social&url=https%3A%2F%2Fwww.npmjs.com%2Fpackage%2Fitty-router
+[logo]:https://img.shields.io/npm/v/itty-router.svg
+[gzip-image]:https://img.shields.io/bundlephobia/minzip/itty-router
+[gzip-url]:https://bundlephobia.com/result?p=itty-router
+[issues-image]:https://img.shields.io/github/issues/kwhitley/itty-router
+[issues-url]:https://github.com/kwhitley/itty-router/issues
+[npm-image]:https://img.shields.io/npm/v/itty-router.svg
+[npm-url]:http://npmjs.org/package/itty-router
+[travis-image]:https://travis-ci.org/kwhitley/itty-router.svg?branch=v1.x
+[travis-url]:https://travis-ci.org/kwhitley/itty-router
+[david-image]:https://david-dm.org/kwhitley/itty-router/status.svg
+[david-url]:https://david-dm.org/kwhitley/itty-router
+[coveralls-image]:https://coveralls.io/repos/github/kwhitley/itty-router/badge.svg?branch=v1.x
+[coveralls-url]:https://coveralls.io/github/kwhitley/itty-router?branch=v1.x
