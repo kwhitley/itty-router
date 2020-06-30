@@ -238,3 +238,11 @@ This trick allows methods (e.g. "get", "post") to by defined dynamically by the 
 [david-url]:https://david-dm.org/kwhitley/itty-router
 [coveralls-image]:https://coveralls.io/repos/github/kwhitley/itty-router/badge.svg?branch=v1.x
 [coveralls-url]:https://coveralls.io/github/kwhitley/itty-router?branch=v1.x
+
+# Contributors
+These folks are the real heroes, making open source the powerhouse that it is!  Help us out and add your name to this list!
+
+#### Core, Concepts, and Codebase
+- [@mvasigh](https://github.com/mvasigh)
+#### Documentation Fixes
+- [@arunsathiya](https://github.com/arunsathiya)
