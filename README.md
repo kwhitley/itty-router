@@ -117,7 +117,7 @@ const router = Router() // note the intentional lack of "new"
 router
   .get('/foo', () => new Response('Foo Index!'))
   .get('/foo/:id', ({ params }) => new Response(`Details for item ${params.id}.`))
-  .get('*', () => new Response('Not Found.', { status: 404 })
+  .get('*', () => new Response('Not Found.', { status: 404 }))
 
 // attach the router handle to the event handler
 addEventListener('fetch', event => event.respondWith(router.handle(event.request)))
