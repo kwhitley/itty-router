@@ -82,6 +82,58 @@ describe('Router', () => {
       expect(route.callback).not.toHaveBeenCalled()
     })
 
+    it('path of "" works with works with route ending in slash or not', async () => {
+      const r = Router()
+      const handler = jest.fn()
+
+      r.get('', handler)
+
+      await r.handle(buildRequest({ path: '/' }))
+      expect(handler).toHaveBeenCalled()
+
+      await r.handle(buildRequest({ path: '' }))
+      expect(handler).toHaveBeenCalledTimes(2)
+    })
+
+    it('path of "/" works with route ending in slash or not', async () => {
+      const r = Router()
+      const handler = jest.fn()
+
+      r.get('/', handler)
+
+      await r.handle(buildRequest({ path: '/' }))
+      expect(handler).toHaveBeenCalled()
+
+      await r.handle(buildRequest({ path: '' }))
+      expect(handler).toHaveBeenCalledTimes(2)
+    })
+
+    it('path of "/:id" works without leading slash', async () => {
+      const r = Router()
+      const handler = jest.fn(req => req.params.id)
+
+      r.get('/:id?', handler)
+
+      await r.handle(buildRequest({ path: '/13' }))
+      expect(handler).toHaveReturnedWith('13')
+
+      await r.handle(buildRequest({ path: '' }))
+      expect(handler).toHaveBeenCalledTimes(2)
+    })
+
+    // it('path of "/:id.:format?" works', async () => {
+    //   const r = Router()
+    //   const handler = jest.fn(req => req.params)
+
+    //   r.get('/:id.:format?', handler)
+
+    //   await r.handle(buildRequest({ path: '/13' }))
+    //   expect(handler).toHaveReturnedWith({ id: '13', format: undefined })
+
+    //   await r.handle(buildRequest({ path: '/13.jpg' }))
+    //   expect(handler).toHaveReturnedWith({ id: '13', format: 'jpg' })
+    // })
+
     it('match earliest routes that match', () => {
       const route = routes.find(r => r.path === '/foo/first')
       router.handle(buildRequest({ path: '/foo/first' }))
@@ -185,6 +237,10 @@ describe('Router', () => {
 
       expect(handler).toHaveBeenCalled()
       expect(handler).toHaveReturnedWith(13)
+
+      await r.handle(buildRequest({ path: '/middleware/' }))
+
+      expect(handler).toHaveBeenCalledTimes(2)
     })
 
     it('allow wildcards in the middle of paths', async () => {
