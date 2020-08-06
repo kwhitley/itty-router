@@ -82,6 +82,14 @@ describe('Router', () => {
       expect(route.callback).not.toHaveBeenCalled()
     })
 
+    it('works with root as /', () => {
+      const route = routes.find(r => r.path === '/')
+
+      router.handle(buildRequest({ path: '/' }))
+
+      expect(route.callback).toHaveBeenCalled()
+    })
+
     it('match earliest routes that match', () => {
       const route = routes.find(r => r.path === '/foo/first')
       router.handle(buildRequest({ path: '/foo/first' }))
@@ -185,6 +193,10 @@ describe('Router', () => {
 
       expect(handler).toHaveBeenCalled()
       expect(handler).toHaveReturnedWith(13)
+
+      await r.handle(buildRequest({ path: '/middleware/' }))
+
+      expect(handler).toHaveBeenCalledTimes(2)
     })
 
     it('allow wildcards in the middle of paths', async () => {
