@@ -6,9 +6,15 @@ interface Route {
   <TRequest>(path: string, ...handlers: RouteHandler<TRequest & Request>[]): Router
 }
 
+type Obj = {
+  [propName: string]: string
+}
+
 interface Request {
   method?: string
   url: string
+  params?: Obj
+  query?: Obj
 }
 
 interface Router {
