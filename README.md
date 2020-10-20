@@ -2,8 +2,8 @@
 
 [![npm package][npm-image]][npm-url]
 [![minified + gzipped size][gzip-image]][gzip-url]
-[![Build Status][travis-image]][travis-url] 
-[![Coverage Status][coveralls-image]][coveralls-url] 
+[![Build Status][travis-image]][travis-url]
+[![Coverage Status][coveralls-image]][coveralls-url]
 [![Open Issues][issues-image]][issues-url]
 
 It's an itty bitty router. Like... super tiny, with zero dependencies. For reals.
@@ -243,6 +243,7 @@ This trick allows methods (e.g. "get", "post") to by defined dynamically by the 
 These folks are the real heroes, making open source the powerhouse that it is!  Help us out and add your name to this list!
 
 #### Core, Concepts, and Codebase
-- [@mvasigh](https://github.com/mvasigh)
+- [@mvasigh](https://github.com/mvasigh) - proxy hacks courtesy of this chap
+- [@roojay520](https://github.com/roojay520) - TS interface fixes
 #### Documentation Fixes
 - [@arunsathiya](https://github.com/arunsathiya)
