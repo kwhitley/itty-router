@@ -64,6 +64,7 @@ describe('Router', () => {
   })
 
   describe('.handle({ method = \'GET\', url })', () => {
+
     it('returns { path, query } from match', () => {
       const route = routes.find(r => r.path === '/foo/:id')
       router.handle(buildRequest({ path: '/foo/13?foo=bar&cat=dog' }))
@@ -307,6 +308,22 @@ describe('Router', () => {
           .get('/foo', jest.fn())
 
       }).not.toThrow()
+    })
+  })
+
+  describe('.handle({ method = \'GET\', url }, ...args)', () => {
+    it('passes extra args to each handler', async () => {
+      const r = Router()
+      const h = (req, a, b) => { req.a = a; req.b = b }
+      const originalA = 'A'
+      const originalB = {}
+      r.get('*', h)
+      const req = buildRequest({ path: '/foo', })
+
+      await r.handle(req, originalA, originalB)
+
+      expect(req.a).toBe(originalA)
+      expect(req.b).toBe(originalB)
     })
   })
 })
