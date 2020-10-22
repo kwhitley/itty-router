@@ -8,7 +8,7 @@
 
 It's an itty bitty router. Like... super tiny, with zero dependencies. For reals.
 
-Did we mention it supports route/query params like in Express.js?
+Did we mention it supports route/query params like in Express.js and was built specifically for use in Workers (e.g. [Cloudflare Workers](https://developers.cloudflare.com/workers/))?
 
 ## Installation
 
