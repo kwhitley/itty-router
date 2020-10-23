@@ -1,6 +1,7 @@
 ## Changelog
 Until this library makes it to a production release of v1.x, **minor versions may contain breaking changes to the API**.  After v1.x, semantic versioning will be honored, and breaking changes will only occur under the umbrella of a major version bump.
 
+- **v1.3.0** - adds support for multiple args to handle(request, ...args) method (@hunterloftis)
 - **v1.2.2** - fix: require verify/build pass before publishing and fixed README badges (should point to v1.x branch)
 - **v1.2.0** - feature: chainable route declarations (with test)... that didn't take long...
 - **v1.1.1** - updated README to reflect that chaining actually never was working... (not a breaking change, as no code could have been using it)

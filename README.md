@@ -194,14 +194,14 @@ router.handle({ url: 'https://example.com/user' }) // --> STATUS 200: { name: 'M
 const Router = (o = {}) =>
   new Proxy(o, {
     get: (t, k, c) => k === 'handle'
-      ? async q => {
+      ? async (q, ...args) => {
           for ([p, hs] of t[(q.method || 'GET').toLowerCase()] || []) {
             if (m = (u = new URL(q.url)).pathname.match(p)) {
               q.params = m.groups
               q.query = Object.fromEntries(u.searchParams.entries())
 
               for (h of hs) {
-                if ((s = await h(q)) !== undefined) return s
+                if ((s = await h(q, ...args)) !== undefined) return s
               }
             }
           }
@@ -210,8 +210,8 @@ const Router = (o = {}) =>
           (t[k] = t[k] || []).push([
             `^${(o.base || '')+p
               .replace(/(\/?)\*/g, '($1.*)?')
-              .replace(/(\/:([^\/\?]+)(\?)?)/g, '/$3(?<$2>[^/]+)$3')
-            }$`,
+              .replace(/:([^\/\?]+)(\?)?/g, '$2(?<$1>[^/]+)$2')
+            }\/?$`,
             hs
           ]) && c
   })
@@ -243,7 +243,8 @@ This trick allows methods (e.g. "get", "post") to by defined dynamically by the 
 These folks are the real heroes, making open source the powerhouse that it is!  Help us out and add your name to this list!
 
 #### Core, Concepts, and Codebase
-- [@mvasigh](https://github.com/mvasigh) - proxy hacks courtesy of this chap
+- [@hunterloftis](https://github.com/hunterloftis) - router.handle() method now accepts extra arguments and passed them to route functions
 - [@roojay520](https://github.com/roojay520) - TS interface fixes
+- [@mvasigh](https://github.com/mvasigh) - proxy hacks courtesy of this chap
 #### Documentation Fixes
 - [@arunsathiya](https://github.com/arunsathiya)
