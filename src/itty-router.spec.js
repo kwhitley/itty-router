@@ -122,18 +122,18 @@ describe('Router', () => {
       expect(handler).toHaveBeenCalledTimes(2)
     })
 
-    // it('path of "/:id.:format?" works', async () => {
-    //   const r = Router()
-    //   const handler = jest.fn(req => req.params)
+    it('path of "/:id.:format?" works', async () => {
+      const r = Router()
+      const handler = jest.fn(req => req.params)
 
-    //   r.get('/:id.:format?', handler)
+      r.get('/:id.:format?', handler)
 
-    //   await r.handle(buildRequest({ path: '/13' }))
-    //   expect(handler).toHaveReturnedWith({ id: '13', format: undefined })
+      await r.handle(buildRequest({ path: '/13' }))
+      expect(handler).toHaveReturnedWith({ id: '13', format: undefined })
 
-    //   await r.handle(buildRequest({ path: '/13.jpg' }))
-    //   expect(handler).toHaveReturnedWith({ id: '13', format: 'jpg' })
-    // })
+      await r.handle(buildRequest({ path: '/13.jpg' }))
+      expect(handler).toHaveReturnedWith({ id: '13', format: 'jpg' })
+    })
 
     it('match earliest routes that match', () => {
       const route = routes.find(r => r.path === '/foo/first')

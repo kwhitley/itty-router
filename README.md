@@ -6,9 +6,7 @@
 [![Coverage Status][coveralls-image]][coveralls-url]
 [![Open Issues][issues-image]][issues-url]
 
-It's an itty bitty router. Like... super tiny, with zero dependencies. For reals.
-
-Did we mention it supports route/query params like in Express.js and was built specifically for use in Workers (e.g. [Cloudflare Workers](https://developers.cloudflare.com/workers/))?
+It's an itty bitty router, designed for Express.js-like routing within [Cloudflare Workers](https://developers.cloudflare.com/workers/) (or any ServiceWorker). Like... it's super tiny, with zero dependencies. For reals.
 
 ## Installation
 
@@ -16,60 +14,44 @@ Did we mention it supports route/query params like in Express.js and was built s
 yarn add itty-router
 ```
 
-or if you've been transported back to 2017...
-```
-npm install itty-router
+# Example
+```js
+import { Router } from 'itty-router'
+
+// create a router
+const router = Router() // this is a Proxy, not a class
+
+// GET index
+router.get('/foo', () => new Response('Foo Index!'))
+
+// GET item
+router.get('/foo/:id.:format?', request => {
+  const { id, format = 'csv' } = request.params
+
+  return new Response(`Getting item ${id} in ${format} format.`)
+}
+
+// 404/Missing as final catch-all route
+router.get('*', () => new Response('Not Found.', { status: 404 }))
+
+// attach the router handle to the event handler
+addEventListener('fetch', event =>
+  event.respondWith(router.handle(event.request))
+)
 ```
 
 ## Features
-- [x] tiny (~430 bytes)
-- [x] zero dependencies!
-- [x] dead-simple usage
-- [x] route params, with optionals (e.g. `/api/:foo/:id?`)
-- [x] bonus query parsing (e.g. `?page=3`)
+- [x] tiny (~430 bytes) with zero dependencies
+- [x] route params, with optionals (e.g. `/api/:foo/:id?.:format?`)
+- [x] bonus query parsing (e.g. `?page=3&foo-bar`)
 - [x] adds params & query to request: `{ params: { foo: 'bar' }, query: { page: '3' }}`
 - [x] multiple (sync or async) [middleware handlers](#multiple-route-handlers-as-middleware) per route for passthrough logic, auth, errors, etc
-- [x] handler functions "stop" at the first handler to return anything at all
+- [x] extendable via Proxies
+- [x] handler functions "stop" at the first handler to return
 - [x] supports [nested routers](#nested-routers)
 - [x] supports [base path](#base-path) option to prefix all routes
 - [x] chainable route declarations (why not?)
 - [ ] have pretty code (yeah right...)
-
-# Examples
-### Kitchen Sink
-```js
-import { Router } from 'itty-router'
-
-// create a Router
-const router = Router()
-
-// basic GET route (with optional ? flag)... delivers route params and query params as objects to handler
-router.get('/todos/:id?', ({ params, query }) =>
-  console.log('matches /todos or /todos/13', `id=${params.id}`, `limit=${query.limit}`)
-)
-
-// first match always wins, so be careful with order of registering routes
-router
-  .get('/todos/oops', () => console.log('you will never see this, thanks to upstream /todos/:id?'))
-  .get('/features/chainable-route-declaration', () => console.log('yep!'))
-  .get('/features/:optionals?', () => console.log('check!')) // will match /features and /features/14 both
-
-// works with POST, DELETE, PATCH, etc
-router.post('/todos', () => console.log('posted a todo'))
-
-// ...or any other method we haven't yet thought of (thanks to @mvasigh implementation of Proxy <3)
-router.future('/todos', () => console.log(`this caught using the FUTURE method!`))
-
-// then handle a request!
-router.handle({ method: 'GET', url: 'https://foo.com/todos/13?foo=bar' })
-
-// ...and viola! the following payload/context is passed to the matching route handler:
-// {
-//   params: { id: '13' },
-//   query: { foo: 'bar' },
-//   ...whatever else was in the original request object/class (e.g. method, url, etc)
-// }
-```
 
 # Usage
 ### 1. Create a Router
@@ -106,22 +88,6 @@ router.handle({
 ```
 
 # Examples
-### Within a Cloudflare Function
-```js
-import { Router } from 'itty-router'
-
-// create a router
-const router = Router() // note the intentional lack of "new"
-
-// register some routes
-router
-  .get('/foo', () => new Response('Foo Index!'))
-  .get('/foo/:id', ({ params }) => new Response(`Details for item ${params.id}.`))
-  .get('*', () => new Response('Not Found.', { status: 404 }))
-
-// attach the router handle to the event handler
-addEventListener('fetch', event => event.respondWith(router.handle(event.request)))
-```
 
 ### Multiple Route Handlers as Middleware
 ###### Note: Any of these handlers may be awaitable async functions!

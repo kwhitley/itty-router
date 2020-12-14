@@ -17,7 +17,7 @@ const Router = (options = {}) =>
           (obj[prop] = obj[prop] || []).push([
             `^${(options.base || '')+route
               .replace(/(\/?)\*/g, '($1.*)?')
-              .replace(/:([^\/\?]+)(\?)?/g, '$2(?<$1>[^/]+)$2')
+              .replace(/:([^\/\?\.]+)(\?)?/g, '$2(?<$1>[^/\.]+)$2')
             }\/?$`,
             handlers
           ]) && receiver
