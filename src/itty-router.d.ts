@@ -1,5 +1,5 @@
 interface RouteHandler<TRequest> {
-  (request: TRequest & Request): any
+  (request: TRequest & Request, ...args: any): any
 }
 
 interface Route {
@@ -17,8 +17,9 @@ interface Request {
   query?: Obj
 }
 
-interface Router {
-  handle: (request: Request) => any
+type Router = {
+  handle: (request: Request, ...extra: any) => any
+} & {
   [any:string]: Route
 }
 
