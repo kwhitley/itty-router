@@ -119,7 +119,7 @@ module.exports = {
         'no-caller': 'error',
         'no-catch-shadow': 'error',
         'no-confusing-arrow': 'off',
-        'no-console': 'error',
+        'no-console': 'off',
         'no-constructor-return': 'error',
         'no-continue': 'error',
         'no-div-regex': 'error',

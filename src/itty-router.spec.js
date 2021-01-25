@@ -256,14 +256,24 @@ describe('Router', () => {
     })
 
     it('can handle nested routers', async () => {
-      const router1 = Router({ base: '/api' })
-      const router2 = Router({ base: '/api/foo' })
-      const handler = jest.fn()
-      router1.get('/foo/*', router2.handle)
-      router2.get('/bar/:id?', handler)
+      const router1 = Router()
+      const router2 = Router({ base: '/nested' })
+      const handler1 = jest.fn()
+      const handler2 = jest.fn()
+      const handler3 = jest.fn()
+      router1.get('/pet', handler1)
+      router1.get('/nested/*', router2.handle)
+      router2.get('/', handler3)
+      router2.get('/bar/:id?', handler2)
 
-      await router1.handle(buildRequest({ path: '/api/foo/bar' }))
-      expect(handler).toHaveBeenCalled()
+      await router1.handle(buildRequest({ path: '/pet' }))
+      expect(handler1).toHaveBeenCalled()
+
+      await router1.handle(buildRequest({ path: '/nested/bar' }))
+      expect(handler2).toHaveBeenCalled()
+
+      await router1.handle(buildRequest({ path: '/nested' }))
+      expect(handler3).toHaveBeenCalled()
     })
 
     it('stops at a handler that throws', async () => {

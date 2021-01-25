@@ -1,6 +1,7 @@
 ## Changelog
 Until this library makes it to a production release of v1.x, **minor versions may contain breaking changes to the API**.  After v1.x, semantic versioning will be honored, and breaking changes will only occur under the umbrella of a major version bump.
 
+- **v1.4.3** - fixed nested routers using simple "/" routes
 - **v1.4.1** - fixed typings for extra args (thanks [@rodrigoaddor](https://github.com/rodrigoaddor))
 - **v1.4.0** - adds support for optional format params (e.g. "/:id.:format?" --> { params: { id: '13', format: 'jpg' }})
 - **v1.3.0** - adds support for multiple args to handle(request, ...args) method (@hunterloftis)
