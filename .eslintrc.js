@@ -12,10 +12,7 @@ module.exports = {
     'rules': {
         'accessor-pairs': 'error',
         'array-bracket-newline': 'error',
-        'array-bracket-spacing': [
-            'error',
-            'never'
-        ],
+        'array-bracket-spacing': 'off',
         'array-callback-return': 'error',
         'array-element-newline': 'off',
         'arrow-body-style': 'error',

@@ -41,7 +41,7 @@ addEventListener('fetch', event =>
 ```
 
 ## Features
-- [x] tiny (~430 bytes) with zero dependencies
+- [x] tiny (~450 bytes) with zero dependencies
 - [x] route params, with optionals (e.g. `/api/:foo/:id?.:format?`)
 - [x] bonus query parsing (e.g. `?page=3&foo-bar`)
 - [x] adds params & query to request: `{ params: { foo: 'bar' }, query: { page: '3' }}`
@@ -64,6 +64,9 @@ const router = Router() // no "new", as this is not a real ES6 class/constructor
 ### 2. Register Route(s)
 ##### `.{methodName}(route:string, handler1:function, handler2:function, ...)`
 The "instantiated" router translates any attribute (e.g. `.get`, `.post`, `.patch`, `.whatever`) as a function that binds a "route" (string) to route handlers (functions) on that method type (e.g. `router.get --> GET`, `router.post --> POST`).  When the url fed to `.handle({ url })` matches the route and method, the handlers are fired sequentially.  Each is given the original request/context, with any parsed route/query params injected as well.  The first handler that returns (anything) will end the chain, allowing early exists from errors, inauthenticated requests, etc.  This mechanism allows ANY method to be handled, including completely custom methods (we're very curious how creative individuals will abuse this flexibility!).  The only "method" currently off-limits is `handle`, as that's used for route handling (see below).
+
+**Special Exception:** To allow nested routers (or middleware) to catch on all METHODS, any routes on the "all" channel will be processed first".  If all routes are on "get", feel free to just use `.get`, but `.all` will allow routes/middleware/routers to match on ANY methods (useful when embedding nested routers that have full CRUD methods).  For example: `router.all('/crud/*', crudRouter.handle)`
+
 ```js
 // register a route on the "GET" method
 router.get('/todos/:user/:item?', (req) => {
@@ -132,7 +135,7 @@ router.handle({ url: 'https://example.com/user' }) // --> STATUS 200: { name: 'M
 
   todosRouter.get('/todos/:id?', ({ params }) => console.log({ id: params.id }))
 
-  parentRouter.get('/todos/*', todosRouter.handle) // all /todos/* routes will route through the todosRouter
+  parentRouter.all('/todos/*', todosRouter.handle) // all /todos/* routes will route through the todosRouter
 ```
 
 ### Base Path
@@ -161,7 +164,7 @@ const Router = (o = {}) =>
   new Proxy(o, {
     get: (t, k, c) => k === 'handle'
       ? async (q, ...args) => {
-          for ([p, hs] of t[(q.method || 'GET').toLowerCase()] || []) {
+          for ([p, hs] of [ t.all || [], t[(q.method || 'GET').toLowerCase()] || [] ].flat()) {
             if (m = (u = new URL(q.url)).pathname.match(p)) {
               q.params = m.groups
               q.query = Object.fromEntries(u.searchParams.entries())

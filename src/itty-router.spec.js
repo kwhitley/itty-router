@@ -276,6 +276,21 @@ describe('Router', () => {
       expect(handler3).toHaveBeenCalled()
     })
 
+    it('allows any method to match an "all" route', async () => {
+      const router = Router()
+      const handler = jest.fn()
+      router.all('/crud/*', handler)
+
+      await router.handle(buildRequest({ path: '/crud/foo' }))
+      expect(handler).toHaveBeenCalled()
+
+      await router.handle(buildRequest({ method: 'POST', path: '/crud/bar' }))
+      expect(handler).toHaveBeenCalledTimes(2)
+
+      await router.handle(buildRequest({ method: 'UPDATE', path: '/crud/baz' }))
+      expect(handler).toHaveBeenCalledTimes(3)
+    })
+
     it('stops at a handler that throws', async () => {
       const router = Router()
       const handler1 = jest.fn(() => {})
