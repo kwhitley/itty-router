@@ -100,8 +100,33 @@ router.handle({
 
 # Examples
 
-### Multiple Route Handlers as Middleware
-###### Note: Any of these handlers may be awaitable async functions!
+### Nested Routers (with 404 handling)
+```js
+  // lets save a missing handler
+  const missingHandler = new Response('That resource was not found.', { status: 404 })
+
+  // create a parent router
+  const parentRouter = Router({ else: missingHandler })
+
+  // and a child router
+  const todosRouter = Router({ base: '/todos' })
+
+  // with some routes on it...
+  todosRouter
+    .get('/', () => new Response('Todos Index'))
+    .get('/:id', ({ params }) => new Response(`Todo #${params.id}`))
+
+  // then divert ALL requests to /todos/* into the child router
+  parentRouter.all('/todos/*', todosRouter.handle) // all /todos/* routes will route through the todosRouter
+
+  // GET /todos --> Todos Index
+  // GET /todos/13 --> Todo #13
+  // POST /todos --> missingHandler (it will fail to catch inside todosRouter, and be caught by "else" on parentRouter)
+  // GET /foo --> missingHandler
+```
+
+### Middleware
+###### Bonus: Any of these handlers may be awaitable async functions!
 ```js
 // withUser modifies original request, then continues without returning
 const withUser = (req) => {
@@ -134,31 +159,6 @@ router.get('*', withUser) // embeds user before all other matching routes
 router.get('/user', (req) => new Response(JSON.stringify(req.user))) // user embedded already!
 
 router.handle({ url: 'https://example.com/user' }) // --> STATUS 200: { name: 'Mittens', age: 3 }
-```
-
-### Nested Routers (with 404 handling)
-```js
-  // lets save a missing handler
-  const missingHandler = new Response('That resource was not found.', { status: 404 })
-
-  // create a parent router
-  const parentRouter = Router({ else: missingHandler })
-
-  // and a child router
-  const todosRouter = Router({ base: '/todos' })
-
-  // with some routes on it...
-  todosRouter
-    .get('/', () => new Response('Todos Index'))
-    .get('/:id', ({ params }) => new Response(`Todo #${params.id}`))
-
-  // then divert ALL requests to /todos/* into the child router
-  parentRouter.all('/todos/*', todosRouter.handle) // all /todos/* routes will route through the todosRouter
-
-  // GET /todos --> Todos Index
-  // GET /todos/13 --> Todo #13
-  // POST /todos --> missingHandler (it will fail to catch inside todosRouter, and be caught by "else" on parentRouter)
-  // GET /foo --> missingHandler
 ```
 
 ## Testing & Contributing
