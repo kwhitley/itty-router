@@ -181,6 +181,23 @@ describe('Router', () => {
       expect(route2.callback).toHaveBeenCalled()
     })
 
+    it('allows missing handler with option "else"', () => {
+      const missingHandler = jest.fn()
+      const matchHandler = jest.fn()
+
+      const router1 = Router({ else: missingHandler })
+      const router2 = Router({ base: '/nested' })
+
+      router2.get('/foo', matchHandler)
+      router1.all('/nested/*', router2.handle)
+
+      router1.handle(buildRequest({ path: '/foo' }))
+      expect(missingHandler).toHaveBeenCalled()
+
+      // router1.handle(buildRequest({ path: '/nested/foo' }))
+      // expect(matchHandler).toHaveBeenCalled()
+    })
+
     it('defaults to GET assumption when handling new requests without { method: \'METHOD\' }', () => {
       const route = routes.find(r => r.path === '/foo')
       router.handle({ url: 'https://example.com/foo' }) // no method listed

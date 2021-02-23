@@ -14,7 +14,7 @@ It's an itty bitty router, designed for Express.js-like routing within [Cloudfla
 yarn add itty-router
 ```
 
-# Example
+# Simple Example
 ```js
 import { Router } from 'itty-router'
 
@@ -40,7 +40,7 @@ addEventListener('fetch', event =>
 )
 ```
 
-## Features
+# Features
 - [x] tiny (~450 bytes) with zero dependencies
 - [x] route params, with optionals (e.g. `/api/:foo/:id?.:format?`)
 - [x] bonus query parsing (e.g. `?page=3&foo-bar`)
@@ -52,6 +52,14 @@ addEventListener('fetch', event =>
 - [x] supports [base path](#base-path) option to prefix all routes
 - [x] chainable route declarations (why not?)
 - [ ] have pretty code (yeah right...)
+
+# Options API
+### const yourRouter = Router(options = {})
+
+| Name | Type(s) | Description | Examples |
+| --- | --- | --- | --- |
+| `base` | `string` | prefixes all routes with this string | `Router({ base: '/api' })`
+| `else` | `function` | missing handler for uncaught routes | `Router({ else: () => new Response('That path was not found!', { status: 404 }) })`
 
 # Usage
 ### 1. Create a Router
@@ -65,7 +73,7 @@ const router = Router() // no "new", as this is not a real ES6 class/constructor
 ##### `.{methodName}(route:string, handler1:function, handler2:function, ...)`
 The "instantiated" router translates any attribute (e.g. `.get`, `.post`, `.patch`, `.whatever`) as a function that binds a "route" (string) to route handlers (functions) on that method type (e.g. `router.get --> GET`, `router.post --> POST`).  When the url fed to `.handle({ url })` matches the route and method, the handlers are fired sequentially.  Each is given the original request/context, with any parsed route/query params injected as well.  The first handler that returns (anything) will end the chain, allowing early exists from errors, inauthenticated requests, etc.  This mechanism allows ANY method to be handled, including completely custom methods (we're very curious how creative individuals will abuse this flexibility!).  The only "method" currently off-limits is `handle`, as that's used for route handling (see below).
 
-**Special Exception:** To allow nested routers (or middleware) to catch on all METHODS, any routes on the "all" channel will be processed first".  If all routes are on "get", feel free to just use `.get`, but `.all` will allow routes/middleware/routers to match on ANY methods (useful when embedding nested routers that have full CRUD methods).  For example: `router.all('/crud/*', crudRouter.handle)`
+**Special Exception:** To allow nested routers (or middleware) to catch on all METHODS, **any routes on the "all" channel will be processed FIRST, no matter when they were registered in the flow**.  If all routes are on "get", feel free to just use `.get`, but `.all` will allow routes/middleware/routers to match on ANY methods (useful when embedding nested routers that have full CRUD methods).  For example: `router.all('/crud/*', crudRouter.handle)`
 
 ```js
 // register a route on the "GET" method
@@ -164,7 +172,7 @@ const Router = (o = {}) =>
   new Proxy(o, {
     get: (t, k, c) => k === 'handle'
       ? async (q, ...args) => {
-          for ([p, hs] of [ t.all || [], t[(q.method || 'GET').toLowerCase()] || [] ].flat()) {
+          for ([p, hs] of [t.all || [], t[(q.method || 'GET').toLowerCase()] || []].flat()) {
             if (m = (u = new URL(q.url)).pathname.match(p)) {
               q.params = m.groups
               q.query = Object.fromEntries(u.searchParams.entries())
@@ -174,6 +182,7 @@ const Router = (o = {}) =>
               }
             }
           }
+          if (o.else) return o.else(q, ...args)
         }
       : (p, ...hs) =>
           (t[k] = t[k] || []).push([

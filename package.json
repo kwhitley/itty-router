@@ -29,6 +29,7 @@
     "prerelease": "yarn verify",
     "prebuild": "rimraf dist && mkdir dist && node prebuild.js && cp src/itty-router.d.ts dist",
     "build": "terser -c -m toplevel -- dist/itty-router.js  > dist/itty-router.min.js",
+    "postbuild": "node check-size.js",
     "release": "release --tag --push"
   },
   "repository": {
@@ -42,10 +43,12 @@
   },
   "homepage": "https://github.com/kwhitley/itty-router#readme",
   "devDependencies": {
+    "chalk": "^4.1.0",
     "coveralls": "^3.0.13",
     "eslint": "^7.2.0",
     "eslint-plugin-jest": "^23.13.2",
     "fs-extra": "^9.0.0",
+    "gzip-size": "^6.0.0",
     "jest": "^25.3.0",
     "rimraf": "^3.0.2",
     "terser": "^4.6.11",
