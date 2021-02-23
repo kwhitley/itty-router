@@ -41,7 +41,7 @@ addEventListener('fetch', event =>
 ```
 
 # Features
-- [x] tiny (<450 bytes) with zero dependencies
+- [x] tiny (~450 bytes) with zero dependencies
 - [x] route params, with optionals (e.g. `/api/:foo/:id?.:format?`)
 - [x] bonus query parsing (e.g. `?page=3&foo-bar`)
 - [x] adds params & query to request: `{ params: { foo: 'bar' }, query: { page: '3' }}`
