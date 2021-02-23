@@ -11,7 +11,7 @@ It's an itty bitty router, designed for Express.js-like routing within [Cloudfla
 ## Installation
 
 ```
-yarn add itty-router
+npm install itty-router
 ```
 
 # Simple Example
