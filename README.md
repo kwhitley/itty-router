@@ -161,17 +161,6 @@ router.handle({ url: 'https://example.com/user' }) // --> STATUS 200: { name: 'M
   // GET /foo --> missingHandler
 ```
 
-### Base Path
-```js
-  const router = Router({ base: '/api/v0' })
-
-  router.get('/todos', indexHandler)
-  router.get('/todos/:id', itemHandler)
-
-  router.handle({ url: 'https://example.com/api/v0/todos' }) // --> fires indexHandler
-```
-
-
 ## Testing & Contributing
 1. fork repo
 2. add code
