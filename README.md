@@ -32,7 +32,7 @@ router.get('/foo/:id.:format?', request => {
 }
 
 // 404/Missing as final catch-all route
-router.get('*', () => new Response('Not Found.', { status: 404 }))
+router.all('*', () => new Response('Not Found.', { status: 404 }))
 
 // attach the router handle to the event handler
 addEventListener('fetch', event =>
@@ -41,7 +41,7 @@ addEventListener('fetch', event =>
 ```
 
 # Features
-- [x] tiny (<500 bytes) with zero dependencies
+- [x] tiny (<450 bytes) with zero dependencies
 - [x] route params, with optionals (e.g. `/api/:foo/:id?.:format?`)
 - [x] bonus query parsing (e.g. `?page=3&foo-bar`)
 - [x] adds params & query to request: `{ params: { foo: 'bar' }, query: { page: '3' }}`
@@ -59,7 +59,6 @@ addEventListener('fetch', event =>
 | Name | Type(s) | Description | Examples |
 | --- | --- | --- | --- |
 | `base` | `string` | prefixes all routes with this string | `Router({ base: '/api' })`
-| `else` | `function` | missing handler for uncaught routes | `Router({ else: () => new Response('That path was not found!', { status: 404 }) })`
 
 # Usage
 ### 1. Create a Router
@@ -73,7 +72,7 @@ const router = Router() // no "new", as this is not a real ES6 class/constructor
 ##### `.{methodName}(route:string, handler1:function, handler2:function, ...)`
 The "instantiated" router translates any attribute (e.g. `.get`, `.post`, `.patch`, `.whatever`) as a function that binds a "route" (string) to route handlers (functions) on that method type (e.g. `router.get --> GET`, `router.post --> POST`).  When the url fed to `.handle({ url })` matches the route and method, the handlers are fired sequentially.  Each is given the original request/context, with any parsed route/query params injected as well.  The first handler that returns (anything) will end the chain, allowing early exists from errors, inauthenticated requests, etc.  This mechanism allows ANY method to be handled, including completely custom methods (we're very curious how creative individuals will abuse this flexibility!).  The only "method" currently off-limits is `handle`, as that's used for route handling (see below).
 
-**Special Exception:** To allow nested routers (or middleware) to catch on all METHODS, **any routes on the "all" channel will be processed FIRST, no matter when they were registered in the flow**.  If all routes are on "get", feel free to just use `.get`, but `.all` will allow routes/middleware/routers to match on ANY methods (useful when embedding nested routers that have full CRUD methods).  For example: `router.all('/crud/*', crudRouter.handle)`
+**Special Exception - the "all" channel:** Any routes on the "all" channel will match to ANY method (e.g. GET/POST/whatever), allowing for greater middleware support, nested routers, 404 catches, etc.
 
 ```js
 // register a route on the "GET" method
@@ -106,7 +105,7 @@ router.handle({
   const missingHandler = new Response('That resource was not found.', { status: 404 })
 
   // create a parent router
-  const parentRouter = Router({ else: missingHandler })
+  const parentRouter = Router()
 
   // and a child router
   const todosRouter = Router({ base: '/todos' })
@@ -117,11 +116,13 @@ router.handle({
     .get('/:id', ({ params }) => new Response(`Todo #${params.id}`))
 
   // then divert ALL requests to /todos/* into the child router
-  parentRouter.all('/todos/*', todosRouter.handle) // all /todos/* routes will route through the todosRouter
+  parentRouter
+    .all('/todos/*', todosRouter.handle) // all /todos/* routes will route through the todosRouter
+    .all('*', missingHandler)
 
   // GET /todos --> Todos Index
   // GET /todos/13 --> Todo #13
-  // POST /todos --> missingHandler (it will fail to catch inside todosRouter, and be caught by "else" on parentRouter)
+  // POST /todos --> missingHandler (it will fail to catch inside todosRouter, and be caught by final "all" on parentRouter)
   // GET /foo --> missingHandler
 ```
 
@@ -175,22 +176,22 @@ router.handle({ url: 'https://example.com/user' }) // --> STATUS 200: { name: 'M
 const Router = (o = {}) =>
   new Proxy(o, {
     get: (t, k, c) => k === 'handle'
-      ? async (q, ...args) => {
-          for ([p, hs] of [t.all || [], t[(q.method || 'GET').toLowerCase()] || []].flat()) {
-            if (m = (u = new URL(q.url)).pathname.match(p)) {
-              q.params = m.groups
-              q.query = Object.fromEntries(u.searchParams.entries())
+      ? async (r, ...args) => {
+          for ([, p, hs] of t.r.filter(r => r[0] === r.method || 'ALL')) {
+            if (m = (u = new URL(r.url)).pathname.match(p)) {
+              r.params = m.groups
+              r.query = Object.fromEntries(u.searchParams.entries())
 
               for (h of hs) {
-                if ((s = await h(q, ...args)) !== undefined) return s
+                if ((s = await h(r, ...args)) !== undefined) return s
               }
             }
           }
-          if (o.else) return o.else(q, ...args)
         }
       : (p, ...hs) =>
-          (t[k] = t[k] || []).push([
-            `^${(o.base || '')+p
+          (t.r = t.r || []).push([
+            k.toUpperCase(),
+            `^${(t.base || '')+p
               .replace(/(\/?)\*/g, '($1.*)?')
               .replace(/\/$/, '')
               .replace(/:([^\/\?\.]+)(\?)?/g, '$2(?<$1>[^/\.]+)$2')

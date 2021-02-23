@@ -181,15 +181,17 @@ describe('Router', () => {
       expect(route2.callback).toHaveBeenCalled()
     })
 
-    it('allows missing handler with option "else"', () => {
+    it('allows missing handler later in flow with "all" channel', () => {
       const missingHandler = jest.fn()
       const matchHandler = jest.fn()
 
-      const router1 = Router({ else: missingHandler })
+      const router1 = Router()
       const router2 = Router({ base: '/nested' })
 
       router2.get('/foo', matchHandler)
-      router1.all('/nested/*', router2.handle)
+      router1
+        .all('/nested/*', router2.handle)
+        .all('*', missingHandler)
 
       router1.handle(buildRequest({ path: '/foo' }))
       expect(missingHandler).toHaveBeenCalled()
