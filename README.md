@@ -54,7 +54,7 @@ addEventListener('fetch', event =>
 - [ ] have pretty code (yeah right...)
 
 # Options API
-### `Router(options = {})`
+#### `Router(options = {})`
 
 | Name | Type(s) | Description | Examples |
 | --- | --- | --- | --- |
@@ -136,14 +136,29 @@ router.get('/user', (req) => new Response(JSON.stringify(req.user))) // user emb
 router.handle({ url: 'https://example.com/user' }) // --> STATUS 200: { name: 'Mittens', age: 3 }
 ```
 
-### Nested Routers
+### Nested Routers (with 404 handling)
 ```js
-  const parentRouter = Router()
-  const todosRouter = Router()
+  // lets save a missing handler
+  const missingHandler = new Response('That resource was not found.', { status: 404 })
 
-  todosRouter.get('/todos/:id?', ({ params }) => console.log({ id: params.id }))
+  // create a parent router
+  const parentRouter = Router({ else: missingHandler })
 
+  // and a child router
+  const todosRouter = Router({ base: '/todos' })
+
+  // with some routes on it...
+  todosRouter
+    .get('/', () => new Response('Todos Index'))
+    .get('/:id', ({ params }) => new Response(`Todo #${params.id}`))
+
+  // then divert ALL requests to /todos/* into the child router
   parentRouter.all('/todos/*', todosRouter.handle) // all /todos/* routes will route through the todosRouter
+
+  // GET /todos --> Todos Index
+  // GET /todos/13 --> Todo #13
+  // POST /todos --> missingHandler (it will fail to catch inside todosRouter, and be caught by "else" on parentRouter)
+  // GET /foo --> missingHandler
 ```
 
 ### Base Path
