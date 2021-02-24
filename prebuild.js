@@ -7,9 +7,9 @@ const minifiedBase = base
   .replace(/([^\.])obj\b/g, '$1t') // Target
   .replace(/([^\.])options\b/g, '$1o') // Options
   .replace(/([^\.])receiver\b/g, '$1c') // Options
-  .replace(/([^\.])attr\b/g, '$1a') // Attr
   .replace(/([^\.])route\b/g, '$1p') // Path
   .replace(/([^\.])\.routes\b/g, '$1\.r') // routes Queue
+  .replace(/args/g, 'a') // Args
   .replace(/([^\.])request\b/g, '$1r') // Request
   .replace(/([^\.])response\b/g, '$1s') // reSponse
   .replace(/([^\.])match\b/g, '$1m') // Match

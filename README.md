@@ -176,27 +176,27 @@ router.handle({ url: 'https://example.com/user' }) // --> STATUS 200: { name: 'M
 const Router = (o = {}) =>
   new Proxy(o, {
     get: (t, k, c) => k === 'handle'
-      ? async (r, ...args) => {
-          for ([, p, hs] of t.r.filter(r => r[0] === r.method || 'ALL')) {
+      ? async (r, ...a) => {
+          for ([p, hs] of t.r.filter(r => r[0] === r.method || 'ALL')) {
             if (m = (u = new URL(r.url)).pathname.match(p)) {
               r.params = m.groups
               r.query = Object.fromEntries(u.searchParams.entries())
 
               for (h of hs) {
-                if ((s = await h(r, ...args)) !== undefined) return s
+                if ((s = await h(r, ...a)) !== undefined) return s
               }
             }
           }
         }
       : (p, ...hs) =>
           (t.r = t.r || []).push([
-            k.toUpperCase(),
             `^${(t.base || '')+p
               .replace(/(\/?)\*/g, '($1.*)?')
               .replace(/\/$/, '')
               .replace(/:([^\/\?\.]+)(\?)?/g, '$2(?<$1>[^/\.]+)$2')
             }\/*$`,
-            hs
+            hs,
+            k.toUpperCase(),
           ]) && c
   })
 ```
