@@ -227,6 +227,7 @@ This trick allows methods (e.g. "get", "post") to by defined dynamically by the 
 These folks are the real heroes, making open source the powerhouse that it is!  Help us out and add your name to this list!
 
 #### Core, Concepts, and Codebase
+- [@technoyes](https://github.com/technoyes) - three kind-of-a-big-deal errors caught at once.  Imagine the look on my face... Thank man!! :)
 - [@hunterloftis](https://github.com/hunterloftis) - router.handle() method now accepts extra arguments and passed them to route functions
 - [@roojay520](https://github.com/roojay520) - TS interface fixes
 - [@mvasigh](https://github.com/mvasigh) - proxy hacks courtesy of this chap

@@ -196,8 +196,8 @@ describe('Router', () => {
       router1.handle(buildRequest({ path: '/foo' }))
       expect(missingHandler).toHaveBeenCalled()
 
-      // router1.handle(buildRequest({ path: '/nested/foo' }))
-      // expect(matchHandler).toHaveBeenCalled()
+      router1.handle(buildRequest({ path: '/nested/foo' }))
+      expect(matchHandler).toHaveBeenCalled()
     })
 
     it('defaults to GET assumption when handling new requests without { method: \'METHOD\' }', () => {
