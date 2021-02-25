@@ -177,7 +177,7 @@ const Router = (o = {}) =>
   new Proxy(o, {
     get: (t, k, c) => k === 'handle'
       ? async (r, ...a) => {
-          for ([p, hs] of t.r.filter(r => r[0] === r.method || 'ALL')) {
+          for ([p, hs] of t.r.filter(i => i[2] === r.method || i[2] === 'ALL')) {
             if (m = (u = new URL(r.url)).pathname.match(p)) {
               r.params = m.groups
               r.query = Object.fromEntries(u.searchParams.entries())
