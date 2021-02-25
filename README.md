@@ -29,7 +29,7 @@ router.get('/foo/:id.:format?', request => {
   const { id, format = 'csv' } = request.params
 
   return new Response(`Getting item ${id} in ${format} format.`)
-}
+})
 
 // 404/Missing as final catch-all route
 router.all('*', () => new Response('Not Found.', { status: 404 }))
