@@ -232,3 +232,4 @@ These folks are the real heroes, making open source the powerhouse that it is!  
 - [@mvasigh](https://github.com/mvasigh) - proxy hacks courtesy of this chap
 #### Documentation Fixes
 - [@arunsathiya](https://github.com/arunsathiya)
+- [@poacher2k](https://github.com/poacher2k)
