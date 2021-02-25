@@ -2,7 +2,7 @@ const Router = (options = {}) =>
   new Proxy(options, {
     get: (obj, prop, receiver) => prop === 'handle'
       ? async (request, ...args) => {
-          for ([route, handlers] of obj.routes.filter(r => r[0] === request.method || 'ALL')) {
+          for ([route, handlers] of obj.routes.filter(x => x[2] === request.method || x[2] === 'ALL')) {
             if (match = (url = new URL(request.url)).pathname.match(route)) {
               request.params = match.groups
               request.query = Object.fromEntries(url.searchParams.entries())
