@@ -6,7 +6,7 @@
 [![Coverage Status][coveralls-image]][coveralls-url]
 [![Open Issues][issues-image]][issues-url]
 
-It's an itty bitty router, designed for Express.js-like routing within [Cloudflare Workers](https://developers.cloudflare.com/workers/) (or any ServiceWorker). Like... it's super tiny, with zero dependencies. For reals.
+It's an itty bitty router, designed for Express.js-like routing within [Cloudflare Workers](https://developers.cloudflare.com/workers/) (or anywhere else). Like... it's super tiny (~450 bytes), with zero dependencies. For reals.
 
 ## Installation
 
@@ -45,11 +45,11 @@ addEventListener('fetch', event =>
 - [x] route params, with optionals (e.g. `/api/:foo/:id?.:format?`)
 - [x] bonus query parsing (e.g. `?page=3&foo=bar`)
 - [x] adds params & query to request: `{ params: { foo: 'bar' }, query: { page: '3' }}`
-- [x] multiple (sync or async) [middleware handlers](#multiple-route-handlers-as-middleware) per route for passthrough logic, auth, errors, etc
+- [x] multiple (sync or async) [middleware handlers](#middleware) per route for passthrough logic, auth, errors, etc
 - [x] extendable via Proxies
 - [x] handler functions "stop" at the first handler to return
-- [x] supports [nested routers](#nested-routers)
-- [x] supports [base path](#base-path) option to prefix all routes
+- [x] supports [nested routers](#nested-routers-with-404-handling)
+- [x] supports [base path](#nested-routers-with-404-handling) option to prefix all routes (useful for nested routers)
 - [x] chainable route declarations (why not?)
 - [ ] have pretty code (yeah right...)
 
@@ -99,7 +99,7 @@ router.handle({
 
 # Examples
 
-### Nested Routers (with 404 handling)
+### Nested Routers with 404 handling
 ```js
   // lets save a missing handler
   const missingHandler = new Response('That resource was not found.', { status: 404 })
@@ -129,35 +129,42 @@ router.handle({
 ### Middleware
 ###### Bonus: Any of these handlers may be awaitable async functions!
 ```js
-// withUser modifies original request, then continues without returning
-const withUser = (req) => {
-  req.user = { name: 'Mittens', age: 3 }
+// withUser modifies original request, but returns nothing (allowing flow to continue)
+const withUser = request => {
+  request.user = { name: 'Mittens', age: 3 }
 }
 
 // requireUser optionally returns (early) if user not found on request
-const requireUser = (req) => {
-  if (!req.user) return new Response('Not Authenticated', { status: 401 })
+const requireUser = request => {
+  if (!request.user) return new Response('Not Authenticated', { status: 401 })
 }
 
 // showUser returns a response with the user, as it is assumed to exist at this point
-const showUser = (req) => new Response(JSON.stringify(req.user))
+const showUser = request => new Response(JSON.stringify(request.user))
 
-router.get('/pass/user', withUser, requireUser, showUser) // withUser injects user, allowing requireUser to not return/continue
-router.get('/fail/user', requireUser, showUser) // requireUser returns early because req.user doesn't exist
 
-router.handle({ url: 'https://example.com/pass/user' }) // --> STATUS 200: { name: 'Mittens', age: 3 }
-router.handle({ url: 'https://example.com/fail/user' }) // --> STATUS 401: Not Authenticated
+router
+  .get('/pass/user', withUser, requireUser, showUser)
+  .get('/fail/user', requireUser, showUser)
+
+router.handle({ url: 'https://example.com/pass/user' })
+// withUser injects user, allowing requireUser to not return/continue
+// STATUS 200: { name: 'Mittens', age: 3 }
+
+router.handle({ url: 'https://example.com/fail/user' })
+// requireUser returns early because req.user doesn't exist
+// STATUS 401: Not Authenticated
 ```
 
 ### Multi-route (Upstream) Middleware
 ```js
-// withUser modifies original request, then continues without returning
-const withUser = (req) => {
-  req.user = { name: 'Mittens', age: 3 }
+const withUser = request => {
+  request.user = { name: 'Mittens', age: 3 }
 }
 
-router.get('*', withUser) // embeds user before all other matching routes
-router.get('/user', (req) => new Response(JSON.stringify(req.user))) // user embedded already!
+router
+  .get('*', withUser) // embeds user before all other matching routes
+  .get('/user', request => new Response(JSON.stringify(request.user))) // user embedded already!
 
 router.handle({ url: 'https://example.com/user' }) // --> STATUS 200: { name: 'Mittens', age: 3 }
 ```
