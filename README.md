@@ -43,7 +43,7 @@ addEventListener('fetch', event =>
 # Features
 - [x] tiny (~450 bytes) with zero dependencies
 - [x] route params, with optionals (e.g. `/api/:foo/:id?.:format?`)
-- [x] bonus query parsing (e.g. `?page=3&foo-bar`)
+- [x] bonus query parsing (e.g. `?page=3&foo=bar`)
 - [x] adds params & query to request: `{ params: { foo: 'bar' }, query: { page: '3' }}`
 - [x] multiple (sync or async) [middleware handlers](#multiple-route-handlers-as-middleware) per route for passthrough logic, auth, errors, etc
 - [x] extendable via Proxies
@@ -193,7 +193,7 @@ const Router = (o = {}) =>
             `^${(t.base || '')+p
               .replace(/(\/?)\*/g, '($1.*)?')
               .replace(/\/$/, '')
-              .replace(/:([^\/\?\.]+)(\?)?/g, '$2(?<$1>[^/\.]+)$2')
+              .replace(/:(\w+)(\?)?/g, '$2(?<$1>[^/\.]+)$2')
             }\/*$`,
             hs,
             k.toUpperCase(),

@@ -1,6 +1,7 @@
 ## Changelog
 Until this library makes it to a production release of v1.x, **minor versions may contain breaking changes to the API**.  After v1.x, semantic versioning will be honored, and breaking changes will only occur under the umbrella of a major version bump.
 
+- **v2.0.7** - shaved a few more characters in the regex
 - **v2.0.0** - API break: `Router({ else: missingHandler })` has been replaced with `router.all('*', missingHandler)`, and now "all" channel respects order of entry
 - **v1.6.0** - added { else: missingHandler } to options for 404 catch-alls (thanks to the discussion with [@martinffx](https://github.com/martinffx))
 - **v1.5.0** - added '.all(route, handler)' handling for passthrough middleware

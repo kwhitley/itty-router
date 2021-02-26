@@ -135,6 +135,16 @@ describe('Router', () => {
       expect(handler).toHaveReturnedWith({ id: '13', format: 'jpg' })
     })
 
+    // it('can accept dot notations (e.g. domains) as a route param', async () => {
+    //   const r = Router()
+    //   const handler = jest.fn(req => req.params.url)
+
+    //   r.get('/:url/etc', handler)
+
+    //   await r.handle(buildRequest({ path: '/domain.dev/etc' }))
+    //   expect(handler).toHaveReturnedWith('domain.dev')
+    // })
+
     it('match earliest routes that match', () => {
       const route = routes.find(r => r.path === '/foo/first')
       router.handle(buildRequest({ path: '/foo/first' }))

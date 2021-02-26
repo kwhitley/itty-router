@@ -18,7 +18,7 @@ const Router = (options = {}) =>
             `^${(obj.base || '')+route
               .replace(/(\/?)\*/g, '($1.*)?')
               .replace(/\/$/, '')
-              .replace(/:([^\/\?\.]+)(\?)?/g, '$2(?<$1>[^/\.]+)$2')
+              .replace(/:(\w+)(\?)?/g, '$2(?<$1>[^/\.]+)$2')
             }\/*$`,
             handlers,
             prop.toUpperCase(),
