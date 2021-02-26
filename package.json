@@ -19,7 +19,13 @@
     "routing",
     "api",
     "handler",
-    "params"
+    "params",
+    "middleware",
+    "nested",
+    "rest",
+    "crud",
+    "query",
+    "paramaters"
   ],
   "scripts": {
     "lint": "npx eslint src",
