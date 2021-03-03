@@ -71,7 +71,7 @@ addEventListener('fetch', event =>
 ```js
 import { Router } from 'itty-router'
 
-const router = Router() // no "new", as this is not a real class/constructor!
+const router = Router() // no "new", as this is not a real class
 ```
 
 ### 2. Register Route(s)
@@ -96,10 +96,18 @@ router.handle({
   url: 'https://example.com/todos/jane/13',   // required
 })
 
-// Example outputs (using route handler from step #2 above):
-// GET /todos/jane/13 --> { user: 'jane', item: '13', query: {} }
-// GET /todos/jane --> { user: 'jane', query: {} }
-// GET /todos/i?limit=2&page=1 --> { user: 'i', query: { limit: '2', page: '2' } }
+/*
+Example outputs (using route handler from step #2 above):
+
+GET /todos/jane/13
+--> { user: 'jane', item: '13', query: {} }
+
+GET /todos/jane
+--> { user: 'jane', query: {} }
+
+GET /todos/jane?limit=2&page=1
+--> { user: 'jane', query: { limit: '2', page: '2' } }
+*/
 ```
 
 # Examples
