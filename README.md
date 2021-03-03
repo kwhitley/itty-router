@@ -185,13 +185,13 @@ router.get('/todos/:id.:format?', request => {
 ```
 
 ## Testing & Contributing
-1. fork repo
-2. add code
-3. run tests (add your own if needed) `yarn dev`
-4. verify tests run once minified `yarn verify`
-5. commit files (do not manually modify version numbers)
-6. submit PR
-7. we'll add you to the credits :)
+1. Fork repo
+2. Run tests (add your own if needed) `yarn dev`
+3. Add your code (tests will re-run in the background)
+4. Verify tests run once minified `yarn verify`
+5. Commit files (do not manually modify version numbers)
+6. Submit PR with a detailed description of what you're doing
+7. I'll add you to the credits! :)
 
 ## The Entire Code (for more legibility, [see src on GitHub](https://github.com/kwhitley/itty-router/blob/v1.x/src/itty-router.js))
 ```js
@@ -247,7 +247,7 @@ This trick allows methods (e.g. "get", "post") to by defined dynamically by the 
 [coveralls-url]:https://coveralls.io/github/kwhitley/itty-router?branch=v1.x
 
 # Contributors
-These folks are the real heroes, making open source the powerhouse that it is!  Help us out and add your name to this list!
+These folks are the real heroes, making open source the powerhouse that it is!  Help out and get your name added to this list! <3
 
 #### Core, Concepts, and Codebase
 - [@technoyes](https://github.com/technoyes) - three kind-of-a-big-deal errors caught at once.  Imagine the look on my face... thanks man!! :)
