@@ -43,14 +43,14 @@ addEventListener('fetch', event =>
 - [x] Route params, with optional param support (e.g. `/api/:collection/:id?`)
 - [x] Optional [format support](#file-format-support) (e.g. `/api/items.:format?`) to handle things like `.csv`/`.json` within same route
 - [x] Query parsing (e.g. `?page=3&foo=bar` will add a `request.query` object with keys `page` and `foo`)
-- [x] Middleware support. Any number of sync/async [middleware handlers](#middleware) may be passed to a route/wildcard.
-- [x] Extendable. Use itty as the tiny, zero-dependency internal router to more feature-rich/elaborate routers.
-- [x] Nestable. Supports [nested routers](#nested-routers-with-404-handling) for API branching.
 - [x] Wildcard support for nesting, global middleware, etc. (e.g. `/api/*`)
-- [x] Route match to ANY method using the ["all" channel](#nested-routers-with-404-handling) (for CRUD support or nested routers with multiple methods)
+- [x] Middleware support. Any number of sync/async [middleware handlers](#middleware) may be passed to a route/wildcard.
+- [x] Nestable. Supports [nested routers](#nested-routers-with-404-handling) for API branching.
+- [x] Supports ANY method, not just the common ones (e.g. `router.puppy('/:name', handler)` will route-match to method `PUPPY`)
+- [x] Route match to ANY method using the ["all" channel](#nested-routers-with-404-handling) (route-matching to multiple methods)
 - [x] Define [base path](#nested-routers-with-404-handling) per router to prefix all routes (useful for nested routers)
+- [x] Extendable. Use itty as the tiny, zero-dependency internal router to more feature-rich/elaborate routers.
 - [x] Chainable route declarations (why not?)
-- [x] Supports ANY (current or future) method, not just the common ones (e.g. `router.puppy('/:name', handler)` will route-match to method: `PUPPY`)
 - [ ] have pretty code (yeah right...)
 
 # Options API
