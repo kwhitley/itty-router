@@ -23,9 +23,9 @@ const router = Router() // this is a Proxy, not a class
 
 // register some routes
 router
-  .get('/todos', () => new Response('Todos Index!'))                          // GET index
-  .get('/todos/:id', request => new Response(`Todo #${request.params.id}`))   // GET item
-  .all('*', () => new Response('Not Found.', { status: 404 }))                // 404 for everything else
+  .get('/todos', () => new Response('Todos Index!'))                         // GET index
+  .get('/todos/:id', request => new Response(`Todo #${request.params.id}`))  // GET item
+  .all('*', () => new Response('Not Found.', { status: 404 }))               // 404 otherwise
 
 // attach the router "handle" to the event handler
 addEventListener('fetch', event =>
