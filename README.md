@@ -21,20 +21,13 @@ import { Router } from 'itty-router'
 // create a router
 const router = Router() // this is a Proxy, not a class
 
-// GET index
-router.get('/todos', () => new Response('Todos Index!'))
+// register some routes
+router
+  .get('/todos', () => new Response('Todos Index!'))                          // GET index
+  .get('/todos/:id', request => new Response(`Todo #${request.params.id}`))   // GET item
+  .all('*', () => new Response('Not Found.', { status: 404 }))                // 404 for everything else
 
-// GET item with (optional) format
-router.get('/todos/:id.:format?', request => {
-  const { id, format = 'csv' } = request.params
-
-  return new Response(`Getting todo #${id} in ${format} format.`)
-})
-
-// 404/Missing as final catch-all route
-router.all('*', () => new Response('Not Found.', { status: 404 }))
-
-// attach the router handle to the event handler
+// attach the router "handle" to the event handler
 addEventListener('fetch', event =>
   event.respondWith(router.handle(event.request))
 )
@@ -42,11 +35,14 @@ addEventListener('fetch', event =>
 
 # Features
 - [x] Tiny (~450 bytes) with zero dependencies
-- [x] Route params, with optional  param support (e.g. `/api/:collection/:id?`)
+- [x] Route params, with optional param support (e.g. `/api/:collection/:id?`)
+- [x] Optional [format support](#file-format-support) (e.g. `/api/items.:format?`) to handle things like `.csv`/`.json` within same route
 - [x] Query parsing (e.g. `?page=3&foo=bar` will add a `request.query` object with keys `page` and `foo`)
 - [x] Middleware support. Any number of sync/async [middleware handlers](#middleware) may be passed to a route/wildcard.
 - [x] Extendable. Use itty as the tiny, zero-dependency internal router to more feature-rich/elaborate routers.
-- [x] Nestable.  Supports [nested routers](#nested-routers-with-404-handling) for API branching.
+- [x] Nestable. Supports [nested routers](#nested-routers-with-404-handling) for API branching.
+- [x] Wildcard support for nesting, global middleware, etc. (e.g. `/api/*`)
+- [x] Route match to ANY method using the ["all" channel](#nested-routers-with-404-handling) (for CRUD support or nested routers with multiple methods)
 - [x] Define [base path](#nested-routers-with-404-handling) per router to prefix all routes (useful for nested routers)
 - [x] Chainable route declarations (why not?)
 - [ ] have pretty code (yeah right...)
@@ -167,6 +163,16 @@ router
   .get('/user', request => new Response(JSON.stringify(request.user))) // user embedded already!
 
 router.handle({ url: 'https://example.com/user' }) // --> STATUS 200: { name: 'Mittens', age: 3 }
+```
+
+### File format support
+```js
+// GET item with (optional) format
+router.get('/todos/:id.:format?', request => {
+  const { id, format = 'csv' } = request.params
+
+  return new Response(`Getting todo #${id} in ${format} format.`)
+})
 ```
 
 ## Testing & Contributing
