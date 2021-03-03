@@ -21,13 +21,13 @@ import { Router } from 'itty-router'
 // create a router
 const router = Router() // this is a Proxy, not a class
 
-// GET index
+// GET collection index
 router.get('/todos', () => new Response('Todos Index!'))
 
 // GET item
 router.get('/todos/:id', ({ params }) => new Response(`Todo #${params.id}`))
 
-// POST item
+// POST to the collection (we'll use async here)
 router.post('/todos', async request => {
   const content = await request.json()
 
