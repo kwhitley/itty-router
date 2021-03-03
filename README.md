@@ -217,12 +217,13 @@ router.get('/todos/:id.:format?', request => {
 
 ## Testing & Contributing
 1. Fork repo
-2. Run tests (add your own if needed) `yarn dev`
-3. Add your code (tests will re-run in the background)
-4. Verify tests run once minified `yarn verify`
-5. Commit files (do not manually modify version numbers)
-6. Submit PR with a detailed description of what you're doing
-7. I'll add you to the credits! :)
+1. Install dev dependencies via `yarn`
+1. Start test runner/dev mode `yarn dev`
+1. Add your code and tests if needed - do NOT remove/alter existing tests
+1. Verify that tests pass once minified `yarn verify`
+1. Commit files
+1. Submit PR with a detailed description of what you're doing
+1. I'll add you to the credits! :)
 
 ## The Entire Code (for more legibility, [see src on GitHub](https://github.com/kwhitley/itty-router/blob/v1.x/src/itty-router.js))
 ```js
