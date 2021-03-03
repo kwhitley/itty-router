@@ -42,17 +42,17 @@ addEventListener('fetch', event =>
 - [x] Tiny (~450 bytes) with zero dependencies
 - [x] Full sync/async support.  Use it when you need it!
 - [x] Route params, with optional param support (e.g. `/api/:collection/:id?`)
-- [x] [Format support](#file-format-support) (e.g. `/api/items.:format`) to handle things like `.csv`/`.json` within same route
+- [x] [Format support](#file-format-support) (e.g. `/api/items.:format`) for **.csv**, **.json**, etc. within same route
 - [x] Query parsing (e.g. `?page=3&foo=bar` will add a `request.query` object with keys `page` and `foo`)
 - [x] Wildcard support for nesting, global middleware, etc. (e.g. `/api/*`)
-- [x] Middleware support. Any number of sync/async [middleware handlers](#middleware) may be passed to a route/wildcard.
-- [x] Nestable. Supports [nested routers](#nested-routers-with-404-handling) for API branching.
-- [x] Supports ANY method (e.g. `router.puppy('/:name', handler)` will match to method `PUPPY`)
+- [x] [Middleware support](#middleware). Any number of sync/async handlers may be passed to a route.
+- [x] [Nestable](#nested-routers-with-404-handling). Supports nesting routers for API branching.
+- [x] Supports **any** method type (e.g. `router.puppy('/:name', handler)` would work)
 - [x] Route match to multiple methods using the ["all" channel](#nested-routers-with-404-handling)
 - [x] Define [base path](#nested-routers-with-404-handling) per router to prefix all routes (useful for nested routers)
 - [x] Extendable. Use itty as the tiny, zero-dependency internal router to more feature-rich/elaborate routers.
 - [x] Chainable route declarations (why not?)
-- [ ] have pretty code (yeah right...)
+- [ ] Readable internal code (yeah right...)
 
 # Options API
 #### `Router(options = {})`
@@ -122,7 +122,7 @@ router.handle({
 
   // GET /todos --> Todos Index
   // GET /todos/13 --> Todo #13
-  // POST /todos --> missingHandler (it will fail to catch inside todosRouter, and be caught by final "all" on parentRouter)
+  // POST /todos --> missingHandler (caught eventually by parentRouter)
   // GET /foo --> missingHandler
 ```
 
@@ -130,20 +130,22 @@ router.handle({
 *Any handler that does NOT return* will effectively be considered "middleware", continuing to execute future functions/routes until one returns, closing the response.
 
 ```js
-// withUser modifies original request, but returns nothing (allowing flow to continue)
+// withUser modifies original request, but returns nothing
 const withUser = request => {
   request.user = { name: 'Mittens', age: 3 }
 }
 
 // requireUser optionally returns (early) if user not found on request
 const requireUser = request => {
-  if (!request.user) return new Response('Not Authenticated', { status: 401 })
+  if (!request.user) {
+    return new Response('Not Authenticated', { status: 401 })
+  }
 }
 
-// showUser returns a response with the user, as it is assumed to exist at this point
+// showUser returns a response with the user (assumed to exist)
 const showUser = request => new Response(JSON.stringify(request.user))
 
-
+// now let's add some routes
 router
   .get('/pass/user', withUser, requireUser, showUser)
   .get('/fail/user', requireUser, showUser)
@@ -165,9 +167,10 @@ const withUser = request => {
 
 router
   .get('*', withUser) // embeds user before all other matching routes
-  .get('/user', request => new Response(JSON.stringify(request.user))) // user embedded already!
+  .get('/user', request => new Response(`Hello, ${user.name}!`))
 
-router.handle({ url: 'https://example.com/user' }) // --> STATUS 200: { name: 'Mittens', age: 3 }
+router.handle({ url: 'https://example.com/user' })
+// STATUS 200: Hello, Mittens!
 ```
 
 ### File format support
