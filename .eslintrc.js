@@ -82,7 +82,7 @@ module.exports = {
         'implicit-arrow-linebreak': 'off',
         'indent': 'off',
         'indent-legacy': 'off',
-        'init-declarations': 'error',
+        'init-declarations': 'off',
         'jsx-quotes': 'error',
         'key-spacing': 'error',
         'keyword-spacing': [
@@ -212,7 +212,7 @@ module.exports = {
         'padded-blocks': 'off',
         'padding-line-between-statements': 'error',
         'prefer-arrow-callback': 'error',
-        'prefer-const': 'error',
+        'prefer-const': 'off',
         'prefer-destructuring': 'error',
         'prefer-exponentiation-operator': 'error',
         'prefer-named-capture-group': 'off',
@@ -242,7 +242,7 @@ module.exports = {
         'semi-spacing': 'error',
         'semi-style': 'error',
         'sort-imports': 'error',
-        'sort-vars': 'error',
+        'sort-vars': 'off',
         'space-before-blocks': 'error',
         'space-before-function-paren': 'error',
         'space-in-parens': [
@@ -252,10 +252,7 @@ module.exports = {
         'space-infix-ops': 'off',
         'space-unary-ops': 'error',
         'spaced-comment': 'error',
-        'strict': [
-            'error',
-            'never'
-        ],
+        'strict': 'off',
         'switch-colon-spacing': 'error',
         'symbol-description': 'error',
         'template-curly-spacing': [

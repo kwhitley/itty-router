@@ -22,13 +22,13 @@ import { Router } from 'itty-router'
 const router = Router() // this is a Proxy, not a class
 
 // GET index
-router.get('/foo', () => new Response('Foo Index!'))
+router.get('/todos', () => new Response('Todos Index!'))
 
-// GET item
-router.get('/foo/:id.:format?', request => {
+// GET item with (optional) format
+router.get('/todos/:id.:format?', request => {
   const { id, format = 'csv' } = request.params
 
-  return new Response(`Getting item ${id} in ${format} format.`)
+  return new Response(`Getting todo #${id} in ${format} format.`)
 })
 
 // 404/Missing as final catch-all route
