@@ -83,7 +83,7 @@ router.get('/todos/:user/:item?', (req) => {
 
 ### 3. Handle Incoming Request(s)
 ##### `.handle(request: Request)`
-Requests should have both a `method` and *full* `url` (e.g. `https://example.com/foo/bar`).  The `handle` method will then return the first matching route handler that returns something.
+Requests should have both a **method** and full **url**. The `handle` method will then return the first matching route handler that returns something.
 
 ```js
 router.handle({
