@@ -71,7 +71,7 @@ addEventListener('fetch', event =>
 ```js
 import { Router } from 'itty-router'
 
-const router = Router() // no "new", as this is not a real ES6 class/constructor!
+const router = Router() // no "new", as this is not a real class/constructor!
 ```
 
 ### 2. Register Route(s)
@@ -97,9 +97,9 @@ router.handle({
 })
 
 // Example outputs (using route handler from step #2 above):
-// GET /todos/jane/13             --> { user: 'jane', item: '13', query: {} }
-// GET /todos/jane                --> { user: 'jane', query: {} }
-// GET /todos/jane?limit=2&page=1 --> { user: 'jane', query: { limit: '2', page: '2' } }
+// GET /todos/jane/13 --> { user: 'jane', item: '13', query: {} }
+// GET /todos/jane --> { user: 'jane', query: {} }
+// GET /todos/i?limit=2&page=1 --> { user: 'i', query: { limit: '2', page: '2' } }
 ```
 
 # Examples
@@ -107,7 +107,7 @@ router.handle({
 ### Nested Routers with 404 handling
 ```js
   // lets save a missing handler
-  const missingHandler = new Response('That resource was not found.', { status: 404 })
+  const missingHandler = new Response('Not found.', { status: 404 })
 
   // create a parent router
   const parentRouter = Router()
