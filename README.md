@@ -161,6 +161,7 @@ router.handle({ url: 'https://example.com/fail/user' })
 
 ### Multi-route (Upstream) Middleware
 ```js
+// middleware that injects a user, but doesn't return
 const withUser = request => {
   request.user = { name: 'Mittens', age: 3 }
 }
