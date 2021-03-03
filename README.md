@@ -41,16 +41,14 @@ addEventListener('fetch', event =>
 ```
 
 # Features
-- [x] tiny (~450 bytes) with zero dependencies
-- [x] route params, with optionals (e.g. `/api/:foo/:id?.:format?`)
-- [x] bonus query parsing (e.g. `?page=3&foo=bar`)
-- [x] adds params & query to request: `{ params: { foo: 'bar' }, query: { page: '3' }}`
-- [x] multiple (sync or async) [middleware handlers](#middleware) per route for passthrough logic, auth, errors, etc
-- [x] extendable via Proxies
-- [x] handler functions "stop" at the first handler to return
-- [x] supports [nested routers](#nested-routers-with-404-handling)
-- [x] supports [base path](#nested-routers-with-404-handling) option to prefix all routes (useful for nested routers)
-- [x] chainable route declarations (why not?)
+- [x] Tiny (~450 bytes) with zero dependencies
+- [x] Route params, with optional  param support (e.g. `/api/:collection/:id?`)
+- [x] Query parsing (e.g. `?page=3&foo=bar` will add a `request.query` object with keys `page` and `foo`)
+- [x] Middleware support. Any number of sync/async [middleware handlers](#middleware) may be passed to a route/wildcard.
+- [x] Extendable. Use itty as the tiny, zero-dependency internal router to more feature-rich/elaborate routers.
+- [x] Nestable.  Supports [nested routers](#nested-routers-with-404-handling) for API branching.
+- [x] Define [base path](#nested-routers-with-404-handling) per router to prefix all routes (useful for nested routers)
+- [x] Chainable route declarations (why not?)
 - [ ] have pretty code (yeah right...)
 
 # Options API
@@ -80,12 +78,12 @@ router.get('/todos/:user/:item?', (req) => {
   let { params, query, url } = req
   let { user, item } = params
 
-  console.log('GET TODOS from', url, { user, item })
+  console.log('GET TODOS from', url, { user, item, query })
 })
 ```
 
 ### 3. Handle Incoming Request(s)
-##### `.handle(request = { method:string = 'GET', url:string })`
+##### `.handle(request: Request)`
 The only requirement for the `.handle(request)` method is an object with a valid **full** url (e.g. `https://example.com/foo`).  The `method` property is optional and defaults to `GET` (which maps to routes registered with `router.get()`).  This method will return the first route handler that actually returns something.  For async/middleware examples, please see below.
 ```js
 router.handle({
@@ -93,8 +91,10 @@ router.handle({
   url: 'https://example.com/todos/jane/13',   // required
 })
 
-// matched handler from step #2 (above) will execute, with the following output:
-// GET TODOS from https://example.com/todos/jane/13 { user: 'jane', item: '13' }
+// Example outputs (using route handler from step #2 above):
+// GET TODOS from https://example.com/todos/jane/13 { user: 'jane', item: '13', query: {} }
+// GET TODOS from https://example.com/todos/jane { user: 'jane', query: {} }
+// GET TODOS from https://example.com/todos/jane?limit=2&page=1 { user: 'jane', query: { limit: '2', page: '2' } }
 ```
 
 # Examples
