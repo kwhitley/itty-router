@@ -40,8 +40,9 @@ addEventListener('fetch', event =>
 
 # Features
 - [x] Tiny (~450 bytes) with zero dependencies
+- [x] Full sync/async support.  Use it when you need it!
 - [x] Route params, with optional param support (e.g. `/api/:collection/:id?`)
-- [x] Optional [format support](#file-format-support) (e.g. `/api/items.:format?`) to handle things like `.csv`/`.json` within same route
+- [x] [Format support](#file-format-support) (e.g. `/api/items.:format`) to handle things like `.csv`/`.json` within same route
 - [x] Query parsing (e.g. `?page=3&foo=bar` will add a `request.query` object with keys `page` and `foo`)
 - [x] Wildcard support for nesting, global middleware, etc. (e.g. `/api/*`)
 - [x] Middleware support. Any number of sync/async [middleware handlers](#middleware) may be passed to a route/wildcard.
@@ -70,17 +71,13 @@ const router = Router() // no "new", as this is not a real ES6 class/constructor
 
 ### 2. Register Route(s)
 ##### `.{methodName}(route:string, handler1:function, handler2:function, ...)`
-The "instantiated" router translates any attribute (e.g. `.get`, `.post`, `.patch`, `.whatever`) as a function that binds a "route" (string) to route handlers (functions) on that method type (e.g. `router.get --> GET`, `router.post --> POST`).  When the url fed to `.handle({ url })` matches the route and method, the handlers are fired sequentially.  Each is given the original request/context, with any parsed route/query params injected as well.  The first handler that returns (anything) will end the chain, allowing early exists from errors, inauthenticated requests, etc.  This mechanism allows ANY method to be handled, including completely custom methods (we're very curious how creative individuals will abuse this flexibility!).  The only "method" currently off-limits is `handle`, as that's used for route handling (see below).
-
-**Special Exception - the "all" channel:** Any routes on the "all" channel will match to ANY method (e.g. GET/POST/whatever), allowing for greater middleware support, nested routers, 404 catches, etc.
-
 ```js
 // register a route on the "GET" method
 router.get('/todos/:user/:item?', (req) => {
   let { params, query, url } = req
   let { user, item } = params
 
-  console.log('GET TODOS from', url, { user, item, query })
+  console.log({ user, item, query })
 })
 ```
 
@@ -94,9 +91,9 @@ router.handle({
 })
 
 // Example outputs (using route handler from step #2 above):
-// GET TODOS from https://example.com/todos/jane/13 { user: 'jane', item: '13', query: {} }
-// GET TODOS from https://example.com/todos/jane { user: 'jane', query: {} }
-// GET TODOS from https://example.com/todos/jane?limit=2&page=1 { user: 'jane', query: { limit: '2', page: '2' } }
+// GET /todos/jane/13             --> { user: 'jane', item: '13', query: {} }
+// GET /todos/jane                --> { user: 'jane', query: {} }
+// GET /todos/jane?limit=2&page=1 --> { user: 'jane', query: { limit: '2', page: '2' } }
 ```
 
 # Examples
@@ -129,7 +126,8 @@ router.handle({
 ```
 
 ### Middleware
-###### Bonus: Any of these handlers may be awaitable async functions!
+*Any handler that does NOT return* will effectively be considered "middleware", continuing to execute future functions/routes until one returns, closing the response.
+
 ```js
 // withUser modifies original request, but returns nothing (allowing flow to continue)
 const withUser = request => {
