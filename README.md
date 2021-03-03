@@ -132,29 +132,29 @@ GET /todos/jane?limit=2&page=1
 
 ### Nested Routers with 404 handling
 ```js
-  // lets save a missing handler
-  const missingHandler = new Response('Not found.', { status: 404 })
+// lets save a missing handler
+const missingHandler = new Response('Not found.', { status: 404 })
 
-  // create a parent router
-  const parentRouter = Router()
+// create a parent router
+const parentRouter = Router()
 
-  // and a child router
-  const todosRouter = Router({ base: '/todos' })
+// and a child router
+const todosRouter = Router({ base: '/todos' })
 
-  // with some routes on it...
-  todosRouter
-    .get('/', () => new Response('Todos Index'))
-    .get('/:id', ({ params }) => new Response(`Todo #${params.id}`))
+// with some routes on it...
+todosRouter
+  .get('/', () => new Response('Todos Index'))
+  .get('/:id', ({ params }) => new Response(`Todo #${params.id}`))
 
-  // then divert ALL requests to /todos/* into the child router
-  parentRouter
-    .all('/todos/*', todosRouter.handle) // attach child router
-    .all('*', missingHandler) // catch any missed routes
+// then divert ALL requests to /todos/* into the child router
+parentRouter
+  .all('/todos/*', todosRouter.handle) // attach child router
+  .all('*', missingHandler) // catch any missed routes
 
-  // GET /todos --> Todos Index
-  // GET /todos/13 --> Todo #13
-  // POST /todos --> missingHandler (caught eventually by parentRouter)
-  // GET /foo --> missingHandler
+// GET /todos --> Todos Index
+// GET /todos/13 --> Todo #13
+// POST /todos --> missingHandler (caught eventually by parentRouter)
+// GET /foo --> missingHandler
 ```
 
 ### Middleware
