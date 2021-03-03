@@ -79,10 +79,9 @@ const router = Router() // no "new", as this is not a real class
 ```js
 // register a route on the "GET" method
 router.get('/todos/:user/:item?', (req) => {
-  const { params, query, url } = req
-  const { user, item } = params
+  const { params, query } = req
 
-  console.log({ user, item, query })
+  console.log({ params, query })
 })
 ```
 
@@ -100,13 +99,32 @@ router.handle({
 Example outputs (using route handler from step #2 above):
 
 GET /todos/jane/13
---> { user: 'jane', item: '13', query: {} }
+{
+  params: {
+    user: 'jane',
+    item: '13'
+  },
+  query: {}
+}
 
 GET /todos/jane
---> { user: 'jane', query: {} }
+{
+  params: {
+    user: 'jane'
+  },
+  query: {}
+}
 
 GET /todos/jane?limit=2&page=1
---> { user: 'jane', query: { limit: '2', page: '2' } }
+{
+  params: {
+    user: 'jane'
+  },
+  query: {
+    limit: '2',
+    page: '2'
+  }
+}
 */
 ```
 
