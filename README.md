@@ -83,7 +83,8 @@ router.get('/todos/:user/:item?', (req) => {
 
 ### 3. Handle Incoming Request(s)
 ##### `.handle(request: Request)`
-The only requirement for the `.handle(request)` method is an object with a valid **full** url (e.g. `https://example.com/foo`).  The `method` property is optional and defaults to `GET` (which maps to routes registered with `router.get()`).  This method will return the first route handler that actually returns something.  For async/middleware examples, please see below.
+Requests should have both a `method` and *full* `url` (e.g. `https://example.com/foo/bar`).  The `handle` method will then return the first matching route handler that returns something.
+
 ```js
 router.handle({
   method: 'GET',                              // optional, default = 'GET'
