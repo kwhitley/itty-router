@@ -25,6 +25,11 @@ const router = Router() // this is a Proxy, not a class
 router
   .get('/todos', () => new Response('Todos Index!'))                         // GET index
   .get('/todos/:id', request => new Response(`Todo #${request.params.id}`))  // GET item
+  .post('/todos', async request => {                                         // POST new item
+    const content = await request.json()
+
+    return new Response('Creating a new Todo with following payload: ' + JSON.stringify(content))
+  })
   .all('*', () => new Response('Not Found.', { status: 404 }))               // 404 otherwise
 
 // attach the router "handle" to the event handler
@@ -45,6 +50,7 @@ addEventListener('fetch', event =>
 - [x] Route match to ANY method using the ["all" channel](#nested-routers-with-404-handling) (for CRUD support or nested routers with multiple methods)
 - [x] Define [base path](#nested-routers-with-404-handling) per router to prefix all routes (useful for nested routers)
 - [x] Chainable route declarations (why not?)
+- [x] Supports ANY (current or future) method, not just the common ones (e.g. `router.puppy('/:name', handler)` will route-match to method: `PUPPY`)
 - [ ] have pretty code (yeah right...)
 
 # Options API
