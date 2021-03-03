@@ -21,16 +21,21 @@ import { Router } from 'itty-router'
 // create a router
 const router = Router() // this is a Proxy, not a class
 
-// register some routes
-router
-  .get('/todos', () => new Response('Todos Index!'))                         // GET index
-  .get('/todos/:id', request => new Response(`Todo #${request.params.id}`))  // GET item
-  .post('/todos', async request => {                                         // POST new item
-    const content = await request.json()
+// GET index
+router.get('/todos', () => new Response('Todos Index!'))
 
-    return new Response('Creating a new Todo with following payload: ' + JSON.stringify(content))
-  })
-  .all('*', () => new Response('Not Found.', { status: 404 }))               // 404 otherwise
+// GET item
+router.get('/todos/:id', ({ params }) => new Response(`Todo #${params.id}`))
+
+// POST item
+router.post('/todos', async request => {
+  const content = await request.json()
+
+  return new Response('Creating Todo: ' + JSON.stringify(content))
+})
+
+// 404 for everything else
+router.all('*', () => new Response('Not Found.', { status: 404 }))
 
 // attach the router "handle" to the event handler
 addEventListener('fetch', event =>
