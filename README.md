@@ -46,8 +46,8 @@ addEventListener('fetch', event =>
 - [x] Wildcard support for nesting, global middleware, etc. (e.g. `/api/*`)
 - [x] Middleware support. Any number of sync/async [middleware handlers](#middleware) may be passed to a route/wildcard.
 - [x] Nestable. Supports [nested routers](#nested-routers-with-404-handling) for API branching.
-- [x] Supports ANY method, not just the common ones (e.g. `router.puppy('/:name', handler)` will match to method `PUPPY`)
-- [x] Route match to ANY method using the ["all" channel](#nested-routers-with-404-handling) (route-matching to multiple methods)
+- [x] Supports ANY method (e.g. `router.puppy('/:name', handler)` will match to method `PUPPY`)
+- [x] Route match to multiple methods using the ["all" channel](#nested-routers-with-404-handling)
 - [x] Define [base path](#nested-routers-with-404-handling) per router to prefix all routes (useful for nested routers)
 - [x] Extendable. Use itty as the tiny, zero-dependency internal router to more feature-rich/elaborate routers.
 - [x] Chainable route declarations (why not?)
