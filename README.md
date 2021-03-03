@@ -195,12 +195,13 @@ const Router = (o = {}) =>
   new Proxy(o, {
     get: (t, k, c) => k === 'handle'
       ? async (r, ...a) => {
-          for ([p, hs] of t.r.filter(i => i[2] === r.method || i[2] === 'ALL')) {
+          for (let [p, hs] of t.r.filter(i => i[2] === r.method || i[2] === 'ALL')) {
+            let m, s, u
             if (m = (u = new URL(r.url)).pathname.match(p)) {
               r.params = m.groups
               r.query = Object.fromEntries(u.searchParams.entries())
 
-              for (h of hs) {
+              for (let h of hs) {
                 if ((s = await h(r, ...a)) !== undefined) return s
               }
             }
@@ -211,7 +212,7 @@ const Router = (o = {}) =>
             `^${(t.base || '')+p
               .replace(/(\/?)\*/g, '($1.*)?')
               .replace(/\/$/, '')
-              .replace(/:(\w+)(\?)?/g, '$2(?<$1>[^/\.]+)$2')
+              .replace(/:(\w+)(\?)?(\.)?/g, '$2(?<$1>[^/$3]+)$2$3')
             }\/*$`,
             hs,
             k.toUpperCase(),
