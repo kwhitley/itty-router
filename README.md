@@ -74,8 +74,8 @@ const router = Router() // no "new", as this is not a real ES6 class/constructor
 ```js
 // register a route on the "GET" method
 router.get('/todos/:user/:item?', (req) => {
-  let { params, query, url } = req
-  let { user, item } = params
+  const { params, query, url } = req
+  const { user, item } = params
 
   console.log({ user, item, query })
 })
@@ -127,7 +127,7 @@ router.handle({
 ```
 
 ### Middleware
-*Any handler that does NOT return* will effectively be considered "middleware", continuing to execute future functions/routes until one returns, closing the response.
+Any handler that does not **return** will effectively be considered "middleware", continuing to execute future functions/routes until one returns, closing the response.
 
 ```js
 // withUser modifies original request, but returns nothing
