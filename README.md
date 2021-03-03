@@ -25,7 +25,7 @@ const router = Router() // this is a Proxy, not a class
 router
   .get('/todos', () => new Response('Todos Index!'))                         // GET index
   .get('/todos/:id', request => new Response(`Todo #${request.params.id}`))  // GET item
-  .delete('/todos', async request => {                                       // POST new item
+  .post('/todos', async request => {                                         // POST new item
     const content = await request.json()
 
     return new Response('Creating a new Todo with following payload: ' + JSON.stringify(content))
@@ -117,8 +117,8 @@ router.handle({
 
   // then divert ALL requests to /todos/* into the child router
   parentRouter
-    .all('/todos/*', todosRouter.handle) // all /todos/* routes will route through the todosRouter
-    .all('*', missingHandler)
+    .all('/todos/*', todosRouter.handle) // attach child router
+    .all('*', missingHandler) // catch any missed routes
 
   // GET /todos --> Todos Index
   // GET /todos/13 --> Todo #13
