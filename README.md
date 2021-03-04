@@ -50,9 +50,9 @@ addEventListener('fetch', event =>
 - [x] Query parsing (e.g. `?page=3&foo=bar`)
 - [x] [Middleware support](#middleware). Any number of sync/async handlers may be passed to a route.
 - [x] [Nestable](#nested-routers-with-404-handling). Supports nesting routers for API branching.
-- [x] [Base path support](#nested-routers-with-404-handling) for prefixing all routes.
-- [x] Supports **any** method type (e.g. `router.puppy('/:name', handler)` would work).
-- [x] ["All" channel](#nested-routers-with-404-handling) for method-agnostic request matches.
+- [x] [Base path](#nested-routers-with-404-handling) for prefixing all routes.
+- [x] Supports **any** method type with zero config (e.g. GET, POST, PATCH, PUPPY, ELON).
+- [x] [Multi-method support](#nested-routers-with-404-handling) using the `.all()` channel.
 - [x] Extendable. Use itty as the internal base for more feature-rich/elaborate routers.
 - [x] Chainable route declarations (why not?)
 - [ ] Readable internal code (yeah right...)
