@@ -11,7 +11,7 @@
 <a href="https://github.com/kwhitley/itty-router" target="\_parent">
   <img alt="" src="https://img.shields.io/github/stars/kwhitley/itty-router.svg?style=social&label=Star" />
 </a>
-<a href="https://twitter.com/kwhitley" target="\_parent">
+<a href="https://twitter.com/kevinrwhitley" target="\_parent">
   <img alt="" src="https://img.shields.io/twitter/follow/kevinrwhitley.svg?style=social&label=Follow" />
 </a>
 <!--<a href="https://github.com/kwhitley/itty-router/discussions">
