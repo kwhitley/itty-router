@@ -44,18 +44,16 @@ addEventListener('fetch', event =>
 ```
 
 # Features
-- [x] Tiny (~450 bytes) with zero dependencies
+- [x] Tiny (~450 bytes) with zero dependencies.
 - [x] Full sync/async support.  Use it when you need it!
-- [x] Route params, with optional param support (e.g. `/api/:collection/:id?`)
-- [x] [Format support](#file-format-support) (e.g. `/api/items.:format`) for **.csv**, **.json**, etc. within same route
-- [x] Query parsing (e.g. `?page=3&foo=bar` will add a `request.query` object with keys `page` and `foo`)
-- [x] Wildcard support for nesting, global middleware, etc. (e.g. `/api/*`)
+- [x] Route params, with wildcards and optionals (e.g. `/api/:collection/:id?`)
+- [x] Query parsing (e.g. `?page=3&foo=bar`)
 - [x] [Middleware support](#middleware). Any number of sync/async handlers may be passed to a route.
 - [x] [Nestable](#nested-routers-with-404-handling). Supports nesting routers for API branching.
-- [x] Supports **any** method type (e.g. `router.puppy('/:name', handler)` would work)
-- [x] Route match to multiple methods using the ["all" channel](#nested-routers-with-404-handling)
-- [x] Define [base path](#nested-routers-with-404-handling) per router to prefix all routes (useful for nested routers)
-- [x] Extendable. Use itty as the tiny, zero-dependency internal router to more feature-rich/elaborate routers.
+- [x] [Base path support](#nested-routers-with-404-handling) for prefixing all routes.
+- [x] Supports **any** method type (e.g. `router.puppy('/:name', handler)` would work).
+- [x] ["All" channel](#nested-routers-with-404-handling) for method-agnostic request matches.
+- [x] Extendable. Use itty as the internal base for more feature-rich/elaborate routers.
 - [x] Chainable route declarations (why not?)
 - [ ] Readable internal code (yeah right...)
 
@@ -75,7 +73,7 @@ const router = Router() // no "new", as this is not a real class
 ```
 
 ### 2. Register Route(s)
-##### `.{methodName}(route:string, handler1:function, handler2:function, ...)`
+##### `router.{method}(route: string, handler1: function, handler2: function, ...)`
 ```js
 // register a route on the "GET" method
 router.get('/todos/:user/:item?', (req) => {
@@ -86,8 +84,9 @@ router.get('/todos/:user/:item?', (req) => {
 ```
 
 ### 3. Handle Incoming Request(s)
-##### `.handle(request: Request)`
-Requests should have both a **method** and full **url**. The `handle` method will then return the first matching route handler that returns something.
+##### `router.handle(request: Request)`
+Requests (doesn't have to be a real Request class) should have both a **method** and full **url**.
+The `handle` method will then return the first matching route handler that returns something (or nothing at all if no match).
 
 ```js
 router.handle({
@@ -207,12 +206,15 @@ router.handle({ url: 'https://example.com/user' })
 
 ### File format support
 ```js
-// GET item with (optional) format
+// GET item with optional format/extension
 router.get('/todos/:id.:format?', request => {
   const { id, format = 'csv' } = request.params
 
   return new Response(`Getting todo #${id} in ${format} format.`)
 })
+
+// GET /todos/13 --> Getting todo #13 in csv format.
+// GET /todos/14.json --> Getting todo #14 in json format.
 ```
 
 ## Testing & Contributing
@@ -282,7 +284,7 @@ This trick allows methods (e.g. "get", "post") to by defined dynamically by the 
 These folks are the real heroes, making open source the powerhouse that it is!  Help out and get your name added to this list! <3
 
 #### Core, Concepts, and Codebase
-- [@technoyes](https://github.com/technoyes) - three kind-of-a-big-deal errors caught at once.  Imagine the look on my face... thanks man!! :)
+- [@technoyes](https://github.com/technoyes) - three kind-of-a-big-deal errors fixed.  Imagine the look on my face... thanks man!! :)
 - [@hunterloftis](https://github.com/hunterloftis) - router.handle() method now accepts extra arguments and passed them to route functions
 - [@roojay520](https://github.com/roojay520) - TS interface fixes
 - [@mvasigh](https://github.com/mvasigh) - proxy hacks courtesy of this chap
