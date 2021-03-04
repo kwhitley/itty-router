@@ -5,6 +5,18 @@
 [![Build Status][travis-image]][travis-url]
 [![Coverage Status][coveralls-image]][coveralls-url]
 [![Open Issues][issues-image]][issues-url]
+<a href="https://npmjs.com/package/itty-router" target="\_parent">
+  <img alt="" src="https://img.shields.io/npm/dm/itty-router.svg" />
+</a>
+<a href="https://github.com/kwhitley/itty-router" target="\_parent">
+  <img alt="" src="https://img.shields.io/github/stars/kwhitley/itty-router.svg?style=social&label=Star" />
+</a>
+<a href="https://twitter.com/kwhitley" target="\_parent">
+  <img alt="" src="https://img.shields.io/twitter/follow/kevinrwhitley.svg?style=social&label=Follow" />
+</a>
+<!--<a href="https://github.com/kwhitley/itty-router/discussions">
+  <img alt="Join the discussion on Github" src="https://img.shields.io/badge/Github%20Discussions%20%26%20Support-Chat%20now!-blue" />
+</a>-->
 
 It's an itty bitty router, designed for Express.js-like routing within [Cloudflare Workers](https://developers.cloudflare.com/workers/) (or anywhere else). Like... it's super tiny (~450 bytes), with zero dependencies. For reals.
 
