@@ -26,7 +26,7 @@ It's an itty bitty router, designed for Express.js-like routing within [Cloudfla
 npm install itty-router
 ```
 
-# Simple Example
+# Example
 ```js
 import { Router } from 'itty-router'
 
@@ -192,11 +192,11 @@ router
   .get('/pass/user', withUser, requireUser, showUser)
   .get('/fail/user', requireUser, showUser)
 
-router.handle({ url: 'https://example.com/pass/user' })
+router.handle({ method: 'GET', url: 'https://example.com/pass/user' })
 // withUser injects user, allowing requireUser to not return/continue
 // STATUS 200: { name: 'Mittens', age: 3 }
 
-router.handle({ url: 'https://example.com/fail/user' })
+router.handle({ method: 'GET', url: 'https://example.com/fail/user' })
 // requireUser returns early because req.user doesn't exist
 // STATUS 401: Not Authenticated
 ```
@@ -212,7 +212,7 @@ router
   .get('*', withUser) // embeds user before all other matching routes
   .get('/user', request => new Response(`Hello, ${user.name}!`))
 
-router.handle({ url: 'https://example.com/user' })
+router.handle({ method: 'GET', url: 'https://example.com/user' })
 // STATUS 200: Hello, Mittens!
 ```
 
