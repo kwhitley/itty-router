@@ -1,9 +1,8 @@
 import "./style.css";
-import Logo from './components/Logo'
 
 new Docute({
   target: "#app",
-  logo: '<h1 class="itty-logo"><img src="icon.svg" alt="" width="36" height="36" /> <span>Itty Router</span></h1>',
+  logo: '<span class="itty-logo"><img src="icon.svg" alt="" width="36" height="36" /> <span>Itty Router</span></span>',
   highlight: ['javascript', 'json'],
   nav: [
     {
