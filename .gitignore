@@ -110,3 +110,4 @@ dist
 docs/dist
 docs/dist-ssr
 docs/*.local
+docs/pages/README.md
