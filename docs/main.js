@@ -48,7 +48,6 @@ new Docute({
   cssVariables: (theme) => {
     const light = {
       pageBackground: "#fafafa",
-      // accentColor: "#ff00ae",
       accentColor: '#e4009b',
       inlineCodeBackground: "#dbdbdb",
       inlineCodeColor: "#212121",
