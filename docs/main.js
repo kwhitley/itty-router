@@ -2,7 +2,7 @@ import "./style.css";
 
 new Docute({
   target: "#app",
-  logo: '<span class="itty-logo"><img src="icon.svg" alt="" width="36" height="36" /> <span>Itty Router</span></span>',
+  logo: '<span class="itty-logo"><img src="icon.svg" alt="" width="24" height="24" /> <span>Itty Router</span></span>',
   highlight: ['javascript', 'json'],
   nav: [
     {
