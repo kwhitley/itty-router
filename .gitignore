@@ -1,3 +1,6 @@
+# OS ignores
+.DS_Store
+
 # Logs
 logs
 *.log
@@ -102,3 +105,8 @@ dist
 
 # TernJS port file
 .tern-port
+
+# Docs ignores
+docs/dist
+docs/dist-ssr
+docs/*.local
