@@ -1,0 +1,11 @@
+.itty-logo {
+  font-size: 1.6rem;
+  display: flex;
+  align-items: center;
+}
+
+.itty-logo svg {
+  width: 24px;
+  height: 24px;
+  margin-right: 8px;
+}

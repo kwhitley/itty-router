@@ -1,4 +1,4 @@
-![Logo][logo-image]
+# ![Itty Router][logo-image]
 
 [![npm package][npm-image]][npm-url]
 [![minified + gzipped size][gzip-image]][gzip-url]
@@ -26,7 +26,7 @@ It's an itty bitty router, designed for Express.js-like routing within [Cloudfla
 npm install itty-router
 ```
 
-# Example
+## Example
 ```js
 import { Router } from 'itty-router'
 
@@ -55,7 +55,7 @@ addEventListener('fetch', event =>
 )
 ```
 
-# Features
+## Features
 - [x] Tiny (~450 bytes) with zero dependencies.
 - [x] Full sync/async support.  Use it when you need it!
 - [x] Route params, with wildcards and optionals (e.g. `/api/:collection/:id?`)
@@ -69,14 +69,14 @@ addEventListener('fetch', event =>
 - [x] Chainable route declarations (why not?)
 - [ ] Readable internal code (yeah right...)
 
-# Options API
+## Options API
 #### `Router(options = {})`
 
 | Name | Type(s) | Description | Examples |
 | --- | --- | --- | --- |
 | `base` | `string` | prefixes all routes with this string | `Router({ base: '/api' })`
 
-# Usage
+## Usage
 ### 1. Create a Router
 ```js
 import { Router } from 'itty-router'
@@ -139,7 +139,7 @@ GET /todos/jane?limit=2&page=1
 */
 ```
 
-# Examples
+## Examples
 
 ### Nested Routers with 404 handling
 ```js
@@ -229,7 +229,7 @@ router.get('/todos/:id.:format?', request => {
 // GET /todos/14.json --> Getting todo #14 in json format.
 ```
 
-## Testing & Contributing
+## Testing and Contributing
 1. Fork repo
 1. Install dev dependencies via `yarn`
 1. Start test runner/dev mode `yarn dev`
@@ -239,7 +239,7 @@ router.get('/todos/:id.:format?', request => {
 1. Submit PR with a detailed description of what you're doing
 1. I'll add you to the credits! :)
 
-## The Entire Code (for more legibility, [see src on GitHub](https://github.com/kwhitley/itty-router/blob/v1.x/src/itty-router.js))
+### The Entire Code (for more legibility, [see src on GitHub](https://github.com/kwhitley/itty-router/blob/v1.x/src/itty-router.js))
 ```js
 const Router = (o = {}) =>
   new Proxy(o, {
@@ -292,7 +292,7 @@ This trick allows methods (e.g. "get", "post") to by defined dynamically by the 
 [coveralls-image]:https://coveralls.io/repos/github/kwhitley/itty-router/badge.svg?branch=v1.x
 [coveralls-url]:https://coveralls.io/github/kwhitley/itty-router?branch=v1.x
 
-# Contributors
+## Contributors
 These folks are the real heroes, making open source the powerhouse that it is!  Help out and get your name added to this list! <3
 
 #### Core, Concepts, and Codebase
