@@ -305,6 +305,48 @@ describe('Router', () => {
       expect(handler3).toHaveBeenCalled()
     })
 
+    it('can allow multiple param injections', async () => {
+      const router1 = Router()
+      const router2 = Router({ base: '/\w+'})
+      const handler = jest.fn(req => req.params)
+      const middleware = () => {}
+
+      router1.get('/:collection/*', middleware, router2.handle)
+      router2.get('/:id', handler)
+
+      await router1.handle(buildRequest({ path: '/items/13' }))
+      expect(handler).toHaveBeenCalled()
+      expect(handler).toHaveReturnedWith({ collection: 'items', id: '13' })
+    })
+
+    // it('can capture wildcard match', async () => {
+    //   const inner = {}
+    //   const router = Router(inner)
+    //   const handler = jest.fn(req => req.params)
+
+    //   router.get('/:collection/*', handler)
+
+    //   console.log(inner.routes)
+
+    //   await router.handle(buildRequest({ path: '/items/something/else' }))
+    //   expect(handler).toHaveBeenCalled()
+    //   expect(handler).toHaveReturnedWith({ collection: 'items' })
+    // })
+
+    it('can handle multiple wildcards', async () => {
+      const inner = {}
+      const router = Router(inner)
+      const handler = jest.fn(req => req.params)
+
+      router.get('/:collection/*/else/*', handler)
+
+      console.log(inner.routes)
+
+      await router.handle(buildRequest({ path: '/items/something/else/whatever/we/want' }))
+      expect(handler).toHaveBeenCalled()
+      expect(handler).toHaveReturnedWith({ collection: 'items' })
+    })
+
     it('allows any method to match an "all" route', async () => {
       const router = Router()
       const handler = jest.fn()

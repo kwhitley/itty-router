@@ -5,8 +5,8 @@ const Router = (options = {}) =>
           for (let [route, handlers] of obj.routes.filter(i => i[2] === request.method || i[2] === 'ALL')) {
             let match, response, url
             if (match = (url = new URL(request.url)).pathname.match(route)) {
-              request.params = match.groups
-              request.query = Object.fromEntries(url.searchParams.entries())
+              request.params = { ...match.groups || {} }
+              request.query = Object.fromEntries(url.searchParams)
 
               for (let handler of handlers) {
                 if ((response = await handler(request, ...args)) !== undefined) return response
@@ -16,7 +16,7 @@ const Router = (options = {}) =>
         }
       : (route, ...handlers) =>
           (obj.routes = obj.routes || []).push([
-            `^${(obj.base || '')+route
+            `^${(obj.base || '' + route)
               .replace(/(\/?)\*/g, '($1.*)?')
               .replace(/\/$/, '')
               .replace(/:(\w+)(\?)?(\.)?/g, '$2(?<$1>[^/$3]+)$2$3')
