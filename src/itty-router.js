@@ -1,5 +1,5 @@
-const Router = (options = {}) =>
-  new Proxy(options, {
+function Router(options = {}) {
+  return new Proxy(options, {
     get: (obj, prop, receiver) => prop === 'handle'
       ? async (request, ...args) => {
           for (let [route, handlers] of obj.routes.filter(i => i[2] === request.method || i[2] === 'ALL')) {
@@ -25,5 +25,6 @@ const Router = (options = {}) =>
             prop.toUpperCase(),
           ]) && receiver
   })
+}
 
 module.exports = { Router }

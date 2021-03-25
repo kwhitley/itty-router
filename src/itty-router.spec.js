@@ -305,6 +305,19 @@ describe('Router', () => {
       expect(handler3).toHaveBeenCalled()
     })
 
+    it('child router can inherit paths from matching parent routes', async () => {
+      const parentRouter = Router({ base: '/api' })
+      const childRouter = Router({ base: '/todos' })
+      const handler = jest.fn(req => req.params.id)
+
+      parentRouter.get('/api/*', childRouter.handle)
+      childRouter.get('/:id', handler)
+
+
+      await parentRouter.handle(buildRequest({ path: '/api/todos/13' }))
+      expect(handler).toHaveBeenCalled()
+    })
+
     it('allows any method to match an "all" route', async () => {
       const router = Router()
       const handler = jest.fn()
