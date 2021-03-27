@@ -1,6 +1,6 @@
 {
   "name": "itty-router",
-  "version": "2.1.9",
+  "version": "2.2.0",
   "description": "Tiny, zero-dependency router with route param and query parsing - build for Cloudflare Workers, but works everywhere!",
   "main": "./dist/itty-router.min.js",
   "types": "./dist/itty-router.d.ts",
@@ -62,6 +62,7 @@
     "eslint-plugin-jest": "^24.1.5",
     "fs-extra": "^9.1.0",
     "gzip-size": "^6.0.0",
+    "isomorphic-fetch": "^3.0.0",
     "jest": "^26.6.3",
     "rimraf": "^3.0.2",
     "terser": "^5.6.0",

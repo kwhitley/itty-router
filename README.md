@@ -147,12 +147,12 @@ GET /todos/jane?limit=2&page=1
 const missingHandler = new Response('Not found.', { status: 404 })
 
 // create a parent router
-const parentRouter = Router()
+const parentRouter = Router({ base: '/api' )
 
-// and a child router
-const todosRouter = Router({ base: '/todos' })
+// and a child router (with FULL base path defined, from root)
+const todosRouter = Router({ base: '/api/todos' })
 
-// with some routes on it...
+// with some routes on it (these will be relative to the base)...
 todosRouter
   .get('/', () => new Response('Todos Index'))
   .get('/:id', ({ params }) => new Response(`Todo #${params.id}`))
@@ -167,6 +167,10 @@ parentRouter
 // POST /todos --> missingHandler (caught eventually by parentRouter)
 // GET /foo --> missingHandler
 ```
+
+A few quick caveats about nesting... each handler/router is fired in complete isolation, unaware of upstream routers.  Because of this, base paths do **not** chain from parent routers - meaning each child branch/router will need to define its **full** path.
+
+However, as a bonus (from v2.2+), route params will use the base path as well (e.g. `Router({ path: '/api/:collection' })`).
 
 ### Middleware
 Any handler that does not **return** will effectively be considered "middleware", continuing to execute future functions/routes until one returns, closing the response.
@@ -259,7 +263,7 @@ const Router = (o = {}) =>
         }
       : (p, ...hs) =>
           (t.r = t.r || []).push([
-            `^${(t.base || '')+p
+            `^${((t.base || '') + p)
               .replace(/(\/?)\*/g, '($1.*)?')
               .replace(/\/$/, '')
               .replace(/:(\w+)(\?)?(\.)?/g, '$2(?<$1>[^/$3]+)$2$3')

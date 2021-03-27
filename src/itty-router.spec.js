@@ -1,4 +1,8 @@
+require('isomorphic-fetch')
+
 const { Router } = require('./itty-router')
+
+const ERROR_MESSAGE = 'Error Message'
 
 describe('Router', () => {
   const router = Router()
@@ -251,6 +255,16 @@ describe('Router', () => {
       expect(handler).toHaveBeenCalledTimes(2)
     })
 
+    it('can pull route params from the basepath as well', async () => {
+      const router = Router({ base: '/:collection' })
+      const handler = jest.fn(req => req.params)
+      router.get('/:id', handler)
+
+      await router.handle(buildRequest({ path: '/todos/13' }))
+      expect(handler).toHaveBeenCalled()
+      expect(handler).toHaveReturnedWith({ collection: 'todos', id: '13' })
+    })
+
     it('gracefully handles trailing slashes', async () => {
       const r = Router()
 
@@ -336,6 +350,45 @@ describe('Router', () => {
       expect(handler1).toHaveBeenCalled()
       expect(handler2).toHaveBeenCalled()
       expect(handler3).not.toHaveBeenCalled()
+    })
+
+    it('can throw an error and still handle if using catch', async () => {
+      const router = Router()
+      const handlerWithError = jest.fn(() => { throw new Error(ERROR_MESSAGE) })
+      const errorHandler = jest.fn(err => err.message)
+
+      router.get('/foo', handlerWithError)
+
+      await router
+        .handle(buildRequest({ path: '/foo' }))
+        .catch(errorHandler)
+
+      expect(handlerWithError).toHaveBeenCalled()
+      expect(errorHandler).toHaveBeenCalled()
+      expect(errorHandler).toHaveReturnedWith(ERROR_MESSAGE)
+    })
+
+    it('can easily create a ThrowableRouter', async () => {
+      const error = (status, message) => new Response(message, { status })
+      const errorResponse = err => error(err.status || 500, err.message)
+
+      const ThrowableRouter = options => new Proxy(Router(options), {
+        get: (obj, prop) => (...args) =>
+            prop === 'handle'
+            ? obj[prop](...args).catch(err => error(err.status || 500, err.message))
+            : obj[prop](...args)
+      })
+
+      const router = ThrowableRouter()
+      const handlerWithError = jest.fn(() => { throw new Error(ERROR_MESSAGE) })
+
+      router.get('/foo', handlerWithError)
+
+      const response = await router.handle(buildRequest({ path: '/foo' }))
+
+      expect(response instanceof Response).toBe(true)
+      expect(response.status).toBe(500)
+      expect(await response.text()).toBe(ERROR_MESSAGE)
     })
 
     it('requires exact path match unless wildcard', async () => {
