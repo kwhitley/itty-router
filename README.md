@@ -20,6 +20,8 @@
 
 It's an itty bitty router, designed for Express.js-like routing within [Cloudflare Workers](https://developers.cloudflare.com/workers/) (or anywhere else). Like... it's super tiny (~450 bytes), with zero dependencies. For reals.
 
+For quality-of-life improvements (e.g. middleware, cookies, body parsing, json handling, errors, and an itty version with automatic exception handling), to further shorten your routing code, be sure to check out [itty-router-extras](https://www.npmjs.com/package/itty-router-extras) - also specifically written for API development on [Cloudflare Workers](https://developers.cloudflare.com/workers/)!
+
 ## Installation
 
 ```
