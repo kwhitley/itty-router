@@ -4,41 +4,6 @@ const { Router } = require('./itty-router')
 
 const ERROR_MESSAGE = 'Error Message'
 
-const notProxy = prop => prop !== 'proxy'
-
-// similar to watch, but takes a predicate function (receives prop, value, and request)
-// to determine if fn should fire (with value and request)
-const dynamicWatch = (fn, predicate = notProxy) => request => {
-  request.proxy = new Proxy(request, {
-    set: (obj, prop, value) => {
-      obj[prop] = value
-      predicate(prop, obj) && fn(value, prop, request)
-
-      return true
-    }
-  })
-}
-
-// 1. this executes a watcher function when the prop changes on request
-// 2. curried signature to allow the product to BE middleware, if desired
-// (would export this from itty-router-extras)
-const watch = (prop, fn) => dynamicWatch(fn, key => key === prop)
-
-// predicate comes last again, to default to all things flowing through this, if not defined,
-// rather than the awkward () => true syntax for using everywhere
-const dynamicRetrieve = (fn, predicate = notProxy) => request => {
-  request.proxy = new Proxy(request, {
-    get: (obj, prop) => predicate(prop, obj)
-                        ? fn(prop, request)
-                        : obj[prop]
-  })
-}
-
-// 1. this allows for modifying reads from the request
-// 2. curried signature to allow the product to BE middleware, if desired
-// (would export this from itty-router-extras)
-const retrieve = (prop, fn) => dynamicRetrieve(key => key === prop, fn)
-
 describe('Router', () => {
   const router = Router()
   const buildRequest = ({
@@ -467,58 +432,21 @@ describe('Router', () => {
       expect(req.a).toBe(originalA)
       expect(req.b).toBe(originalB)
     })
-  })
 
-  describe('request.proxy embedding', () => {
-    it('allows for upstream request-watching', async () => {
+    it('will pass request.proxy instead of request if found', async () => {
       const router = Router()
-      const handler = jest.fn(req => req.id)
-      const logger = jest.fn(v => v)
-      const simplelogger = jest.fn(user => user.id)
-      const dynamicLogger = jest.fn(user => `${user.id}*`)
-      const everythingLogger = jest.fn((value, prop) => console.log(prop, 'changed to', value))
+      const handler = jest.fn(req => req)
+      let proxy
 
-      // without a predicate, a dynamic watcher will fire on any request update
-      const watchEverything = dynamicWatch(everythingLogger)
-
-      // longhand for watch('user', fn), using the predicate to target props
-      const withDynamicWatch = dynamicWatch(
-        dynamicLogger,
-        prop => prop === 'user',
-      )
-
-      // if you need access to the request, you could do it this way
-      const withUserTracking = request => {
-        request.foo = 'bar' // this is here to see if the watchEverything middleware fires twice
-        watch('user', user => logger({ user, url: request.url }))(request)
+      const withProxy = request => {
+        request.proxy = proxy = new Proxy(request, {})
       }
 
-      // but this is simpler when watching a single prop
-      const withSimpleUserTracking = watch('user', simplelogger)
+      router.get('/foo', withProxy, handler)
 
-      // similar syntax for retrieving [dynamic] props.  No predicate 2nd param means everything
-      // passes through this function.
-      const withParams = dynamicRetrieve((prop, request) => request?.params[prop]
-                                                            ? request.params[prop]
-                                                            : request[prop])
+      await router.handle(buildRequest({ path: '/foo' }))
 
-      // just embeds user in the request... other middleware will fire as a result!
-      const withUser = request => {
-        request.user = { id: '15' }
-      }
-
-      router
-        .all('*', watchEverything, withUserTracking, withDynamicWatch, withSimpleUserTracking, withUser, withParams)
-        .get('/:id', handler)
-
-      await router.handle(buildRequest({ path: '/13' }))
-
-      expect(handler).toHaveReturnedWith('13')
-      expect(logger).toHaveReturnedWith({ url: 'https://example.com/13', user: { id: '15' } })
-      expect(simplelogger).toHaveReturnedWith('15')
-      expect(logger).toHaveBeenCalledTimes(1)
-      expect(everythingLogger).toHaveBeenCalledTimes(2)
-      expect(dynamicLogger).toHaveReturnedWith('15*')
+      expect(handler).toHaveReturnedWith(proxy)
     })
   })
 })
