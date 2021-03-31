@@ -18,7 +18,7 @@
   <img alt="Join the discussion on Github" src="https://img.shields.io/badge/Github%20Discussions%20%26%20Support-Chat%20now!-blue" />
 </a>-->
 
-It's an itty bitty router, designed for Express.js-like routing within [Cloudflare Workers](https://developers.cloudflare.com/workers/) (or anywhere else). Like... it's super tiny (~450 bytes), with zero dependencies. For reals.
+It's an itty bitty router, designed for Express.js-like routing within [Cloudflare Workers](https://developers.cloudflare.com/workers/) (or anywhere else). Like... it's super tiny (~460 bytes), with zero dependencies. For reals.
 
 For quality-of-life improvements (e.g. middleware, cookies, body parsing, json handling, errors, and an itty version with automatic exception handling), to further shorten your routing code, be sure to check out [itty-router-extras](https://www.npmjs.com/package/itty-router-extras) - also specifically written for API development on [Cloudflare Workers](https://developers.cloudflare.com/workers/)!
 
@@ -64,7 +64,7 @@ addEventListener('fetch', event =>
 ```
 
 ## Features
-- [x] Tiny (~450 bytes) with zero dependencies.
+- [x] Tiny (~460 bytes) with zero dependencies.
 - [x] Full sync/async support.  Use it when you need it!
 - [x] Route params, with wildcards and optionals (e.g. `/api/:collection/:id?`)
 - [x] Query parsing (e.g. `?page=3&foo=bar`)
@@ -148,7 +148,7 @@ GET /todos/jane?limit=2&page=1
 ```
 
 #### A few notes about this:
-- **Error Handling:** By default, there is no error handling built in to itty.  However, the handle function is async, allowing you to add a `.catch(error)` like this: 
+- **Error Handling:** By default, there is no error handling built in to itty.  However, the handle function is async, allowing you to add a `.catch(error)` like this:
 
   ```js
   import { Router } from 'itty-router'
@@ -156,7 +156,7 @@ GET /todos/jane?limit=2&page=1
   // a generic error handler
   const errorHandler = error =>
     new Response(error.message || 'Server Error', { status: error.status || 500 })
-  
+
   // add some routes (will both safely trigger errorHandler)
   router
     .get('/accidental', request => request.that.will.throw)
@@ -175,13 +175,13 @@ GET /todos/jane?limit=2&page=1
 
   ```js
   const router = Router()
-  
+
   router.add('/long-task', (request, event) => {
     event.waitUntil(longAsyncTaskPromise)
-  
+
     return new Response('Task is still running in the background!')
   })
-  
+
   addEventListener('fetch', event =>
     event.respondWith(router.handle(event.request, event))
   )
