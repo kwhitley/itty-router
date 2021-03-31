@@ -148,22 +148,45 @@ GET /todos/jane?limit=2&page=1
 ```
 
 #### A few notes about this:
-- **Error Handling:** By default, there is no error handling built in to itty.  However, the handle function is async, allowing you to `router.handle(request).catch(err => new Response('Internal Serverless Error', { status: 500 })) to safely catch any throws inside handlers.  We encourage this!
+- **Error Handling:** By default, there is no error handling built in to itty.  However, the handle function is async, allowing you to add a `.catch(error)` like this: 
+
+  ```js
+  import { Router } from 'itty-router'
+
+  // a generic error handler
+  const errorHandler = error =>
+    new Response(error.message || 'Server Error', { status: error.status || 500 })
+  
+  // add some routes (will both safely trigger errorHandler)
+  router
+    .get('/accidental', request => request.that.will.throw)
+    .get('/intentional', () => {
+      throw new Error('Bad Request')
+    })
+
+  // attach the router "handle" to the event handler
+  addEventListener('fetch', event =>
+    event.respondWith(
+      router.handle(event.request).catch(errorHandler)
+    )
+  )
+  ```
 - **Extra Variables:** The router handle expects only the request itself, but passes along any additional params to the handlers/middleware.  For example, to access the `event` itself within a handler (e.g. for `event.waitUntil()`), you could simply do this:
+
+  ```js
+  const router = Router()
+  
+  router.add('/long-task', (request, event) => {
+    event.waitUntil(longAsyncTaskPromise)
+  
+    return new Response('Task is still running in the background!')
+  })
+  
+  addEventListener('fetch', event =>
+    event.respondWith(router.handle(event.request, event))
+  )
+  ```
 - **Proxies:** To allow for some pretty incredible middleware hijacks, we pass `request.proxy` (if it exists) or `request` (if not) to the handler.  This allows middleware to set `request.proxy = new Proxy(request.proxy || request, {})` and effectively take control of reads/writes to the request object itself.  As an example, the `withParams` middleware in `itty-router-extras` uses this to control future reads from the request.  It intercepts "get" on the Proxy, first checking the requested attribute within the `request.params` then falling back to the `request` itself.
-```js
-const router = Router()
-
-router.add('/long-task', (request, event) => {
-  event.waitUntil(longAsyncTaskPromise)
-
-  return new Response('Task is still running in the background!')
-})
-
-addEventListener('fetch', event =>
-  event.respondWith(router.handle(event.request, event))
-)
-```
 
 ## Examples
 
