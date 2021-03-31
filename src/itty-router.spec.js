@@ -469,8 +469,7 @@ describe('Router', () => {
       const withParams = retrieve((prop, request) =>
                                     request.params && request.params[prop]
                                     ? request.params[prop]
-                                    : request[prop]
-      )
+                                    : request[prop])
 
       // abbreviated example if you didn't need request
       // const withParams = retrieve(prop => prop.toUpperCase())
