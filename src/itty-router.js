@@ -2,7 +2,6 @@ const Router = (options = {}) =>
   new Proxy(options, {
     get: (obj, prop, receiver) => prop === 'handle'
       ? async (request, ...args) => {
-          request.proxy = new Proxy(request, {})
           for (let [route, handlers] of obj.routes.filter(i => i[2] === request.method || i[2] === 'ALL')) {
             let match, response, url
             if (match = (url = new URL(request.url)).pathname.match(route)) {
@@ -10,7 +9,7 @@ const Router = (options = {}) =>
               request.query = Object.fromEntries(url.searchParams.entries())
 
               for (let handler of handlers) {
-                if ((response = await handler(request.proxy, ...args)) !== undefined) return response
+                if ((response = await handler(request.proxy || request, ...args)) !== undefined) return response
               }
             }
           }

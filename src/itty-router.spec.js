@@ -443,7 +443,7 @@ describe('Router', () => {
 
       // this signature allows it to output middleware if desired
       const watch = (observing, fn) => request => {
-        request.proxy = new Proxy(request.proxy, {
+        request.proxy = new Proxy(request, {
           set: (obj, prop, value) => {
             obj[prop] = value
             prop === observing && fn(value, request)
@@ -454,7 +454,7 @@ describe('Router', () => {
       }
 
       const retrieve = fn => request => {
-        request.proxy = new Proxy(request.proxy, {
+        request.proxy = new Proxy(request, {
           get: (obj, prop) => fn(prop, request)
         })
       }
