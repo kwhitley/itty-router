@@ -98,13 +98,31 @@ router.get('/todos/:user/:item?', (req) => {
 ```
 
 ### 3. Handle Incoming Request(s)
-##### `router.handle(request: Request)`
+##### `router.handle(request.proxy: Proxy || request: Request, ...anything else)`
 Requests (doesn't have to be a real Request class) should have both a **method** and full **url**.
 The `handle` method will then return the first matching route handler that returns something (or nothing at all if no match).
 
+#### A couple notes about this:
+- **Proxies:** To allow for some pretty incredible middleware hijacks, we pass `request.proxy` (if it exists) or `request` (if not) to the handler.  This allows middleware to set `request.proxy = new Proxy(request.proxy || request, {})` and effectively take control of reads/writes to the request object itself.  As an example, the `withParams` middleware in `itty-router-extras` uses this to control future reads from the request.  It intercepts "get" on the Proxy, first checking the requested attribute within the `request.params` then falling back to the `request` itself.
+- **Error Handling:** By default, there is no error handling built in to itty.  However, the handle function is async, allowing you to `router.handle(request).catch(err => new Response('Internal Serverless Error', { status: 500 })) to safely catch any throws inside handlers.
+- **Extra Variables:** The router handle expects only the request itself, but passes along any additional params to the handlers/middleware.  For example, to access the `event` itself within a handler (e.g. for `event.waitUntil()`), you could simply do this:
+```js
+const router = Router()
+
+router.add('/long-task', (request, event) => {
+  event.waitUntil(longAsyncTaskPromise)
+
+  return new Response('Task is still running in the background!')
+})
+
+addEventListener('fetch', event =>
+  event.respondWith(router.handle(event.request, event))
+)
+```
+
 ```js
 router.handle({
-  method: 'GET',                              // optional, default = 'GET'
+  method: 'GET',                              // required
   url: 'https://example.com/todos/jane/13',   // required
 })
 
@@ -258,7 +276,7 @@ const Router = (o = {}) =>
               r.query = Object.fromEntries(u.searchParams.entries())
 
               for (let h of hs) {
-                if ((s = await h(r, ...a)) !== undefined) return s
+                if ((s = await h(r.proxy || r, ...a)) !== undefined) return s
               }
             }
           }
