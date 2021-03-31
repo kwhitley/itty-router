@@ -32,8 +32,12 @@ npm install itty-router
 ```js
 import { Router } from 'itty-router'
 
-// create a router
-const router = Router() // this is a Proxy, not a class
+// let's define a generic error handler to catch any breaks
+const genericErrorHandler = error =>
+  new Response(error.message || 'Mysterious Error', { status: 500 })
+
+// now let's create a router (note the lack of "new")
+const router = Router()
 
 // GET collection index
 router.get('/todos', () => new Response('Todos Index!'))
@@ -53,7 +57,9 @@ router.all('*', () => new Response('Not Found.', { status: 404 }))
 
 // attach the router "handle" to the event handler
 addEventListener('fetch', event =>
-  event.respondWith(router.handle(event.request))
+  event.respondWith(
+    router.handle(event.request).catch(genericErrorHandler)
+  )
 )
 ```
 
@@ -67,7 +73,7 @@ addEventListener('fetch', event =>
 - [x] [Base path](#nested-routers-with-404-handling) for prefixing all routes.
 - [x] [Multi-method support](#nested-routers-with-404-handling) using the `.all()` channel.
 - [x] Supports **any** method type (e.g. `.get() --> 'GET'` or `.puppy() --> 'PUPPY'`).
-- [x] Extendable. Use itty as the internal base for more feature-rich/elaborate routers.
+- [x] [Extendable](#extending-itty-router). Use itty as the internal base for more feature-rich/elaborate routers.
 - [x] Chainable route declarations (why not?)
 - [ ] Readable internal code (yeah right...)
 
@@ -98,13 +104,13 @@ router.get('/todos/:user/:item?', (req) => {
 ```
 
 ### 3. Handle Incoming Request(s)
-##### `router.handle(request: Request)`
+##### `async router.handle(request.proxy: Proxy || request: Request, ...anything else)`
 Requests (doesn't have to be a real Request class) should have both a **method** and full **url**.
 The `handle` method will then return the first matching route handler that returns something (or nothing at all if no match).
 
 ```js
 router.handle({
-  method: 'GET',                              // optional, default = 'GET'
+  method: 'GET',                              // required
   url: 'https://example.com/todos/jane/13',   // required
 })
 
@@ -140,6 +146,47 @@ GET /todos/jane?limit=2&page=1
 }
 */
 ```
+
+#### A few notes about this:
+- **Error Handling:** By default, there is no error handling built in to itty.  However, the handle function is async, allowing you to add a `.catch(error)` like this: 
+
+  ```js
+  import { Router } from 'itty-router'
+
+  // a generic error handler
+  const errorHandler = error =>
+    new Response(error.message || 'Server Error', { status: error.status || 500 })
+  
+  // add some routes (will both safely trigger errorHandler)
+  router
+    .get('/accidental', request => request.that.will.throw)
+    .get('/intentional', () => {
+      throw new Error('Bad Request')
+    })
+
+  // attach the router "handle" to the event handler
+  addEventListener('fetch', event =>
+    event.respondWith(
+      router.handle(event.request).catch(errorHandler)
+    )
+  )
+  ```
+- **Extra Variables:** The router handle expects only the request itself, but passes along any additional params to the handlers/middleware.  For example, to access the `event` itself within a handler (e.g. for `event.waitUntil()`), you could simply do this:
+
+  ```js
+  const router = Router()
+  
+  router.add('/long-task', (request, event) => {
+    event.waitUntil(longAsyncTaskPromise)
+  
+    return new Response('Task is still running in the background!')
+  })
+  
+  addEventListener('fetch', event =>
+    event.respondWith(router.handle(event.request, event))
+  )
+  ```
+- **Proxies:** To allow for some pretty incredible middleware hijacks, we pass `request.proxy` (if it exists) or `request` (if not) to the handler.  This allows middleware to set `request.proxy = new Proxy(request.proxy || request, {})` and effectively take control of reads/writes to the request object itself.  As an example, the `withParams` middleware in `itty-router-extras` uses this to control future reads from the request.  It intercepts "get" on the Proxy, first checking the requested attribute within the `request.params` then falling back to the `request` itself.
 
 ## Examples
 
@@ -230,9 +277,36 @@ router.get('/todos/:id.:format?', request => {
 
   return new Response(`Getting todo #${id} in ${format} format.`)
 })
+```
 
-// GET /todos/13 --> Getting todo #13 in csv format.
-// GET /todos/14.json --> Getting todo #14 in json format.
+### Extending itty router
+Extending itty is as easy as wrapping Router in another Proxy layer to control the handle (or the route registering).  For example, here's the code to
+ThrowableRouter in itty-router-extras... a version of itty with built-in error-catching for convenience.
+```js
+import { Router } from 'itty-router'
+
+// a generic error handler
+const errorHandler = error =>
+  new Response(error.message || 'Server Error', { status: error.status || 500 })
+
+// and the new-and-improved itty
+const ThrowableRouter = (options = {}) =>
+  new Proxy(Router(options), {
+    get: (obj, prop) => (...args) =>
+        prop === 'handle'
+        ? obj[prop](...args).catch(errorHandler)
+        : obj[prop](...args)
+  })
+
+// 100% drop-in replacement for Router
+const router = ThrowableRouter()
+
+// add some routes
+router
+  .get('/accidental', request => request.that.will.throw) // will safely trigger error (above)
+  .get('/intentional', () => {
+    throw new Error('Bad Request') // will also trigger error handler
+  })
 ```
 
 ## Testing and Contributing
@@ -258,7 +332,7 @@ const Router = (o = {}) =>
               r.query = Object.fromEntries(u.searchParams.entries())
 
               for (let h of hs) {
-                if ((s = await h(r, ...a)) !== undefined) return s
+                if ((s = await h(r.proxy || r, ...a)) !== undefined) return s
               }
             }
           }

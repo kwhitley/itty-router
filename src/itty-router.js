@@ -9,7 +9,7 @@ const Router = (options = {}) =>
               request.query = Object.fromEntries(url.searchParams.entries())
 
               for (let handler of handlers) {
-                if ((response = await handler(request, ...args)) !== undefined) return response
+                if ((response = await handler(request.proxy || request, ...args)) !== undefined) return response
               }
             }
           }

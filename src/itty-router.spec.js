@@ -432,5 +432,21 @@ describe('Router', () => {
       expect(req.a).toBe(originalA)
       expect(req.b).toBe(originalB)
     })
+
+    it('will pass request.proxy instead of request if found', async () => {
+      const router = Router()
+      const handler = jest.fn(req => req)
+      let proxy
+
+      const withProxy = request => {
+        request.proxy = proxy = new Proxy(request, {})
+      }
+
+      router.get('/foo', withProxy, handler)
+
+      await router.handle(buildRequest({ path: '/foo' }))
+
+      expect(handler).toHaveReturnedWith(proxy)
+    })
   })
 })
