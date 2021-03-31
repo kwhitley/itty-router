@@ -440,39 +440,65 @@ describe('Router', () => {
       const handler = jest.fn(req => req.id)
       const logger = jest.fn(v => v)
       const simplelogger = jest.fn(user => user.id)
+      const dynamicLogger = jest.fn(user => user.id+'*')
 
-      // this signature allows it to output middleware if desired
-      const watch = (observing, fn) => request => {
+      // 1. this executes a watcher function when the prop changes on request
+      // 2. curried signature to allow the product to BE middleware, if desired
+      // (would export this from itty-router-extras)
+      const watch = (prop, fn) => request => {
         request.proxy = new Proxy(request, {
-          set: (obj, prop, value) => {
-            obj[prop] = value
-            prop === observing && fn(value, request)
+          set: (obj, key, value) => {
+            obj[key] = value
+            key === prop && fn(value, request)
 
             return true
           }
         })
       }
 
+      // similar to watch, but takes a predicate function (receives prop, value, and request)
+      // to determine if fn should fire (with value and request)
+      const dynamicWatch = (predicate, fn) => request => {
+        request.proxy = new Proxy(request, {
+          set: (obj, key, value) => {
+            obj[key] = value
+            predicate(key, obj) && fn(value, request)
+
+            return true
+          }
+        })
+      }
+
+      // 1. this allows for modifying reads from the request
+      // 2. curried signature to allow the product to BE middleware, if desired
+      // (would export this from itty-router-extras)
       const retrieve = fn => request => {
         request.proxy = new Proxy(request, {
           get: (obj, prop) => fn(prop, request)
         })
       }
 
-      // if you need access to the request, you'd do it this way
-      const withUserTracking = watch('user', (user, request) => logger({ user, url: request.url }))
+      // if you need access to the request, you could do it this way
+      const withDynamicWatch = dynamicWatch(
+        (prop) => prop === 'user',
+        dynamicLogger,
+      )
 
-      // if not, watch would output the middleware (that accepts request)
-      const withSimpleUserTracking = watch('user', user => simplelogger(user))
+      // if you need access to the request, you could do it this way
+      const withUserTracking = request => {
+        // notice, because we can access request as the second param to the watcher function,
+        // we didn't need to use this longhand format
+        watch('user', (user, request) => logger({ user, url: request.url }))(request)
+      }
 
-      // proxy crap for fetching... prop not worth abstracting
+      // simplified version, using the middleware output of watch
+      const withSimpleUserTracking = watch('user', simplelogger)
+
+      // similar syntax for retrieving [dynamic] props
       const withParams = retrieve((prop, request) =>
                                     request.params && request.params[prop]
                                     ? request.params[prop]
                                     : request[prop])
-
-      // abbreviated example if you didn't need request
-      // const withParams = retrieve(prop => prop.toUpperCase())
 
       // embeds user
       const withUser = request => {
@@ -480,7 +506,7 @@ describe('Router', () => {
       }
 
       router
-        .all('*', withUserTracking, withSimpleUserTracking, withUser, withParams)
+        .all('*', withUserTracking, withDynamicWatch, withSimpleUserTracking, withUser, withParams)
         .get('/:id', handler)
 
       await router.handle(buildRequest({ path: '/13' }))
