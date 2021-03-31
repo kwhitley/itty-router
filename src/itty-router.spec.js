@@ -490,50 +490,5 @@ describe('Router', () => {
       expect(simplelogger).toHaveReturnedWith('15')
       expect(logger).toHaveBeenCalledTimes(1)
     })
-
-    // it('ProxiedRouter allows getting params directly from request if available in request.params', async () => {
-    //   const ProxiedRouter = (options = {}) => {
-    //     const proxiedRequest = request =>
-    //       new Proxy(request, {
-    //         get: (obj, prop) => obj.params && obj.params[prop]
-    //                             ? obj.params[prop]
-    //                             : obj[prop]
-    //       })
-
-    //     return new Proxy(Router(options), {
-    //       get: (obj, prop) => (...args) =>
-    //           prop === 'handle'
-    //           ? obj[prop](proxiedRequest(args[0]), ...args.slice(1))
-    //           : obj[prop](...args)
-    //     })
-    //   }
-
-
-    //   const errorHandler = jest.fn(err => err.message)
-
-    //   const ThrowableRouter = (options = {}) =>
-    //     new Proxy(Router(options), {
-    //       get: (obj, prop) => (...args) =>
-    //           prop === 'handle'
-    //           ? obj[prop](...args).catch(errorHandler)
-    //           : obj[prop](...args)
-    //     })
-
-    //   // test case
-    //   const router = ProxiedRouter()
-    //   const handler = jest.fn(req => req.id)
-
-    //   router
-    //     .get('/:id', handler)
-    //     .get('/throw', () => {
-    //       throw new Error('Failure')
-    //     })
-
-    //   await router.handle(buildRequest({ path: '/13' }))
-    //   expect(handler).toHaveReturnedWith('13')
-
-    //   await router.handle(buildRequest({ path: '/throw' }))
-    //   expect(errorHandler).toHaveReturnedWith('Failure')
-    // })
   })
 })

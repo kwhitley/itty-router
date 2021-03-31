@@ -2,10 +2,10 @@ const Router = (options = {}) =>
   new Proxy(options, {
     get: (obj, prop, receiver) => prop === 'handle'
       ? async (request, ...args) => {
+          request.proxy = new Proxy(request, {})
           for (let [route, handlers] of obj.routes.filter(i => i[2] === request.method || i[2] === 'ALL')) {
             let match, response, url
             if (match = (url = new URL(request.url)).pathname.match(route)) {
-              request.proxy = request.proxy || new Proxy(request, {})
               request.params = match.groups
               request.query = Object.fromEntries(url.searchParams.entries())
 
