@@ -5,11 +5,12 @@ const Router = (options = {}) =>
           for (let [route, handlers] of obj.routes.filter(i => i[2] === request.method || i[2] === 'ALL')) {
             let match, response, url
             if (match = (url = new URL(request.url)).pathname.match(route)) {
+              request.proxy = request.proxy || new Proxy(request, {})
               request.params = match.groups
               request.query = Object.fromEntries(url.searchParams.entries())
 
               for (let handler of handlers) {
-                if ((response = await handler(request, ...args)) !== undefined) return response
+                if ((response = await handler(request.proxy, ...args)) !== undefined) return response
               }
             }
           }
