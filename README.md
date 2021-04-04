@@ -32,10 +32,6 @@ npm install itty-router
 ```js
 import { Router } from 'itty-router'
 
-// let's define a generic error handler to catch any breaks
-const genericErrorHandler = error =>
-  new Response(error.message || 'Mysterious Error', { status: 500 })
-
 // now let's create a router (note the lack of "new")
 const router = Router()
 
@@ -57,9 +53,7 @@ router.all('*', () => new Response('Not Found.', { status: 404 }))
 
 // attach the router "handle" to the event handler
 addEventListener('fetch', event =>
-  event.respondWith(
-    router.handle(event.request).catch(genericErrorHandler)
-  )
+  event.respondWith(router.handle(event.request))
 )
 ```
 
