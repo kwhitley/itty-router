@@ -273,6 +273,21 @@ router.get('/todos/:id.:format?', request => {
 })
 ```
 
+### Cloudflare ES6 Module Syntax (required for Durable Objects)
+```js
+const router = Router()
+
+router.get('/', (request, env) => {
+  // now have access to the env (where CF bindings like durables, KV, etc now are)
+})
+
+export default {
+  fetch(request, env) {
+    return router.handle(request, env) // just pass env on to the handlers to access
+  }
+}
+```
+
 ### Extending itty router
 Extending itty is as easy as wrapping Router in another Proxy layer to control the handle (or the route registering).  For example, here's the code to
 ThrowableRouter in itty-router-extras... a version of itty with built-in error-catching for convenience.
