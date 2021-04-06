@@ -273,7 +273,7 @@ router.get('/todos/:id.:format?', request => {
 })
 ```
 
-### Cloudflare ES6 Module Syntax (required for Durable Objects)
+### Cloudflare ES6 Module Syntax (required for Durable Objects) <a id="cf-es6-module-syntax"></a>
 ```js
 const router = Router()
 
