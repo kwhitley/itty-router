@@ -6,7 +6,7 @@ const Router = (options = {}) =>
             let match, response, url
             if (match = (url = new URL(request.url)).pathname.match(route)) {
               request.params = match.groups
-              request.query = Object.fromEntries(url.searchParams.entries())
+              request.query = request.query || Object.fromEntries(url.searchParams.entries())
 
               for (let handler of handlers) {
                 if ((response = await handler(request.proxy || request, ...args)) !== undefined) return response

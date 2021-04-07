@@ -282,9 +282,7 @@ router.get('/', (request, env) => {
 })
 
 export default {
-  fetch(request, env) {
-    return router.handle(request, env) // just pass env on to the handlers to access
-  }
+  fetch: router.handle // yep, it's this easy.
 }
 ```
 
