@@ -326,7 +326,7 @@ router
 1. Submit PR with a detailed description of what you're doing
 1. I'll add you to the credits! :)
 
-### The Entire Code (for more legibility, [see src on GitHub](https://github.com/kwhitley/itty-router/blob/v1.x/src/itty-router.js))
+### The Entire Code (for more legibility, [see src on GitHub](https://github.com/kwhitley/itty-router/blob/v2.x/src/itty-router.js))
 ```js
 const Router = (o = {}) =>
   new Proxy(o, {
