@@ -58,7 +58,7 @@ addEventListener('fetch', event =>
 ```
 
 ## Features
-- [x] Tiny (~460 bytes) with zero dependencies.
+- [x] Tiny (~475 bytes) with zero dependencies.
 - [x] Full sync/async support.  Use it when you need it!
 - [x] Route params, with wildcards and optionals (e.g. `/api/:collection/:id?`)
 - [x] Query parsing (e.g. `?page=3&foo=bar`)
@@ -336,7 +336,7 @@ const Router = (o = {}) =>
             let m, s, u
             if (m = (u = new URL(r.url)).pathname.match(p)) {
               r.params = m.groups
-              r.query = Object.fromEntries(u.searchParams.entries())
+              r.query = r.query || Object.fromEntries(u.searchParams.entries())
 
               for (let h of hs) {
                 if ((s = await h(r.proxy || r, ...a)) !== undefined) return s
@@ -350,6 +350,7 @@ const Router = (o = {}) =>
               .replace(/(\/?)\*/g, '($1.*)?')
               .replace(/\/$/, '')
               .replace(/:(\w+)(\?)?(\.)?/g, '$2(?<$1>[^/$3]+)$2$3')
+              .replace(/\.\(/g, '\\.(')
             }\/*$`,
             hs,
             k.toUpperCase(),

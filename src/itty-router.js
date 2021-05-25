@@ -20,6 +20,7 @@ const Router = (options = {}) =>
               .replace(/(\/?)\*/g, '($1.*)?')
               .replace(/\/$/, '')
               .replace(/:(\w+)(\?)?(\.)?/g, '$2(?<$1>[^/$3]+)$2$3')
+              .replace(/\.\(/g, '\\.(')
             }\/*$`,
             handlers,
             prop.toUpperCase(),

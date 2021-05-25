@@ -126,6 +126,23 @@ describe('Router', () => {
       expect(handler).toHaveBeenCalledTimes(2)
     })
 
+    it('"/:id.:format" will only match with .format', async () => {
+      const config = {}
+      const r = Router(config)
+      const handlerWithFormat = jest.fn(req => req.params)
+      const handlerWithoutFormat = jest.fn(req => req.params)
+
+      r
+        .get('/:id.:format', handlerWithFormat) // image14.jpg
+        .get('/:id', handlerWithoutFormat) // image.jpg.foo.bar
+
+      await r.handle(buildRequest({ path: '/foobarbaz' }))
+      expect(handlerWithoutFormat).toHaveReturnedWith({ id: 'foobarbaz' })
+
+      await r.handle(buildRequest({ path: '/foobarbaz.jpg' }))
+      expect(handlerWithFormat).toHaveReturnedWith({ id: 'foobarbaz', format: 'jpg' })
+    })
+
     it('path of "/:id.:format?" works', async () => {
       const r = Router()
       const handler = jest.fn(req => req.params)
@@ -135,8 +152,8 @@ describe('Router', () => {
       await r.handle(buildRequest({ path: '/13' }))
       expect(handler).toHaveReturnedWith({ id: '13', format: undefined })
 
-      await r.handle(buildRequest({ path: '/13.jpg' }))
-      expect(handler).toHaveReturnedWith({ id: '13', format: 'jpg' })
+      await r.handle(buildRequest({ path: '/1345.jpg' }))
+      expect(handler).toHaveReturnedWith({ id: '1345', format: 'jpg' })
     })
 
     it('can accept dot notations (e.g. domains) as a route param', async () => {
@@ -368,6 +385,48 @@ describe('Router', () => {
       expect(errorHandler).toHaveReturnedWith(ERROR_MESSAGE)
     })
 
+    it('can throw method not allowed error', async () => {
+      const router = Router()
+      const errorText = 'Not Allowed'
+      const okText = 'OK'
+      const errorResponse = new Response(JSON.stringify({ foo: 'bar' }), {
+        headers: { 'content-type': 'application/json;charset=UTF-8' },
+        status: 405,
+        statusText: 'Method not allowed',
+      })
+      const handler = jest.fn(() => new Response(okText))
+      const middleware = jest.fn()
+      const errorHandler = jest.fn(() => errorResponse)
+
+      router
+        .post('*', middleware, handler)
+        .all('*', errorHandler)
+
+      // creates a request (with passed method) with JSON body
+      const createRequest = method => new Request('https://foo.com/foo', {
+        method,
+        headers: {
+          'content-type': 'application/json'
+        },
+        body: JSON.stringify({ foo: 'bar' })
+      })
+
+      // test POST with JSON body (catch by post handler)
+      let response = await router.handle(createRequest('post'))
+
+      expect(handler).toHaveBeenCalled()
+      expect(middleware).toHaveBeenCalled()
+      expect(errorHandler).not.toHaveBeenCalled()
+      expect(await response.text()).toBe(okText)
+
+      // test PUT with json body (will flow to all/errorHandler)
+      response = await router.handle(createRequest('put'))
+
+      expect(handler).toHaveBeenCalledTimes(1)
+      expect(errorHandler).toHaveBeenCalled()
+      expect(await response.json()).toEqual({ foo: 'bar' })
+    })
+
     it('can easily create a ThrowableRouter', async () => {
       const error = (status, message) => new Response(message, { status })
       const errorResponse = err => error(err.status || 500, err.message)
@@ -447,6 +506,31 @@ describe('Router', () => {
       await router.handle(buildRequest({ path: '/foo' }))
 
       expect(handler).toHaveReturnedWith(proxy)
+    })
+
+    it('can handle POST body even if not used', async () => {
+      const router = Router()
+      const handler = jest.fn(req => req.json())
+      const errorHandler = jest.fn()
+
+      router
+        .post('/foo', handler)
+        .all('*', errorHandler)
+
+      const createRequest = method => new Request('https://foo.com/foo', {
+        method,
+        headers: {
+          'content-type': 'application/json'
+        },
+        body: JSON.stringify({ foo: 'bar' })
+      })
+
+      await router.handle(createRequest('put'))
+      expect(errorHandler).toHaveBeenCalled()
+
+      const response = await router.handle(createRequest('post'))
+      expect(handler).toHaveBeenCalled()
+      expect(await response).toEqual({ foo: 'bar' })
     })
   })
 })
