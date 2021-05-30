@@ -384,10 +384,11 @@ This trick allows methods (e.g. "get", "post") to by defined dynamically by the 
 These folks are the real heroes, making open source the powerhouse that it is!  Help out and get your name added to this list! <3
 
 #### Core, Concepts, and Codebase
-- [@technoyes](https://github.com/technoyes) - three kind-of-a-big-deal errors fixed.  Imagine the look on my face... thanks man!! :)
 - [@hunterloftis](https://github.com/hunterloftis) - router.handle() method now accepts extra arguments and passed them to route functions
-- [@roojay520](https://github.com/roojay520) - TS interface fixes
 - [@mvasigh](https://github.com/mvasigh) - proxy hacks courtesy of this chap
-#### Documentation Fixes
-- [@arunsathiya](https://github.com/arunsathiya)
-- [@poacher2k](https://github.com/poacher2k)
+#### Fixes
+- [@taralx](https://github.com/taralx) - QOL fixes for contributing (dev dep fix and test file consistency) <3
+- [@technoyes](https://github.com/technoyes) - three kind-of-a-big-deal errors fixed.  Imagine the look on my face... thanks man!! :)
+- [@roojay520](https://github.com/roojay520) - TS interface fixes
+- [@arunsathiya](https://github.com/arunsathiya) - documentation
+- [@poacher2k](https://github.com/poacher2k) - documentation
