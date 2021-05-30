@@ -69,9 +69,9 @@ describe('Router', () => {
 
   describe('.handle({ method = \'GET\', url })', () => {
 
-    it('returns { path, query } from match', () => {
+    it('returns { path, query } from match', async () => {
       const route = routes.find(r => r.path === '/foo/:id')
-      router.handle(buildRequest({ path: '/foo/13?foo=bar&cat=dog' }))
+      await router.handle(buildRequest({ path: '/foo/13?foo=bar&cat=dog' }))
 
       expect(route.callback).toHaveReturnedWith({
         params: { id: '13' },
@@ -79,10 +79,10 @@ describe('Router', () => {
       })
     })
 
-    it('requires exact route match', () => {
+    it('requires exact route match', async () => {
       const route = routes.find(r => r.path === '/')
 
-      router.handle(buildRequest({ path: '/foo' }))
+      await router.handle(buildRequest({ path: '/foo' }))
 
       expect(route.callback).not.toHaveBeenCalled()
     })
@@ -166,33 +166,33 @@ describe('Router', () => {
       expect(handler).toHaveReturnedWith('domain.dev')
     })
 
-    it('match earliest routes that match', () => {
+    it('match earliest routes that match', async () => {
       const route = routes.find(r => r.path === '/foo/first')
-      router.handle(buildRequest({ path: '/foo/first' }))
+      await router.handle(buildRequest({ path: '/foo/first' }))
 
       expect(route.callback).toHaveBeenCalled()
     })
 
-    it('honors correct method (e.g. GET, POST, etc)', () => {
+    it('honors correct method (e.g. GET, POST, etc)', async () => {
       const route = routes.find(r => r.path === '/foo' && r.method === 'post')
-      router.handle(buildRequest({ method: 'POST', path: '/foo' }))
+      await router.handle(buildRequest({ method: 'POST', path: '/foo' }))
 
       expect(route.callback).toHaveBeenCalled()
     })
 
-    it('handles optional params (e.g. /foo/:id?)', () => {
+    it('handles optional params (e.g. /foo/:id?)', async () => {
       const route = routes.find(r => r.path === '/optional/:id?')
 
-      router.handle(buildRequest({ path: '/optional' }))
+      await router.handle(buildRequest({ path: '/optional' }))
       expect(route.callback).toHaveBeenCalled()
 
-      router.handle(buildRequest({ path: '/optional/13' }))
+      await router.handle(buildRequest({ path: '/optional/13' }))
       expect(route.callback).toHaveBeenCalledTimes(2)
     })
 
-    it('passes the entire original request through to the handler', () => {
+    it('passes the entire original request through to the handler', async () => {
       const route = routes.find(r => r.path === '/passthrough')
-      router.handle(buildRequest({ path: '/passthrough', name: 'miffles' }))
+      await router.handle(buildRequest({ path: '/passthrough', name: 'miffles' }))
 
       expect(route.callback).toHaveReturnedWith({
         path: '/passthrough',
@@ -200,19 +200,19 @@ describe('Router', () => {
       })
     })
 
-    it('accepts * as a wildcard route (e.g. for use in 404)', () => {
+    it('accepts * as a wildcard route (e.g. for use in 404)', async () => {
       const route = routes.find(r => r.path === '*')
-      router.handle(buildRequest({ path: '/missing' }))
+      await router.handle(buildRequest({ path: '/missing' }))
 
       expect(route.callback).toHaveBeenCalled()
 
       const route2 = routes.find(r => r.path === '/wildcards/*')
-      router.handle(buildRequest({ path: '/wildcards/missing' }))
+      await router.handle(buildRequest({ path: '/wildcards/missing' }))
 
       expect(route2.callback).toHaveBeenCalled()
     })
 
-    it('allows missing handler later in flow with "all" channel', () => {
+    it('allows missing handler later in flow with "all" channel', async () => {
       const missingHandler = jest.fn()
       const matchHandler = jest.fn()
 
@@ -224,16 +224,16 @@ describe('Router', () => {
         .all('/nested/*', router2.handle)
         .all('*', missingHandler)
 
-      router1.handle(buildRequest({ path: '/foo' }))
+      await router1.handle(buildRequest({ path: '/foo' }))
       expect(missingHandler).toHaveBeenCalled()
 
-      router1.handle(buildRequest({ path: '/nested/foo' }))
+      await router1.handle(buildRequest({ path: '/nested/foo' }))
       expect(matchHandler).toHaveBeenCalled()
     })
 
-    it('defaults to GET assumption when handling new requests without { method: \'METHOD\' }', () => {
+    it('defaults to GET assumption when handling new requests without { method: \'METHOD\' }', async () => {
       const route = routes.find(r => r.path === '/foo')
-      router.handle({ url: 'https://example.com/foo' }) // no method listed
+      await router.handle({ url: 'https://example.com/foo' }) // no method listed
 
       expect(route.callback).toHaveBeenCalled()
     })
@@ -265,7 +265,7 @@ describe('Router', () => {
       const handler = jest.fn()
       router.get('/foo/:id?', handler)
 
-      router.handle(buildRequest({ path: '/api/foo' }))
+      await router.handle(buildRequest({ path: '/api/foo' }))
       expect(handler).toHaveBeenCalled()
 
       await router.handle(buildRequest({ path: '/api/foo/13' }))
