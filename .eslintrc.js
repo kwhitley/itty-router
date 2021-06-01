@@ -149,7 +149,7 @@ module.exports = {
         'no-native-reassign': 'error',
         'no-negated-condition': 'off',
         'no-negated-in-lhs': 'error',
-        'no-nested-ternary': 'error',
+        'no-nested-ternary': 'off',
         'no-new': 'error',
         'no-new-func': 'error',
         'no-new-object': 'error',

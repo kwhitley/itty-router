@@ -40,15 +40,18 @@ const testRoute = async ({
   }
 }
 
-const runTests = (tests = [], Router) => {
+const runTests = (tests, Router) => {
   for (let test of tests) {
     let { route, path, returns = true, description } = test
     const matchNote = returns
-                  ? (
-                      typeof returns === 'object'
-                      ? `returns params ${JSON.stringify(returns).replace('{', '{ ').replace('}', ' }').replace(/"(\w+)":/g, '$1: ').replace(',', ', ')} from`
-                      : 'matches'
-                    )
+                  ? typeof returns === 'object'
+                    ? `returns params ${JSON
+                                          .stringify(returns)
+                                          .replace('{', '{ ')
+                                          .replace('}', ' }')
+                                          .replace(/"(\w+)":/g, '$1: ')
+                                          .replace(',', ', ')} from`
+                    : 'matches'
                   : 'does NOT match'
     description = description || `route "${route}" ${matchNote} path "${path}"`
 

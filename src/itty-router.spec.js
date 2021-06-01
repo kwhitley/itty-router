@@ -383,7 +383,7 @@ describe('Router', () => {
 
   describe('ROUTE MATCHING', () => {
     describe('allowed characters', () => {
-      const chars = `/foo/-.abc!@%&_=:;',~|/bar`
+      const chars = '/foo/-.abc!@%&_=:;\',~|/bar'
       testRoutes([
         { route: chars, path: chars },
       ])
