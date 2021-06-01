@@ -1,13 +1,13 @@
-const Router = (options = {}) =>
+const Router = (options = {}, routes = []) =>
   new Proxy(options, {
     get: (obj, prop, receiver) => prop === 'handle'
       ? async (request, ...args) => {
-          for (let [route, handlers] of obj.routes.filter(i => i[2] === request.method || i[2] === 'ALL')) {
-            let match, response, url
-            if (match = (url = new URL(request.url)).pathname.match(route)) {
+          let response, match,
+            url = new URL(request.url)
+          request.query = Object.fromEntries(url.searchParams)
+          for (let [route, handlers, method] of routes) {
+            if ((method === request.method || method === 'ALL') && (match = url.pathname.match(route))) {
               request.params = match.groups
-              request.query = request.query || Object.fromEntries(url.searchParams.entries())
-
               for (let handler of handlers) {
                 if ((response = await handler(request.proxy || request, ...args)) !== undefined) return response
               }
@@ -15,7 +15,7 @@ const Router = (options = {}) =>
           }
         }
       : (route, ...handlers) =>
-          (obj.routes = obj.routes || []).push([
+          routes.push([
             `^${((obj.base || '') + route)
               .replace(/(\/?)\*/g, '($1.*)?')
               .replace(/\/$/, '')
