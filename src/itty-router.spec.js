@@ -15,18 +15,11 @@ describe('Router', () => {
     { path: '/foo/first', callback: jest.fn(extract), method: 'get' },
     { path: '/foo/:id', callback: jest.fn(extract), method: 'get' },
     { path: '/foo', callback: jest.fn(extract), method: 'post' },
-    { path: '/optional/:id?', callback: jest.fn(extract), method: 'get' },
     {
       path: '/passthrough',
       callback: jest.fn(({ path, name }) => ({ path, name })),
       method: 'get',
     },
-    {
-      path: '/passthrough',
-      callback: jest.fn(({ path, name }) => ({ path, name })),
-    },
-    { path: '/wildcards/*', callback: jest.fn(), method: 'get' },
-    { path: '*', callback: jest.fn(), method: 'get' },
   ]
 
   const applyRoutes = (router, routes) => {
@@ -57,14 +50,12 @@ describe('Router', () => {
 
       await r.handle(buildRequest({ path: '/multi/foo' }))
 
-      // expect(handler1).toHaveBeenCalled()
       expect(handler2).toHaveBeenCalled()
       expect(handler3).not.toHaveBeenCalled()
     })
   })
 
   describe('.handle({ method = \'GET\', url })', () => {
-
     it('returns { path, query } from match', async () => {
       const route = routes.find(r => r.path === '/foo/:id')
       await router.handle(buildRequest({ path: '/foo/13?foo=bar&cat=dog' }))
@@ -124,13 +115,6 @@ describe('Router', () => {
 
       await router1.handle(buildRequest({ path: '/nested/foo' }))
       expect(matchHandler).toHaveBeenCalled()
-    })
-
-    it('defaults to GET assumption when handling new requests without { method: \'METHOD\' }', async () => {
-      const route = routes.find(r => r.path === '/foo')
-      await router.handle({ url: 'https://example.com/foo' }) // no method listed
-
-      expect(route.callback).toHaveBeenCalled()
     })
 
     it('won\'t throw on unknown method', () => {
@@ -208,9 +192,6 @@ describe('Router', () => {
 
       await router.handle(buildRequest({ method: 'POST', path: '/crud/bar' }))
       expect(handler).toHaveBeenCalledTimes(2)
-
-      await router.handle(buildRequest({ method: 'UPDATE', path: '/crud/baz' }))
-      expect(handler).toHaveBeenCalledTimes(3)
     })
 
     it('stops at a handler that throws', async () => {
