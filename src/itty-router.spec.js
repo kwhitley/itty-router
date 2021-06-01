@@ -1,7 +1,7 @@
 require('isomorphic-fetch')
 
 const { Router } = require('./itty-router')
-const { buildRequest, extract, createTestRunner } = require('./test-utils')
+const { buildRequest, extract, createTestRunner } = require('../test-utils')
 
 const ERROR_MESSAGE = 'Error Message'
 

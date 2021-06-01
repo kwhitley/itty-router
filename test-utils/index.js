@@ -1,3 +1,5 @@
+/* istanbul ignore file */
+
 const buildRequest = ({
   method = 'GET',
   path,
