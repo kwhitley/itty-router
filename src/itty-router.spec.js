@@ -1,18 +1,14 @@
 require('isomorphic-fetch')
 
 const { Router } = require('./itty-router')
+const { buildRequest, extract, createTestRunner } = require('./test-utils')
 
 const ERROR_MESSAGE = 'Error Message'
 
+const testRoutes = createTestRunner(Router)
+
 describe('Router', () => {
   const router = Router()
-  const buildRequest = ({
-    method = 'GET',
-    path,
-    url = `https://example.com${path}`,
-    ...other
-  }) => ({ method, path, url, ...other })
-  const extract = ({ params, query }) => ({ params, query })
 
   const routes = [
     { path: '/', callback: jest.fn(extract), method: 'get' },
@@ -87,85 +83,6 @@ describe('Router', () => {
       expect(route.callback).not.toHaveBeenCalled()
     })
 
-    it('path of "" works with works with route ending in slash or not', async () => {
-      const r = Router()
-      const handler = jest.fn()
-
-      r.get('', handler)
-
-      await r.handle(buildRequest({ path: '/' }))
-      expect(handler).toHaveBeenCalled()
-
-      await r.handle(buildRequest({ path: '' }))
-      expect(handler).toHaveBeenCalledTimes(2)
-    })
-
-    it('path of "/" works with route ending in slash or not', async () => {
-      const r = Router()
-      const handler = jest.fn()
-
-      r.get('/', handler)
-
-      await r.handle(buildRequest({ path: '/' }))
-      expect(handler).toHaveBeenCalled()
-
-      await r.handle(buildRequest({ path: '' }))
-      expect(handler).toHaveBeenCalledTimes(2)
-    })
-
-    it('path of "/:id" works without leading slash', async () => {
-      const r = Router()
-      const handler = jest.fn(req => req.params.id)
-
-      r.get('/:id?', handler)
-
-      await r.handle(buildRequest({ path: '/13' }))
-      expect(handler).toHaveReturnedWith('13')
-
-      await r.handle(buildRequest({ path: '' }))
-      expect(handler).toHaveBeenCalledTimes(2)
-    })
-
-    it('"/:id.:format" will only match with .format', async () => {
-      const config = {}
-      const r = Router(config)
-      const handlerWithFormat = jest.fn(req => req.params)
-      const handlerWithoutFormat = jest.fn(req => req.params)
-
-      r
-        .get('/:id.:format', handlerWithFormat) // image14.jpg
-        .get('/:id', handlerWithoutFormat) // image.jpg.foo.bar
-
-      await r.handle(buildRequest({ path: '/foobarbaz' }))
-      expect(handlerWithoutFormat).toHaveReturnedWith({ id: 'foobarbaz' })
-
-      await r.handle(buildRequest({ path: '/foobarbaz.jpg' }))
-      expect(handlerWithFormat).toHaveReturnedWith({ id: 'foobarbaz', format: 'jpg' })
-    })
-
-    it('path of "/:id.:format?" works', async () => {
-      const r = Router()
-      const handler = jest.fn(req => req.params)
-
-      r.get('/:id.:format?', handler)
-
-      await r.handle(buildRequest({ path: '/13' }))
-      expect(handler).toHaveReturnedWith({ id: '13', format: undefined })
-
-      await r.handle(buildRequest({ path: '/1345.jpg' }))
-      expect(handler).toHaveReturnedWith({ id: '1345', format: 'jpg' })
-    })
-
-    it('can accept dot notations (e.g. domains) as a route param', async () => {
-      const r = Router()
-      const handler = jest.fn(req => req.params.url)
-
-      r.get('/:url/etc', handler)
-
-      await r.handle(buildRequest({ path: '/domain.dev/etc' }))
-      expect(handler).toHaveReturnedWith('domain.dev')
-    })
-
     it('match earliest routes that match', async () => {
       const route = routes.find(r => r.path === '/foo/first')
       await router.handle(buildRequest({ path: '/foo/first' }))
@@ -180,16 +97,6 @@ describe('Router', () => {
       expect(route.callback).toHaveBeenCalled()
     })
 
-    it('handles optional params (e.g. /foo/:id?)', async () => {
-      const route = routes.find(r => r.path === '/optional/:id?')
-
-      await router.handle(buildRequest({ path: '/optional' }))
-      expect(route.callback).toHaveBeenCalled()
-
-      await router.handle(buildRequest({ path: '/optional/13' }))
-      expect(route.callback).toHaveBeenCalledTimes(2)
-    })
-
     it('passes the entire original request through to the handler', async () => {
       const route = routes.find(r => r.path === '/passthrough')
       await router.handle(buildRequest({ path: '/passthrough', name: 'miffles' }))
@@ -198,18 +105,6 @@ describe('Router', () => {
         path: '/passthrough',
         name: 'miffles',
       })
-    })
-
-    it('accepts * as a wildcard route (e.g. for use in 404)', async () => {
-      const route = routes.find(r => r.path === '*')
-      await router.handle(buildRequest({ path: '/missing' }))
-
-      expect(route.callback).toHaveBeenCalled()
-
-      const route2 = routes.find(r => r.path === '/wildcards/*')
-      await router.handle(buildRequest({ path: '/wildcards/missing' }))
-
-      expect(route2.callback).toHaveBeenCalled()
     })
 
     it('allows missing handler later in flow with "all" channel', async () => {
@@ -280,39 +175,6 @@ describe('Router', () => {
       await router.handle(buildRequest({ path: '/todos/13' }))
       expect(handler).toHaveBeenCalled()
       expect(handler).toHaveReturnedWith({ collection: 'todos', id: '13' })
-    })
-
-    it('gracefully handles trailing slashes', async () => {
-      const r = Router()
-
-      const middleware = req => {
-        req.user = { id: 13 }
-      }
-
-      const handler = jest.fn(req => req.user.id)
-
-      r.get('/middleware/*', middleware)
-      r.get('/middleware', handler)
-
-      await r.handle(buildRequest({ path: '/middleware' }))
-
-      expect(handler).toHaveBeenCalled()
-      expect(handler).toHaveReturnedWith(13)
-
-      await r.handle(buildRequest({ path: '/middleware/' }))
-
-      expect(handler).toHaveBeenCalledTimes(2)
-    })
-
-    it('allow wildcards in the middle of paths', async () => {
-      const r = Router()
-      const handler = jest.fn()
-
-      r.get('/foo/*/end', handler)
-
-      await r.handle(buildRequest({ path: '/foo/bar/baz/13/end' }))
-
-      expect(handler).toHaveBeenCalled()
     })
 
     it('can handle nested routers', async () => {
@@ -450,21 +312,6 @@ describe('Router', () => {
       expect(await response.text()).toBe(ERROR_MESSAGE)
     })
 
-    it('requires exact path match unless wildcard', async () => {
-      const router = Router()
-      const handler = jest.fn()
-      router.get('/foo', handler)
-
-      await router.handle(buildRequest({ path: '/a/foo' })) // test prefix
-      expect(handler).not.toHaveBeenCalled()
-
-      await router.handle(buildRequest({ path: '/foo/d' })) // test suffix
-      expect(handler).not.toHaveBeenCalled()
-
-      await router.handle(buildRequest({ path: '/foo' })) // test exact
-      expect(handler).toHaveBeenCalled()
-    })
-
     it('allows chaining', () => {
       const router = Router()
 
@@ -531,6 +378,77 @@ describe('Router', () => {
       const response = await router.handle(createRequest('post'))
       expect(handler).toHaveBeenCalled()
       expect(await response).toEqual({ foo: 'bar' })
+    })
+  })
+
+  describe('ROUTE MATCHING', () => {
+    describe('allowed characters', () => {
+      const chars = `/foo/-.abc!@%&_=:;',~|/bar`
+      testRoutes([
+        { route: chars, path: chars },
+      ])
+    })
+
+    describe('dots', () => {
+      testRoutes([
+        { route: '/foo.json', path: '/foo.json' },
+        { route: '/foo.json', path: '/fooXjson', returns: false },
+      ])
+    })
+
+    describe('formats/extensions', () => {
+      testRoutes([
+        { route: '/:id.:format', path: '/foo', returns: false },
+        { route: '/:id.:format', path: '/foo.jpg', returns: { id: 'foo', format: 'jpg' } },
+        { route: '/:id.:format?', path: '/foo', returns: { id: 'foo' } },
+        { route: '/:id.:format?', path: '/foo.jpg', returns: { id: 'foo', format: 'jpg' } },
+        { route: '/:id.:format?', path: '/foo', returns: { id: 'foo' } },
+      ])
+    })
+
+    describe('optional params', () => {
+      testRoutes([
+        { route: '/foo/:id?', path: '/foo' },
+        { route: '/foo/:id?', path: '/foo/' },
+        { route: '/foo/:id?', path: '/foo/bar', returns: { id: 'bar' } },
+      ])
+    })
+
+    describe('regex', () => {
+      testRoutes([
+        { route: '/foo|bar/baz', path: '/foo/baz' },
+        { route: '/foo|bar/baz', path: '/bar/baz' },
+        { route: '/foo(bar|baz)', path: '/foobar' },
+        { route: '/foo(bar|baz)', path: '/foobaz' },
+        { route: '/foo(bar|baz)', path: '/foo', returns: false },
+        { route: '/foo+', path: '/foo' },
+        { route: '/foo+', path: '/fooooooo' },
+        { route: '/foo?', path: '/foo' },
+        { route: '/foo?', path: '/fo' },
+        { route: '/foo?', path: '/fooo', returns: false },
+        { route: '/\.', path: '/f' },
+        { route: '/\.', path: '/', returns: false },
+      ])
+    })
+
+    describe('trailing/leading slashes', () => {
+      testRoutes([
+        { route: '/foo/bar', path: '/foo/bar' },
+        { route: '/foo/bar', path: '/foo/bar/' },
+        { route: '/foo/bar/', path: '/foo/bar/' },
+        { route: '/foo/bar/', path: '/foo/bar' },
+        { route: '/', path: '/' },
+        { route: '', path: '/' },
+      ])
+    })
+
+    describe('wildcards', () => {
+      testRoutes([
+        { route: '*', path: '/something/foo' },
+        { route: '/*/foo', path: '/something/foo' },
+        { route: '/*/foo', path: '/something/else/foo' },
+        { route: '/foo/*/bar', path: '/foo/a/b/c/bar' },
+      ])
     })
   })
 })

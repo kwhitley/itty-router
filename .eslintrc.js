@@ -11,7 +11,7 @@ module.exports = {
     'plugins': ['jest'],
     'rules': {
         'accessor-pairs': 'error',
-        'array-bracket-newline': 'error',
+        'array-bracket-newline': 'off',
         'array-bracket-spacing': 'off',
         'array-callback-return': 'error',
         'array-element-newline': 'off',
@@ -147,7 +147,7 @@ module.exports = {
         'no-multi-str': 'error',
         'no-multiple-empty-lines': 'error',
         'no-native-reassign': 'error',
-        'no-negated-condition': 'error',
+        'no-negated-condition': 'off',
         'no-negated-in-lhs': 'error',
         'no-nested-ternary': 'error',
         'no-new': 'error',
