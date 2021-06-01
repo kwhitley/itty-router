@@ -1,6 +1,7 @@
 ## Changelog
 Until this library makes it to a production release of v1.x, **minor versions may contain breaking changes to the API**.  After v1.x, semantic versioning will be honored, and breaking changes will only occur under the umbrella of a major version bump.
 
+- **v2.3.10** - fix: dots now properly escaped (e.g. /image.jpg should not match /imageXjpg)
 - **v2.3.9** - dev fixes: [@taralx](https://github.com/taralx) improved QOL issues for test writers and dev installers
 - **v2.3.7** - fix: :id.:format not resolving (only conditional format would match)
 - **v2.3.0** - feature: request handler will be passed request.proxy (if found) or request (if not) - allowing for middleware magic downstream...
