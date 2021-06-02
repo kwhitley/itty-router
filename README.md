@@ -58,7 +58,7 @@ addEventListener('fetch', event =>
 ```
 
 ## Features
-- [x] Tiny (~475 bytes) with zero dependencies.
+- [x] Tiny (~411 bytes compressed) with zero dependencies.
 - [x] Full sync/async support.  Use it when you need it!
 - [x] Route params, with wildcards and optionals (e.g. `/api/:collection/:id?`)
 - [x] Query parsing (e.g. `?page=3&foo=bar`)
@@ -328,34 +328,35 @@ router
 
 ### The Entire Code (for more legibility, [see src on GitHub](https://github.com/kwhitley/itty-router/blob/v2.x/src/itty-router.js))
 ```js
-const Router = (o = {}) =>
-  new Proxy(o, {
-    get: (t, k, c) => k === 'handle'
-      ? async (r, ...a) => {
-          for (let [p, hs] of t.r.filter(i => i[2] === r.method || i[2] === 'ALL')) {
-            let m, s, u
-            if (m = (u = new URL(r.url)).pathname.match(p)) {
-              r.params = m.groups
-              r.query = r.query || Object.fromEntries(u.searchParams.entries())
-
-              for (let h of hs) {
-                if ((s = await h(r.proxy || r, ...a)) !== undefined) return s
-              }
-            }
-          }
+const Router = ({ base = ''} = {}, r = []) => ({
+  __proto__: new Proxy({}, {
+    get: (t, k, c) => (p, ...H) =>
+      r.push([
+        RegExp(`^${(base + p)
+          .replace(/(\/?)\*/g, '($1.*)?')
+          .replace(/\/$/, '')
+          .replace(/:(\w+|\()(\?)?(\.)?/g, '$2(?<$1>[^/$3]+)$2$3')
+          .replace(/\.(?=[\w(])/, '\\.')
+        }/*$`),
+        H,
+        k.toUpperCase(),
+      ]) && c
+  }),
+  routes: r,
+  async handle (q, ...a) {
+    let s, m,
+        u = new URL(q.url)
+    q.query = Object.fromEntries(u.searchParams)
+    for (let [p, H, M] of r) {
+      if ((M === q.method || M === 'ALL') && (m = u.pathname.match(p))) {
+        q.params = m.groups
+        for (let h of H) {
+          if ((s = await h(q.proxy || q, ...a)) !== undefined) return s
         }
-      : (p, ...hs) =>
-          (t.r = t.r || []).push([
-            `^${((t.base || '') + p)
-              .replace(/(\/?)\*/g, '($1.*)?')
-              .replace(/\/$/, '')
-              .replace(/:(\w+)(\?)?(\.)?/g, '$2(?<$1>[^/$3]+)$2$3')
-              .replace(/\.\(/g, '\\.(')
-            }\/*$`,
-            hs,
-            k.toUpperCase(),
-          ]) && c
-  })
+      }
+    }
+  }
+})
 ```
 
 ## Special Thanks
