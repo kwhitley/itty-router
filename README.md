@@ -170,7 +170,7 @@ GET /todos/jane?limit=2&page=1
   ```js
   const router = Router()
 
-  router.add('/long-task', (request, event) => {
+  router.get('/long-task', (request, event) => {
     event.waitUntil(longAsyncTaskPromise)
 
     return new Response('Task is still running in the background!')
