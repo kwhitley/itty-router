@@ -54,10 +54,11 @@ describe('Router', () => {
   it('allows preloading advanced routes', async () => {
     const basicHandler = jest.fn(req => req.params)
     const customHandler = jest.fn(req => req.params)
+    const customHandler2 = jest.fn(req => req.params)
     const router = Router({
                     routes: [
-                      [ /^\/test\.(?<x>[^/]+)\/*$/, [basicHandler], 'GET' ],
-                      [ /^\/custom-(?<custom>\d{2,4})$/, [customHandler], 'GET' ],
+                      [ 'GET', /^\/test\.(?<x>[^/]+)\/*$/, [basicHandler] ],
+                      [ 'GET', /^\/custom-(?<custom>\d{2,4})$/, [customHandler] ],
                     ]
                   })
 
@@ -69,6 +70,10 @@ describe('Router', () => {
 
     await router.handle(buildRequest({ path: '/custom-123' }))
     expect(customHandler).toHaveReturnedWith({ custom: '123' }) // custom route hit
+
+    router.routes.push([ 'GET', /^\/custom2-(?<custom>\w\d{3})$/, [customHandler2] ])
+    await router.handle(buildRequest({ path: '/custom2-a456' }))
+    expect(customHandler2).toHaveReturnedWith({ custom: 'a456' }) // custom route hit
   })
 
   describe('.{method}(route: string, handler1: function, ..., handlerN: function)', () => {

@@ -2,6 +2,7 @@ const Router = ({ base = '', routes = [] } = {}) => ({
   __proto__: new Proxy({}, {
     get: (target, prop, receiver) => (route, ...handlers) =>
       routes.push([
+        prop.toUpperCase(),
         RegExp(`^${(base + route)
           .replace(/(\/?)\*/g, '($1.*)?')
           .replace(/\/$/, '')
@@ -9,7 +10,6 @@ const Router = ({ base = '', routes = [] } = {}) => ({
           .replace(/\.(?=[\w(])/, '\\.')
         }/*$`),
         handlers,
-        prop.toUpperCase(),
       ]) && receiver
   }),
   // eslint-disable-next-line object-shorthand
@@ -18,7 +18,7 @@ const Router = ({ base = '', routes = [] } = {}) => ({
     let response, match,
         url = new URL(request.url)
     request.query = Object.fromEntries(url.searchParams)
-    for (let [route, handlers, method] of routes) {
+    for (let [method, route, handlers] of routes) {
       if ((method === request.method || method === 'ALL') && (match = url.pathname.match(route))) {
         request.params = match.groups
         for (let handler of handlers) {
