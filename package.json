@@ -1,6 +1,6 @@
 {
   "name": "itty-router",
-  "version": "2.3.10-next.1",
+  "version": "2.3.10-next.2",
   "description": "Tiny, zero-dependency router with route param and query parsing - build for Cloudflare Workers, but works everywhere!",
   "main": "./dist/itty-router.min.js",
   "types": "./dist/itty-router.d.ts",
