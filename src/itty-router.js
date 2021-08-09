@@ -1,4 +1,4 @@
-const Router = ({ base = '', routes = [] } = {}) => ({
+const Router = ({ base = '', r = [] } = {}) => ({
   __proto__: new Proxy({}, {
     get: (target, prop, receiver) => (route, ...handlers) =>
       r.push([
@@ -13,7 +13,7 @@ const Router = ({ base = '', routes = [] } = {}) => ({
       ]) && receiver
   }),
   // eslint-disable-next-line object-shorthand
-  routes,
+  r,
   async handle (request, ...args) {
     let response, match,
         url = new URL(request.url)
