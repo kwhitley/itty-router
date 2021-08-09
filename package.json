@@ -41,7 +41,7 @@
     "coveralls": "cat ./coverage/lcov.info | node node_modules/.bin/coveralls",
     "prerelease": "yarn verify",
     "prebuild": "rimraf dist && mkdir dist && node prebuild.js && cp src/itty-router.d.ts dist",
-    "build": "terser -c -m toplevel -- dist/itty-router.js  > dist/itty-router.min.js",
+    "build": "uglifyjs dist/itty-router.js -c -m --toplevel > dist/itty-router.min.js",
     "postbuild": "node check-size.js",
     "release": "release --tag --push"
   },
@@ -67,7 +67,7 @@
     "isomorphic-fetch": "^3.0.0",
     "jest": "^27.0.3",
     "rimraf": "^3.0.2",
-    "terser": "^5.7.0",
+    "uglify-js": "^3.13.8",
     "vite": "^2.3.5",
     "yarn": "^1.22.10",
     "yarn-release": "^1.10.3"
