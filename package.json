@@ -5,7 +5,6 @@
   "main": "./dist/itty-router.min.js",
   "types": "./dist/itty-router.d.ts",
   "files": [
-    "dist/itty-router.js",
     "dist/itty-router.min.js",
     "dist/itty-router.d.ts"
   ],
