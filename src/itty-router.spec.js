@@ -38,7 +38,7 @@ describe('Router', () => {
 
   it('allows introspection', () => {
     const r = []
-    const config = { r }
+    const config = { routes: r }
     const router = Router(config)
 
     router
@@ -47,7 +47,7 @@ describe('Router', () => {
       .post('/baz', () => {})
 
     expect(r.length).toBe(3) // can pass in the routes directly through "r"
-    expect(config.r.length).toBe(3) // or just look at the mututated config
+    expect(config.routes.length).toBe(3) // or just look at the mututated config
   })
 
   describe('.{method}(route: string, handler1: function, ..., handlerN: function)', () => {
