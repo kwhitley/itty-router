@@ -15,6 +15,12 @@ interface Request {
   url: string
   params?: Obj
   query?: Obj
+
+  arrayBuffer?(): Promise
+  blob?(): Promise
+  formData?(): Promise
+  json?(): Promise
+  text?(): Promise
 }
 
 type Router = {
@@ -25,6 +31,7 @@ type Router = {
 
 interface RouterOptions {
   base?: string
+  r?: any[]
 }
 
 export function Router(options?:RouterOptions): Router
