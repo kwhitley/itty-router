@@ -5,7 +5,7 @@ const minifiedBase = base
   .replace(/^\s*\/\/.*\n/mg, '') // remove comments
   .replace(/\bargs\b/g, 'a') // Args
   .replace(/\bhandlers\b/g, 'H') // (H)andlers
-  .replace(/\broutes([^:])/g, 'r$1') // Routes
+  // .replace(/\broutes([^:])/g, 'r$1') // Routes
   .replace(/([^\.])handler\b/g, '$1h') // Handler
   .replace(/([^\.])match\b/g, '$1m') // Match
   .replace(/([^\.])method\b/g, '$1M') // (M)ethod

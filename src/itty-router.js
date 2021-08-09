@@ -1,4 +1,4 @@
-const Router = ({ base = '', r = [] } = {}) => ({
+const Router = ({ base = '', routes = [] } = {}) => ({
   __proto__: new Proxy({}, {
     get: (target, prop, receiver) => (route, ...handlers) =>
       r.push([
@@ -7,14 +7,13 @@ const Router = ({ base = '', r = [] } = {}) => ({
           .replace(/\/$/, '')
           .replace(/:(\w+)(\?)?(\.)?/g, '$2(?<$1>[^/]+)$2$3')
           .replace(/\.(?=[\w(])/, '\\.')
-          // .replace(/\.\?\(/, '(?:\\.)(')
         }/*$`),
         handlers,
         prop.toUpperCase(),
       ]) && receiver
   }),
   // eslint-disable-next-line object-shorthand
-  r,
+  routes,
   async handle (request, ...args) {
     let response, match,
         url = new URL(request.url)
