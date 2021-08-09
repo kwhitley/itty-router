@@ -38,7 +38,7 @@ describe('Router', () => {
 
   it('allows introspection', () => {
     const r = []
-    const config = { r }
+    const config = { routes: r }
     const router = Router(config)
 
     router
@@ -47,7 +47,28 @@ describe('Router', () => {
       .post('/baz', () => {})
 
     expect(r.length).toBe(3) // can pass in the routes directly through "r"
-    expect(config.r.length).toBe(3) // or just look at the mututated config
+    expect(config.routes.length).toBe(3) // or just look at the mututated config
+    expect(router.routes.length).toBe(3) // accessible off the main router
+  })
+
+  it('allows preloading advanced routes', async () => {
+    const basicHandler = jest.fn(req => req.params)
+    const customHandler = jest.fn(req => req.params)
+    const router = Router({
+                    routes: [
+                      [ /^\/test\.(?<x>[^/]+)\/*$/, [basicHandler], 'GET' ],
+                      [ /^\/custom-(?<custom>\d{2,4})$/, [customHandler], 'GET' ],
+                    ]
+                  })
+
+    await router.handle(buildRequest({ path: '/test.a.b' }))
+    expect(basicHandler).toHaveReturnedWith({ x: 'a.b' })
+
+    await router.handle(buildRequest({ path: '/custom-12345' }))
+    expect(customHandler).not.toHaveBeenCalled() // custom route mismatch
+
+    await router.handle(buildRequest({ path: '/custom-123' }))
+    expect(customHandler).toHaveReturnedWith({ custom: '123' }) // custom route hit
   })
 
   describe('.{method}(route: string, handler1: function, ..., handlerN: function)', () => {
