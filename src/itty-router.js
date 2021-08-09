@@ -1,7 +1,7 @@
-const Router = ({ base = '', routes = [] } = {}) => ({
+const Router = ({ base = '', r = [] } = {}) => ({
   __proto__: new Proxy({}, {
     get: (target, prop, receiver) => (route, ...handlers) =>
-      routes.push([
+      r.push([
         RegExp(`^${(base + route)
           .replace(/(\/?)\*/g, '($1.*)?')
           .replace(/\/$/, '')
@@ -13,12 +13,12 @@ const Router = ({ base = '', routes = [] } = {}) => ({
       ]) && receiver
   }),
   // eslint-disable-next-line object-shorthand
-  routes,
+  r,
   async handle (request, ...args) {
     let response, match,
         url = new URL(request.url)
     request.query = Object.fromEntries(url.searchParams)
-    for (let [route, handlers, method] of routes) {
+    for (let [route, handlers, method] of r) {
       if ((method === request.method || method === 'ALL') && (match = url.pathname.match(route))) {
         request.params = match.groups
         for (let handler of handlers) {
