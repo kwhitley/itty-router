@@ -1,20 +1,20 @@
-interface RouteHandler<TRequest> {
-  (request: TRequest & Request, ...args: any): any
-}
-
-interface Route {
-  <TRequest>(path: string, ...handlers: RouteHandler<TRequest & Request>[]): Router
-}
-
-type Obj = {
+export type Obj = {
   [propName: string]: string
 }
 
-interface Request {
+export interface RouteHandler<TRequest> {
+  (request: TRequest & Request, ...args: any): any
+}
+
+export interface Route {
+  <TRequest>(path: string, ...handlers: RouteHandler<TRequest & Request>[]): Router
+}
+
+export interface Request {
   method?: string
-  url: string
   params?: Obj
   query?: Obj
+  url: string
 
   arrayBuffer?(): Promise
   blob?(): Promise
@@ -23,13 +23,13 @@ interface Request {
   text?(): Promise
 }
 
-type Router = {
+export type Router = {
   handle: (request: Request, ...extra: any) => any
 } & {
   [any:string]: Route
 }
 
-interface RouterOptions {
+export interface RouterOptions {
   base?: string
   r?: any[]
 }
