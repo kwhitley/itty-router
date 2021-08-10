@@ -16,15 +16,15 @@ const testRoute = async ({
   returns = true,
   log = false,
 }, Router) => {
-  const c = {}
-  const router = Router(c)
+  const routes = []
+  const router = Router({ routes })
   const handler = jest.fn(req => req.params)
 
   // register route
   router[method](route, handler)
 
   log && console.log({
-    regex: c.routes,
+    routes,
     route,
     path,
   })

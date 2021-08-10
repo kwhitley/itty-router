@@ -18,9 +18,24 @@
   <img alt="Join the discussion on Github" src="https://img.shields.io/badge/Github%20Discussions%20%26%20Support-Chat%20now!-blue" />
 </a>-->
 
-It's an itty bitty router, designed for Express.js-like routing within [Cloudflare Workers](https://developers.cloudflare.com/workers/) (or anywhere else). Like... it's super tiny (~460 bytes), with zero dependencies. For reals.
+It's an itty bitty router, designed for Express.js-like routing within [Cloudflare Workers](https://developers.cloudflare.com/workers/) (or anywhere else). Like... it's super tiny ([~4xx bytes](https://bundlephobia.com/package/itty-router)), with zero dependencies. For reals.
 
 For quality-of-life improvements (e.g. middleware, cookies, body parsing, json handling, errors, and an itty version with automatic exception handling), to further shorten your routing code, be sure to check out [itty-router-extras](https://www.npmjs.com/package/itty-router-extras) - also specifically written for API development on [Cloudflare Workers](https://developers.cloudflare.com/workers/)!
+
+## Features
+- [x] Tiny ([~4xx bytes](https://bundlephobia.com/package/itty-router) compressed) with zero dependencies.
+- [x] Full sync/async support.  Use it when you need it!
+- [x] Route params, with wildcards and optionals (e.g. `/api/:collection/:id?`)
+- [x] Query parsing (e.g. `?page=3&foo=bar`)
+- [x] [Middleware support](#middleware). Any number of sync/async handlers may be passed to a route.
+- [x] [Nestable](#nested-routers-with-404-handling). Supports nesting routers for API branching.
+- [x] [Base path](#nested-routers-with-404-handling) for prefixing all routes.
+- [x] [Multi-method support](#nested-routers-with-404-handling) using the `.all()` channel.
+- [x] Supports **any** method type (e.g. `.get() --> 'GET'` or `.puppy() --> 'PUPPY'`).
+- [x] [Extendable](#extending-itty-router). Use itty as the internal base for more feature-rich/elaborate routers.
+- [x] Chainable route declarations (why not?)
+- [x] [Preload or manually inject custom regex for routes](#manual-routes) (advanced usage)
+- [ ] Readable internal code (yeah right...)
 
 ## Installation
 
@@ -57,26 +72,13 @@ addEventListener('fetch', event =>
 )
 ```
 
-## Features
-- [x] Tiny (~411 bytes compressed) with zero dependencies.
-- [x] Full sync/async support.  Use it when you need it!
-- [x] Route params, with wildcards and optionals (e.g. `/api/:collection/:id?`)
-- [x] Query parsing (e.g. `?page=3&foo=bar`)
-- [x] [Middleware support](#middleware). Any number of sync/async handlers may be passed to a route.
-- [x] [Nestable](#nested-routers-with-404-handling). Supports nesting routers for API branching.
-- [x] [Base path](#nested-routers-with-404-handling) for prefixing all routes.
-- [x] [Multi-method support](#nested-routers-with-404-handling) using the `.all()` channel.
-- [x] Supports **any** method type (e.g. `.get() --> 'GET'` or `.puppy() --> 'PUPPY'`).
-- [x] [Extendable](#extending-itty-router). Use itty as the internal base for more feature-rich/elaborate routers.
-- [x] Chainable route declarations (why not?)
-- [ ] Readable internal code (yeah right...)
-
 ## Options API
 #### `Router(options = {})`
 
 | Name | Type(s) | Description | Examples |
 | --- | --- | --- | --- |
 | `base` | `string` | prefixes all routes with this string | `Router({ base: '/api' })`
+| `routes` | `array of routes` | array of manual routes for preloading | [see documentation](#manual-routes)
 
 ## Usage
 ### 1. Create a Router
@@ -161,7 +163,9 @@ GET /todos/jane?limit=2&page=1
   // attach the router "handle" to the event handler
   addEventListener('fetch', event =>
     event.respondWith(
-      router.handle(event.request).catch(errorHandler)
+      router
+        .handle(event.request)
+        .catch(errorHandler)
     )
   )
   ```
@@ -316,6 +320,59 @@ router
   })
 ```
 
+### Manual Routes
+Thanks to a pretty sick refactor by [@taralx](https://github.com/taralx), we've added the ability to fully preload or push manual routes with hand-writted regex.
+
+Why is this useful?
+
+Out of the box, only a tiny subset of regex "accidentally" works with itty, given that... you know... it's the thing writing regex for you in the first place.  If you have a problem route that needs custom regex though, you can now manually give itty the exact regex it will match against, through the far-less-user-friendly-but-totally-possible manual injection method (below).
+
+Individual routes are defined as an array of: `[ method: string, match: RegExp, handlers: Array<function> ]`
+
+###### EXAMPLE 1: Manually push a custom route
+```js
+import { Router } from 'itty-router'
+
+const router = Router()
+
+// let's define a simple request handler
+const handler = request => request.params
+
+// and manually push a route onto the internal routes collection
+router.routes.push(
+  [
+    'GET',                        // method: GET
+    /^\/custom-(?<id>\w\d{3})$/,  // regex match with named groups (e.g. "id")
+    [handler],                    // array of request handlers
+  ]
+)
+
+await router.handle({ method: 'GET', url: 'https:nowhere.com/custom-a123' })    // { id: "a123" }
+await router.handle({ method: 'GET', url: 'https:nowhere.com/custom-a12456' })  // won't catch
+```
+
+
+###### EXAMPLE 2: Preloading routes via Router options
+```js
+import { Router } from 'itty-router'
+
+// let's define a simple request handler
+const handler = request => request.params
+
+// and load the route while creating the router
+const router = Router({
+  routes: [
+    [ 'GET', /^\/custom-(?<id>\w\d{3})$/, [handler] ], // same example as above, but shortened
+  ]
+})
+
+// add routes normally...
+router.get('/test', () => new Response('You can still define routes normally as well...'))
+
+// router will catch on custom route, as expected
+await router.handle({ method: 'GET', url: 'https:nowhere.com/custom-a123' })    // { id: "a123" }
+```
+
 ## Testing and Contributing
 1. Fork repo
 1. Install dev dependencies via `yarn`
@@ -328,26 +385,26 @@ router
 
 ### The Entire Code (for more legibility, [see src on GitHub](https://github.com/kwhitley/itty-router/blob/v2.x/src/itty-router.js))
 ```js
-const Router = ({ base = ''} = {}, r = []) => ({
+const Router = ({ base = '', routes = [] } = {}) => ({
   __proto__: new Proxy({}, {
     get: (t, k, c) => (p, ...H) =>
-      r.push([
+      routes.push([
+        k.toUpperCase(),
         RegExp(`^${(base + p)
           .replace(/(\/?)\*/g, '($1.*)?')
           .replace(/\/$/, '')
-          .replace(/:(\w+|\()(\?)?(\.)?/g, '$2(?<$1>[^/$3]+)$2$3')
+          .replace(/:(\w+)(\?)?(\.)?/g, '$2(?<$1>[^/]+)$2$3')
           .replace(/\.(?=[\w(])/, '\\.')
         }/*$`),
         H,
-        k.toUpperCase(),
       ]) && c
   }),
-  routes: r,
+  routes,
   async handle (q, ...a) {
     let s, m,
         u = new URL(q.url)
     q.query = Object.fromEntries(u.searchParams)
-    for (let [p, H, M] of r) {
+    for (let [M, p, H] of routes) {
       if ((M === q.method || M === 'ALL') && (m = u.pathname.match(p))) {
         q.params = m.groups
         for (let h of H) {
@@ -385,6 +442,7 @@ This trick allows methods (e.g. "get", "post") to by defined dynamically by the 
 These folks are the real heroes, making open source the powerhouse that it is!  Help out and get your name added to this list! <3
 
 #### Core, Concepts, and Codebase
+- [@taralx](https://github.com/taralx) - router internal code-golfing refactor for performance and character savings
 - [@hunterloftis](https://github.com/hunterloftis) - router.handle() method now accepts extra arguments and passed them to route functions
 - [@mvasigh](https://github.com/mvasigh) - proxy hacks courtesy of this chap
 #### Fixes

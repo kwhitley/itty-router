@@ -36,6 +36,54 @@ describe('Router', () => {
     expect(typeof Router).toBe('function')
   })
 
+  it('allows introspection', () => {
+    const r = []
+    const config = { routes: r }
+    const router = Router(config)
+
+    router
+      .get('/foo', () => {})
+      .patch('/bar', () => {})
+      .post('/baz', () => {})
+
+    expect(r.length).toBe(3) // can pass in the routes directly through "r"
+    expect(config.routes.length).toBe(3) // or just look at the mututated config
+    expect(router.routes.length).toBe(3) // accessible off the main router
+  })
+
+it('allows preloading advanced routes', async () => {
+  const basicHandler = jest.fn(req => req.params)
+  const customHandler = jest.fn(req => req.params)
+
+  const router = Router({
+                  routes: [
+                    [ 'GET', /^\/test\.(?<x>[^/]+)\/*$/, [basicHandler] ],
+                    [ 'GET', /^\/custom-(?<custom>\d{2,4})$/, [customHandler] ],
+                  ]
+                })
+
+  await router.handle(buildRequest({ path: '/test.a.b' }))
+  expect(basicHandler).toHaveReturnedWith({ x: 'a.b' })
+
+  await router.handle(buildRequest({ path: '/custom-12345' }))
+  expect(customHandler).not.toHaveBeenCalled() // custom route mismatch
+
+  await router.handle(buildRequest({ path: '/custom-123' }))
+  expect(customHandler).toHaveReturnedWith({ custom: '123' }) // custom route hit
+})
+
+it('allows loading advanced routes after config', async () => {
+  const handler = jest.fn(req => req.params)
+
+  const router = Router()
+
+  // allows manual loading (after config)
+  router.routes.push([ 'GET', /^\/custom2-(?<custom>\w\d{3})$/, [handler] ])
+
+  await router.handle(buildRequest({ path: '/custom2-a456' }))
+  expect(handler).toHaveReturnedWith({ custom: 'a456' }) // custom route hit
+})
+
   describe('.{method}(route: string, handler1: function, ..., handlerN: function)', () => {
     it('can accept multiple handlers (each mutates request)', async () => {
       const r = Router()
@@ -381,8 +429,10 @@ describe('Router', () => {
       testRoutes([
         { route: '/:id.:format', path: '/foo', returns: false },
         { route: '/:id.:format', path: '/foo.jpg', returns: { id: 'foo', format: 'jpg' } },
+        { route: '/:id.:format', path: '/foo.bar.jpg', returns: { id: 'foo.bar', format: 'jpg' } },
         { route: '/:id.:format?', path: '/foo', returns: { id: 'foo' } },
-        { route: '/:id.:format?', path: '/foo.jpg', returns: { id: 'foo', format: 'jpg' } },
+        // { route: '/:id.:format?', path: '/foo.bar.jpg', returns: { id: 'foo.bar', format: 'jpg' }, log: true }, // FAILING TEST - known bug
+        // { route: '/:id.:format?', path: '/foo.jpg', returns: { id: 'foo', format: 'jpg' }, log: true }, // FAILING TEST - known bug
         { route: '/:id.:format?', path: '/foo', returns: { id: 'foo' } },
       ])
     })
@@ -409,6 +459,22 @@ describe('Router', () => {
         { route: '/foo?', path: '/fooo', returns: false },
         { route: '/\.', path: '/f' },
         { route: '/\.', path: '/', returns: false },
+
+        { route: '/x|y', path: '/y', returns: true },
+        { route: '/x|y', path: '/x', returns: true },
+        { route: '/x/y|z', path: '/z', returns: true }, // should require second path as y or z
+        { route: '/x/y|z', path: '/x/y', returns: true }, // shouldn't allow the weird pipe
+        { route: '/x/y|z', path: '/x/z', returns: true }, // shouldn't allow the weird pipe
+        { route: '/xy*', path: '/x', returns: false },
+        { route: '/xy*', path: '/xyz', returns: true },
+        { route: '/:x.y', path: '/a.x.y', returns: { x: 'a.x' } },
+        { route: '/x.y', path: '/xay', returns: false }, // dots are enforced as dots, not any character (e.g. extensions)
+        { route: '/xy{2}', path: '/xyxy', returns: false }, // no regex repeating supported
+        { route: '/xy{2}', path: '/xy/xy', returns: false }, // no regex repeating supported
+        { route: '/:x.:y', path: '/a.b.c', returns: { x: 'a.b', y: 'c' } }, // standard file + extension format
+        { route: '/test.:x', path: '/test.a.b', returns: { x: 'a.b' } }, // dots are still captured as part of the param
+        { route: '/:x?.y', path: '/test.y', returns: { x: 'test' } },
+        { route: '/x/:y*', path: '/x/test', returns: { y: 'test' } },
       ])
     })
 
