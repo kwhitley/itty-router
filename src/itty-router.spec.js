@@ -51,30 +51,38 @@ describe('Router', () => {
     expect(router.routes.length).toBe(3) // accessible off the main router
   })
 
-  it('allows preloading advanced routes', async () => {
-    const basicHandler = jest.fn(req => req.params)
-    const customHandler = jest.fn(req => req.params)
-    const customHandler2 = jest.fn(req => req.params)
-    const router = Router({
-                    routes: [
-                      [ 'GET', /^\/test\.(?<x>[^/]+)\/*$/, [basicHandler] ],
-                      [ 'GET', /^\/custom-(?<custom>\d{2,4})$/, [customHandler] ],
-                    ]
-                  })
+it('allows preloading advanced routes', async () => {
+  const basicHandler = jest.fn(req => req.params)
+  const customHandler = jest.fn(req => req.params)
 
-    await router.handle(buildRequest({ path: '/test.a.b' }))
-    expect(basicHandler).toHaveReturnedWith({ x: 'a.b' })
+  const router = Router({
+                  routes: [
+                    [ 'GET', /^\/test\.(?<x>[^/]+)\/*$/, [basicHandler] ],
+                    [ 'GET', /^\/custom-(?<custom>\d{2,4})$/, [customHandler] ],
+                  ]
+                })
 
-    await router.handle(buildRequest({ path: '/custom-12345' }))
-    expect(customHandler).not.toHaveBeenCalled() // custom route mismatch
+  await router.handle(buildRequest({ path: '/test.a.b' }))
+  expect(basicHandler).toHaveReturnedWith({ x: 'a.b' })
 
-    await router.handle(buildRequest({ path: '/custom-123' }))
-    expect(customHandler).toHaveReturnedWith({ custom: '123' }) // custom route hit
+  await router.handle(buildRequest({ path: '/custom-12345' }))
+  expect(customHandler).not.toHaveBeenCalled() // custom route mismatch
 
-    router.routes.push([ 'GET', /^\/custom2-(?<custom>\w\d{3})$/, [customHandler2] ])
-    await router.handle(buildRequest({ path: '/custom2-a456' }))
-    expect(customHandler2).toHaveReturnedWith({ custom: 'a456' }) // custom route hit
-  })
+  await router.handle(buildRequest({ path: '/custom-123' }))
+  expect(customHandler).toHaveReturnedWith({ custom: '123' }) // custom route hit
+})
+
+it('allows loading advanced routes after config', async () => {
+  const handler = jest.fn(req => req.params)
+
+  const router = Router()
+
+  // allows manual loading (after config)
+  router.routes.push([ 'GET', /^\/custom2-(?<custom>\w\d{3})$/, [handler] ])
+
+  await router.handle(buildRequest({ path: '/custom2-a456' }))
+  expect(handler).toHaveReturnedWith({ custom: 'a456' }) // custom route hit
+})
 
   describe('.{method}(route: string, handler1: function, ..., handlerN: function)', () => {
     it('can accept multiple handlers (each mutates request)', async () => {

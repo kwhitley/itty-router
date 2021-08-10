@@ -10,6 +10,12 @@ export interface Route {
   <TRequest>(path: string, ...handlers: RouteHandler<TRequest & Request>[]): Router
 }
 
+export interface RouteEntry<Array> {
+  0: string
+  1: RegExp
+  2: RouteHandler[]
+}
+
 export interface Request {
   method?: string
   params?: Obj
