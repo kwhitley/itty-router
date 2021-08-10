@@ -163,7 +163,9 @@ GET /todos/jane?limit=2&page=1
   // attach the router "handle" to the event handler
   addEventListener('fetch', event =>
     event.respondWith(
-      router.handle(event.request).catch(errorHandler)
+      router
+        .handle(event.request)
+        .catch(errorHandler)
     )
   )
   ```
