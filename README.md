@@ -319,11 +319,15 @@ router
 ```
 
 ### Manual Routes
-Thanks to a beautiful refactor by @taralx, we've added the ability to fully preload or push manual routes with hand-writted regex.  This is useful because out of the box, only a tiny subset of regex "accidentally" works with itty, given that... you know... it's the thing writing regex for you in the first place.  If you have a problem route that needs custom regex though, you're in luck!  You can now inject your own routes using the far-less-user-friendly-but-totally-possible manual injection method (below).
+Thanks to a pretty sick refactor by [@taralx](https://github.com/taralx), we've added the ability to fully preload or push manual routes with hand-writted regex.
+
+Why is this useful?
+
+Out of the box, only a tiny subset of regex "accidentally" works with itty, given that... you know... it's the thing writing regex for you in the first place.  If you have a problem route that needs custom regex though, you can now manually give itty the exact regex it will match against, through the far-less-user-friendly-but-totally-possible manual injection method (below).
 
 Individual routes are defined as an array of: `[ method: string, match: RegExp, handlers: Array<function> ]`
 
-###### Manually push a custom route
+###### EXAMPLE 1: Manually push a custom route
 ```js
 import { Router } from 'itty-router'
 
@@ -346,20 +350,21 @@ await router.handle({ method: 'GET', url: 'https:nowhere.com/custom-a12456' })  
 ```
 
 
-###### Preloading routes via Router options
+###### EXAMPLE 2: Preloading routes via Router options
 ```js
 import { Router } from 'itty-router'
 
 // let's define a simple request handler
 const handler = request => request.params
 
-// and load the route while
+// and load the route while creating the router
 const router = Router({
   routes: [
     [ 'GET', /^\/custom-(?<id>\w\d{3})$/, [handler] ], // same example as above, but shortened
   ]
 })
 
+// add routes normally...
 router.get('/test', () => new Response('You can still define routes normally as well...'))
 
 // router will catch on custom route, as expected
