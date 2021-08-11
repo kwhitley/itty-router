@@ -1,4 +1,4 @@
-# ![Itty Router][logo-image]
+# [![Itty Router][logo-image]][itty-homepage]
 
 [![npm package][npm-image]][npm-url]
 [![minified + gzipped size][gzip-image]][gzip-url]
@@ -8,6 +8,7 @@
 <a href="https://npmjs.com/package/itty-router" target="\_parent">
   <img alt="" src="https://img.shields.io/npm/dm/itty-router.svg" />
 </a>
+[![Discord][discord-image]][discord-url]
 <a href="https://github.com/kwhitley/itty-router" target="\_parent">
   <img alt="" src="https://img.shields.io/github/stars/kwhitley/itty-router.svg?style=social&label=Star" />
 </a>
@@ -437,6 +438,9 @@ This trick allows methods (e.g. "get", "post") to by defined dynamically by the 
 [david-url]:https://david-dm.org/kwhitley/itty-router
 [coveralls-image]:https://coveralls.io/repos/github/kwhitley/itty-router/badge.svg?branch=v1.x
 [coveralls-url]:https://coveralls.io/github/kwhitley/itty-router?branch=v1.x
+[itty-homepage]:https://itty-router.dev
+[discord-image]:https://img.shields.io/discord/832353585802903572
+[discord-url]:https://discord.com/channels/832353585802903572
 
 ## Contributors
 These folks are the real heroes, making open source the powerhouse that it is!  Help out and get your name added to this list! <3
