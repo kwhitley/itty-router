@@ -439,6 +439,7 @@ it('allows loading advanced routes after config', async () => {
 
     describe('optional params', () => {
       testRoutes([
+        { route: '/foo/abc:id?', path: '/foo/abcbar', returns: { id: 'bar' } },
         { route: '/foo/:id?', path: '/foo' },
         { route: '/foo/:id?', path: '/foo/' },
         { route: '/foo/:id?', path: '/foo/bar', returns: { id: 'bar' } },

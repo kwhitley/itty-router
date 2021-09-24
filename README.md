@@ -19,7 +19,7 @@
   <img alt="Join the discussion on Github" src="https://img.shields.io/badge/Github%20Discussions%20%26%20Support-Chat%20now!-blue" />
 </a>-->
 
-It's an itty bitty router, designed for Express.js-like routing within [Cloudflare Workers](https://developers.cloudflare.com/workers/) (or anywhere else). Like... it's super tiny ([~4xx bytes](https://bundlephobia.com/package/itty-router)), with zero dependencies. For reals.
+It's an itty bitty router, designed for express-like routing within [Cloudflare Workers](https://developers.cloudflare.com/workers/) (or anywhere else). Like... it's super tiny ([~4xx bytes](https://bundlephobia.com/package/itty-router)), with zero dependencies. For reals.
 
 For quality-of-life improvements (e.g. middleware, cookies, body parsing, json handling, errors, and an itty version with automatic exception handling), to further shorten your routing code, be sure to check out [itty-router-extras](https://www.npmjs.com/package/itty-router-extras) - also specifically written for API development on [Cloudflare Workers](https://developers.cloudflare.com/workers/)!
 
@@ -33,9 +33,10 @@ For quality-of-life improvements (e.g. middleware, cookies, body parsing, json h
 - [x] [Base path](#nested-routers-with-404-handling) for prefixing all routes.
 - [x] [Multi-method support](#nested-routers-with-404-handling) using the `.all()` channel.
 - [x] Supports **any** method type (e.g. `.get() --> 'GET'` or `.puppy() --> 'PUPPY'`).
+- [x] Supports [Cloudflare ES Module syntax](#cf-es6-module-syntax)! :)
+- [x] [Preload or manually inject custom regex for routes](#manual-routes) (advanced usage)
 - [x] [Extendable](#extending-itty-router). Use itty as the internal base for more feature-rich/elaborate routers.
 - [x] Chainable route declarations (why not?)
-- [x] [Preload or manually inject custom regex for routes](#manual-routes) (advanced usage)
 - [ ] Readable internal code (yeah right...)
 
 ## Installation
