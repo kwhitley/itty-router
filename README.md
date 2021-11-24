@@ -21,7 +21,9 @@
 
 It's an itty bitty router, designed for express-like routing within [Cloudflare Workers](https://developers.cloudflare.com/workers/) (or anywhere else). Like... it's super tiny ([~4xx bytes](https://bundlephobia.com/package/itty-router)), with zero dependencies. For reals.
 
-For quality-of-life improvements (e.g. middleware, cookies, body parsing, json handling, errors, and an itty version with automatic exception handling), to further shorten your routing code, be sure to check out [itty-router-extras](https://www.npmjs.com/package/itty-router-extras) - also specifically written for API development on [Cloudflare Workers](https://developers.cloudflare.com/workers/)! [itty-durable][https://github.com/kwhitley/itty-durable] simplifies durable objects integration for transactions and subscriptions.
+### Addons & Related Libraries
+1. [itty-router-extras](https://www.npmjs.com/package/itty-router-extras) - adds quality-of-life improvements and utility functions for simplifying request/response code (e.g. middleware, cookies, body parsing, json handling, errors, and an itty version with automatic exception handling)! 
+2. [itty-durable](https://github.com/kwhitley/itty-durable) - creates a more direct object-like API for interacting with [Cloudflare Durable Objects](https://developers.cloudflare.com/workers/learning/using-durable-objects). 
 
 ## Features
 - [x] Tiny ([~4xx bytes](https://bundlephobia.com/package/itty-router) compressed) with zero dependencies.
