@@ -123,10 +123,19 @@ it('allows loading advanced routes after config', async () => {
     })
 
     it('match earliest routes that match', async () => {
-      const route = routes.find(r => r.path === '/foo/first')
-      await router.handle(buildRequest({ path: '/foo/first' }))
+      const router = Router()
+      const handler1 = jest.fn(() => 1)
+      const handler2 = jest.fn(() => 1)
+      router.get('/foo/static', handler1)
+      router.get('/foo/:id', handler2)
 
-      expect(route.callback).toHaveBeenCalled()
+      await router.handle(buildRequest({ path: '/foo/static' }))
+      expect(handler1).toHaveBeenCalled()
+      expect(handler2).not.toHaveBeenCalled()
+
+      await router.handle(buildRequest({ path: '/foo/3' }))
+      expect(handler1).toHaveBeenCalledTimes(1)
+      expect(handler2).toHaveBeenCalled()
     })
 
     it('honors correct method (e.g. GET, POST, etc)', async () => {
