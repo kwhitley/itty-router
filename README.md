@@ -198,7 +198,7 @@ GET /todos/jane?limit=2&page=1
 const missingHandler = new Response('Not found.', { status: 404 })
 
 // create a parent router
-const parentRouter = Router({ base: '/api' )
+const parentRouter = Router({ base: '/api' })
 
 // and a child router (with FULL base path defined, from root)
 const todosRouter = Router({ base: '/api/todos' })
