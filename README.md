@@ -22,8 +22,8 @@
 It's an itty bitty router, designed for express-like routing within [Cloudflare Workers](https://developers.cloudflare.com/workers/) (or anywhere else). Like... it's super tiny ([~4xx bytes](https://bundlephobia.com/package/itty-router)), with zero dependencies. For reals.
 
 ### Addons & Related Libraries
-1. [itty-router-extras](https://www.npmjs.com/package/itty-router-extras) - adds quality-of-life improvements and utility functions for simplifying request/response code (e.g. middleware, cookies, body parsing, json handling, errors, and an itty version with automatic exception handling)! 
-2. [itty-durable](https://github.com/kwhitley/itty-durable) - creates a more direct object-like API for interacting with [Cloudflare Durable Objects](https://developers.cloudflare.com/workers/learning/using-durable-objects). 
+1. [itty-router-extras](https://www.npmjs.com/package/itty-router-extras) - adds quality-of-life improvements and utility functions for simplifying request/response code (e.g. middleware, cookies, body parsing, json handling, errors, and an itty version with automatic exception handling)!
+2. [itty-durable](https://github.com/kwhitley/itty-durable) - creates a more direct object-like API for interacting with [Cloudflare Durable Objects](https://developers.cloudflare.com/workers/learning/using-durable-objects).
 
 ## Features
 - [x] Tiny ([~4xx bytes](https://bundlephobia.com/package/itty-router) compressed) with zero dependencies.
@@ -449,12 +449,12 @@ This trick allows methods (e.g. "get", "post") to by defined dynamically by the 
 These folks are the real heroes, making open source the powerhouse that it is!  Help out and get your name added to this list! <3
 
 #### Core, Concepts, and Codebase
+- [@mvasigh](https://github.com/mvasigh) - proxy hack wizard behind itty, coding partner in crime, maker of the entire doc site, etc, etc.
 - [@taralx](https://github.com/taralx) - router internal code-golfing refactor for performance and character savings
 - [@hunterloftis](https://github.com/hunterloftis) - router.handle() method now accepts extra arguments and passed them to route functions
-- [@mvasigh](https://github.com/mvasigh) - proxy hacks courtesy of this chap
 #### Fixes
 - [@taralx](https://github.com/taralx) - QOL fixes for contributing (dev dep fix and test file consistency) <3
 - [@technoyes](https://github.com/technoyes) - three kind-of-a-big-deal errors fixed.  Imagine the look on my face... thanks man!! :)
 - [@roojay520](https://github.com/roojay520) - TS interface fixes
-- [@arunsathiya](https://github.com/arunsathiya) - documentation
-- [@poacher2k](https://github.com/poacher2k) - documentation
+#### Documentation
+- [@arunsathiya](https://github.com/arunsathiya), [@poacher2k](https://github.com/poacher2k), [@kclauson](https://github.com/kclauson)
