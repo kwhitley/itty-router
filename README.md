@@ -457,4 +457,4 @@ These folks are the real heroes, making open source the powerhouse that it is!  
 - [@technoyes](https://github.com/technoyes) - three kind-of-a-big-deal errors fixed.  Imagine the look on my face... thanks man!! :)
 - [@roojay520](https://github.com/roojay520) - TS interface fixes
 #### Documentation
-- [@arunsathiya](https://github.com/arunsathiya), [@poacher2k](https://github.com/poacher2k), [@kclauson](https://github.com/kclauson)
+- [@arunsathiya](https://github.com/arunsathiya), [@poacher2k](https://github.com/poacher2k), [@ddarkr](https://github.com/ddarkr), [@kclauson](https://github.com/kclauson)
