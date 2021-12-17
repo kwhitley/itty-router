@@ -6,6 +6,7 @@ const Router = ({ base = '', routes = [] } = {}) => ({
         RegExp(`^${(base + route)
           .replace(/(\/?)\*/g, '($1.*)?')
           .replace(/\/$/, '')
+          .replace(/(:(\w+)\+)/, '(?<$2>.*)')
           .replace(/:(\w+)(\?)?(\.)?/g, '$2(?<$1>[^/]+)$2$3')
           .replace(/\.(?=[\w(])/, '\\.')
         }/*$`),

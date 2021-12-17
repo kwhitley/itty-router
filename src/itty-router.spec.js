@@ -476,6 +476,7 @@ it('allows loading advanced routes after config', async () => {
         { route: '/test.:x', path: '/test.a.b', returns: { x: 'a.b' } }, // dots are still captured as part of the param
         { route: '/:x?.y', path: '/test.y', returns: { x: 'test' } },
         { route: '/x/:y*', path: '/x/test', returns: { y: 'test' } },
+        { route: '/x/:y+', path: '/x/test/test', returns: { y: 'test/test' } },
       ])
     })
 
