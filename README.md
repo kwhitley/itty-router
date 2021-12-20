@@ -435,12 +435,12 @@ This trick allows methods (e.g. "get", "post") to by defined dynamically by the 
 [issues-url]:https://github.com/kwhitley/itty-router/issues
 [npm-image]:https://img.shields.io/npm/v/itty-router.svg
 [npm-url]:http://npmjs.org/package/itty-router
-[travis-image]:https://travis-ci.org/kwhitley/itty-router.svg?branch=v1.x
+[travis-image]:https://app.travis-ci.com/kwhitley/itty-router.svg?branch=v2.x
 [travis-url]:https://travis-ci.org/kwhitley/itty-router
 [david-image]:https://david-dm.org/kwhitley/itty-router/status.svg
 [david-url]:https://david-dm.org/kwhitley/itty-router
-[coveralls-image]:https://coveralls.io/repos/github/kwhitley/itty-router/badge.svg?branch=v1.x
-[coveralls-url]:https://coveralls.io/github/kwhitley/itty-router?branch=v1.x
+[coveralls-image]:https://coveralls.io/repos/github/kwhitley/itty-router/badge.svg?branch=v2.x
+[coveralls-url]:https://coveralls.io/github/kwhitley/itty-router?branch=v2.x
 [itty-homepage]:https://itty-router.dev
 [discord-image]:https://img.shields.io/discord/832353585802903572
 [discord-url]:https://discord.com/channels/832353585802903572
