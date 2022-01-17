@@ -1,7 +1,7 @@
 ## Changelog
 Until this library makes it to a production release of v1.x, **minor versions may contain breaking changes to the API**.  After v1.x, semantic versioning will be honored, and breaking changes will only occur under the umbrella of a major version bump.
 
-- **v2.4.7** - fixed the cursed "optional" file format capturing bug - RIP all the bytes lost
+- **v2.4.9** - fixed the cursed "optional" file format capturing bug - RIP all the bytes lost
 - **v2.4.6** - fixed README issues
 - **v2.4.1** - fixed type errors introduced with 2.4.0
 - **v2.4.0** - HUGE internal code-golfing refactor thanks to [@taralx](https://github.com/taralx)!  Super cool work on this!!!
