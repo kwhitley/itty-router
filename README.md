@@ -23,7 +23,7 @@ It's an itty bitty router, designed for express-like routing within [Cloudflare 
 
 ### Addons & Related Libraries
 1. [itty-router-extras](https://www.npmjs.com/package/itty-router-extras) - adds quality-of-life improvements and utility functions for simplifying request/response code (e.g. middleware, cookies, body parsing, json handling, errors, and an itty version with automatic exception handling)!
-2. [itty-durable](https://github.com/kwhitley/itty-durable) - creates a more direct object-like API for interacting with [Cloudflare Durable Objects](https://developers.cloudflare.com/workers/learning/using-durable-objects).
+2. [itty-durable](https://github.com/kwhitley/itty-durable) - (EXPERIMENTAL/alpha) creates a more direct object-like API for interacting with [Cloudflare Durable Objects](https://developers.cloudflare.com/workers/learning/using-durable-objects).
 
 ## Features
 - [x] Tiny ([~4xx bytes](https://bundlephobia.com/package/itty-router) compressed) with zero dependencies.
@@ -399,6 +399,7 @@ const Router = ({ base = '', routes = [] } = {}) => ({
           .replace(/\/$/, '')
           .replace(/:(\w+)(\?)?(\.)?/g, '$2(?<$1>[^/]+)$2$3')
           .replace(/\.(?=[\w(])/, '\\.')
+          .replace(/\)\.\?\(([^\[]+)\[\^/g, '?)\\.?($1(?<=\\.)[^\\.')
         }/*$`),
         H,
       ]) && c
