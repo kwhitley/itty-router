@@ -8,6 +8,7 @@ const Router = ({ base = '', routes = [] } = {}) => ({
           .replace(/\/$/, '')
           .replace(/:(\w+)(\?)?(\.)?/g, '$2(?<$1>[^/]+)$2$3')
           .replace(/\.(?=[\w(])/, '\\.')
+          .replace(/\)\.\?\(([^\[]+)\[\^/g, '?)\\.?($1(?<=\\.)[^\\.') // RIP all the bytes lost :'(
         }/*$`),
         handlers,
       ]) && receiver

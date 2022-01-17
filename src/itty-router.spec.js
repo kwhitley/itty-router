@@ -440,8 +440,8 @@ it('allows loading advanced routes after config', async () => {
         { route: '/:id.:format', path: '/foo.jpg', returns: { id: 'foo', format: 'jpg' } },
         { route: '/:id.:format', path: '/foo.bar.jpg', returns: { id: 'foo.bar', format: 'jpg' } },
         { route: '/:id.:format?', path: '/foo', returns: { id: 'foo' } },
-        // { route: '/:id.:format?', path: '/foo.bar.jpg', returns: { id: 'foo.bar', format: 'jpg' }, log: true }, // FAILING TEST - known bug
-        // { route: '/:id.:format?', path: '/foo.jpg', returns: { id: 'foo', format: 'jpg' }, log: true }, // FAILING TEST - known bug
+        { route: '/:id.:format?', path: '/foo.bar.jpg', returns: { id: 'foo.bar', format: 'jpg' } },
+        { route: '/:id.:format?', path: '/foo.jpg', returns: { id: 'foo', format: 'jpg' } },
         { route: '/:id.:format?', path: '/foo', returns: { id: 'foo' } },
       ])
     })
