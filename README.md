@@ -437,7 +437,7 @@ This trick allows methods (e.g. "get", "post") to by defined dynamically by the 
 [npm-image]:https://img.shields.io/npm/v/itty-router.svg
 [npm-url]:http://npmjs.org/package/itty-router
 [travis-image]:https://app.travis-ci.com/kwhitley/itty-router.svg?branch=v2.x
-[travis-url]:https://travis-ci.org/kwhitley/itty-router
+[travis-url]:https://app.travis-ci.com/kwhitley/itty-router.svg?branch=v2.x
 [david-image]:https://david-dm.org/kwhitley/itty-router/status.svg
 [david-url]:https://david-dm.org/kwhitley/itty-router
 [coveralls-image]:https://coveralls.io/repos/github/kwhitley/itty-router/badge.svg?branch=v2.x
