@@ -456,15 +456,6 @@ The itty-router package also exports an interface containing all the HTTP method
 ```ts
 import { Router, Route, IHTTPMethods } from 'itty-router'
 
-interface IMethods extends IHTTPMethods {
-  puppy: Route
-}
-
-const router = Router<void, IMethods>()
-
-router.get('/', request => {}) // Exposed via IHTTPMethods
-router.puppy('/', request => {}) // Custom method
-
 const router = Router<void, IHTTPMethods>()
 
 router.get('/', request => {}) // Exposed via IHTTPMethods
