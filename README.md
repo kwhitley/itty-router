@@ -451,7 +451,7 @@ router.puppy('/', request => {}) // Valid
 router.kitten('/', request => {}) // Also Valid
 ```
 
-The itty-router package also exports an interface containing all the HTTP methods.
+The `itty-router` package also exports an interface containing all of the HTTP methods.
 
 ```ts
 import { Router, Route, IHTTPMethods } from 'itty-router'
@@ -462,7 +462,7 @@ router.get('/', request => {}) // Exposed via IHTTPMethods
 router.puppy('/', request => {}) // Valid but not strongly typed
 ```
 
-You can also extend `IHTTPMethods` your own custom methods so they will be strongly typed.
+You can also extend `IHTTPMethods` with your own custom methods so they will be strongly typed.
 
 ```ts
 import { Router, Route, IHTTPMethods } from 'itty-router'
