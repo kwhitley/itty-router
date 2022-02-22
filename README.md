@@ -377,6 +377,80 @@ router.get('/test', () => new Response('You can still define routes normally as 
 await router.handle({ method: 'GET', url: 'https:nowhere.com/custom-a123' })    // { id: "a123" }
 ```
 
+### Typescript
+
+For Typescript projects, the Router can be adorned with two generics: A custom request interface and a custom methods interface.
+
+```ts
+import { Router, Route, Request } from 'itty-router'
+
+type MethodType = 'GET' | 'POST' | 'PUPPY'
+
+interface IRequest extends Request {
+  method: MethodType // method is required to be on the interface
+  url: string // url is required to be on the interface
+  optional?: string
+}
+
+interface IMethods {
+  get: Route
+  post: Route
+  puppy: Route
+}
+
+const router = Router<IRequest, IMethods>()
+
+router.get('/', (request: IRequest) => {})
+router.post('/', (request: IRequest) => {})
+router.puppy('/', (request: IRequest) => {})
+
+addEventListener('fetch', (event: FetchEvent) => {
+  event.respondWith(router.handle(event.request))
+})
+```
+
+Both generics are optional. `TRequest` defaults to `Request` and `TMethods` defaults to `{}`.
+
+```ts
+import { Router, Route } from 'itty-router'
+
+type MethodType = 'GET' | 'POST' | 'PUPPY'
+
+interface IRequest extends Request {
+  method: MethodType
+  url: string
+  optional?: string
+}
+
+interface IMethods {
+  get: Route
+  post: Route
+  puppy: Route
+}
+
+const router = Router() // Valid
+const router = Router<IRequest>() // Valid
+const router = Router<Request, IMethods>() // Valid
+const router = Router<void, IMethods>() // Valid
+```
+
+The router will also accept any string as a method, not just those provided on the `TMethods` type. 
+
+```ts
+import { Router, Route } from 'itty-router'
+
+interface IMethods {
+  get: Route
+  post: Route
+  puppy: Route
+}
+
+const router = Router<void, IMethods>()
+
+router.puppy('/', request => {}) // Valid
+router.kitten('/', request => {}) // Also Valid
+```
+
 ## Testing and Contributing
 1. Fork repo
 1. Install dev dependencies via `yarn`

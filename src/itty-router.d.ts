@@ -29,10 +29,10 @@ export interface Request {
   text?(): Promise<any>
 }
 
-export type Router<TRequest> = {
-  handle: (request: Request, ...extra: any) => any
+export type Router<TRequest = Request, TMethods = {}> = {
+  handle: (request: TRequest, ...extra: any) => any
   routes: RouteEntry<TRequest>[]
-} & {
+} & TMethods & {
   [any:string]: Route
 }
 
@@ -41,4 +41,4 @@ export interface RouterOptions<TRequest> {
   routes?: RouteEntry<TRequest>[]
 }
 
-export function Router<TRequest>(options?:RouterOptions<TRequest>): Router<TRequest>
+export function Router<TRequest = Request, TMethods = {}>(options?:RouterOptions<TRequest>): Router<TRequest, TMethods>
