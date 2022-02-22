@@ -29,9 +29,22 @@ export interface Request {
   text?(): Promise<any>
 }
 
+export interface IHTTPMethods {
+  get: Route
+  head: Route
+  post: Route
+  put: Route
+  delete: Route
+  connect: Route
+  options: Route
+  trace: Route
+  patch: Route
+}
+
 export type Router<TRequest = Request, TMethods = {}> = {
   handle: (request: TRequest, ...extra: any) => any
   routes: RouteEntry<TRequest>[]
+  all: Route
 } & TMethods & {
   [any:string]: Route
 }
