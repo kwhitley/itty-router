@@ -3,7 +3,7 @@ export type Obj = {
 }
 
 export interface RouteHandler<TRequest> {
-  (request: TRequest & Request, ...args: any): any
+  (request: TRequest, ...args: any): any
 }
 
 export interface Route {
