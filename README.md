@@ -552,7 +552,7 @@ These folks are the real heroes, making open source the powerhouse that it is!  
 - [@mvasigh](https://github.com/mvasigh) - proxy hack wizard behind itty, coding partner in crime, maker of the entire doc site, etc, etc.
 - [@taralx](https://github.com/taralx) - router internal code-golfing refactor for performance and character savings
 - [@hunterloftis](https://github.com/hunterloftis) - router.handle() method now accepts extra arguments and passed them to route functions
-- [@SupremeTechnopriest)(https://github.com/SupremeTechnopriest) - improved TypeScript support and documentation! :D
+- [@SupremeTechnopriest](https://github.com/SupremeTechnopriest) - improved TypeScript support and documentation! :D
 #### Fixes
 - [@taralx](https://github.com/taralx) - QOL fixes for contributing (dev dep fix and test file consistency) <3
 - [@technoyes](https://github.com/technoyes) - three kind-of-a-big-deal errors fixed.  Imagine the look on my face... thanks man!! :)
