@@ -283,15 +283,32 @@ router.get('/todos/:id.:format?', request => {
 ```
 
 ### Cloudflare ES6 Module Syntax (required for Durable Objects) <a id="cf-es6-module-syntax"></a>
+See https://developers.cloudflare.com/workers/runtime-apis/fetch-event#syntax-module-worker
 ```js
+import { Router } from 'itty-router'
+
 const router = Router()
 
-router.get('/', (request, env) => {
+router.get('/', (request, env, context) => {
   // now have access to the env (where CF bindings like durables, KV, etc now are)
 })
 
 export default {
   fetch: router.handle // yep, it's this easy.
+}
+
+// alternative advanced/manual approach for downstream control
+export default {
+  fetch: (...args) => router
+                        .handle(...args)
+                        .then(response => 
+                          // can modify response here before final return, e.g. CORS headers
+
+                          return response
+                        })
+                        .catch(err => {
+                          // and do something with the errors here, like logging, error status, etc
+                        })
 }
 ```
 
@@ -558,4 +575,8 @@ These folks are the real heroes, making open source the powerhouse that it is!  
 - [@technoyes](https://github.com/technoyes) - three kind-of-a-big-deal errors fixed.  Imagine the look on my face... thanks man!! :)
 - [@roojay520](https://github.com/roojay520) - TS interface fixes
 #### Documentation
-- [@arunsathiya](https://github.com/arunsathiya), [@poacher2k](https://github.com/poacher2k), [@ddarkr](https://github.com/ddarkr), [@kclauson](https://github.com/kclauson)
+- [@arunsathiya](https://github.com/arunsathiya), 
+  [@poacher2k](https://github.com/poacher2k), 
+  [@ddarkr](https://github.com/ddarkr), 
+  [@kclauson](https://github.com/kclauson),
+  [@jcapogna](https://github.com/jcapogna)
