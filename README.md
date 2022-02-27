@@ -2,7 +2,7 @@
 
 [![npm package][npm-image]][npm-url]
 [![minified + gzipped size][gzip-image]][gzip-url]
-[![Build Status][travis-image]][travis-url]
+![Build Status](https://github.com/kwhitley/itty-router/actions/workflows/verify.yml/badge.svg)
 [![Coverage Status][coveralls-image]][coveralls-url]
 [![Open Issues][issues-image]][issues-url]
 <a href="https://npmjs.com/package/itty-router" target="\_parent">
@@ -436,8 +436,6 @@ This trick allows methods (e.g. "get", "post") to by defined dynamically by the 
 [issues-url]:https://github.com/kwhitley/itty-router/issues
 [npm-image]:https://img.shields.io/npm/v/itty-router.svg
 [npm-url]:http://npmjs.org/package/itty-router
-[travis-image]:https://app.travis-ci.com/kwhitley/itty-router.svg?branch=v2.x
-[travis-url]:https://app.travis-ci.com/kwhitley/itty-router
 [david-image]:https://david-dm.org/kwhitley/itty-router/status.svg
 [david-url]:https://david-dm.org/kwhitley/itty-router
 [coveralls-image]:https://coveralls.io/repos/github/kwhitley/itty-router/badge.svg?branch=v2.x
