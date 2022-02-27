@@ -19,5 +19,4 @@ jobs:
           node-version: '16.x'
       - name: Install dependencies
         run: yarn
-      - run: yarn run build
-      - run: yarn run test
+      - run: yarn verify
