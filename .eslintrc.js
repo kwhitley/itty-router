@@ -67,10 +67,6 @@ module.exports = {
         'func-call-spacing': 'error',
         'func-name-matching': 'error',
         'func-names': 'error',
-        'func-style': [
-            'error',
-            'expression'
-        ],
         'function-paren-newline': 'error',
         'generator-star-spacing': 'error',
         'global-require': 'error',
@@ -232,7 +228,6 @@ module.exports = {
         'radix': 'error',
         'require-atomic-updates': 'error',
         'require-await': 'error',
-        'require-jsdoc': 'error',
         'require-unicode-regexp': 'off',
         'rest-spread-spacing': [
             'error',
@@ -244,7 +239,6 @@ module.exports = {
         'sort-imports': 'error',
         'sort-vars': 'off',
         'space-before-blocks': 'error',
-        'space-before-function-paren': 'error',
         'space-in-parens': [
             'error',
             'never'

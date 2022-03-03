@@ -301,7 +301,7 @@ export default {
 export default {
   fetch: (...args) => router
                         .handle(...args)
-                        .then(response => 
+                        .then(response =>
                           // can modify response here before final return, e.g. CORS headers
 
                           return response
@@ -452,7 +452,7 @@ const router = Router<Request, IMethods>() // Valid
 const router = Router<void, IMethods>() // Valid
 ```
 
-The router will also accept any string as a method, not just those provided on the `TMethods` type. 
+The router will also accept any string as a method, not just those provided on the `TMethods` type.
 
 ```ts
 import { Router, Route } from 'itty-router'
@@ -507,36 +507,38 @@ router.puppy('/', request => {}) // Strongly typed
 
 ### The Entire Code (for more legibility, [see src on GitHub](https://github.com/kwhitley/itty-router/blob/v2.x/src/itty-router.js))
 ```js
-const Router = ({ base = '', routes = [] } = {}) => ({
-  __proto__: new Proxy({}, {
-    get: (t, k, c) => (p, ...H) =>
-      routes.push([
-        k.toUpperCase(),
-        RegExp(`^${(base + p)
-          .replace(/(\/?)\*/g, '($1.*)?')
-          .replace(/\/$/, '')
-          .replace(/:(\w+)(\?)?(\.)?/g, '$2(?<$1>[^/]+)$2$3')
-          .replace(/\.(?=[\w(])/, '\\.')
-          .replace(/\)\.\?\(([^\[]+)\[\^/g, '?)\\.?($1(?<=\\.)[^\\.')
-        }/*$`),
-        H,
-      ]) && c
-  }),
-  routes,
-  async handle (q, ...a) {
-    let s, m,
-        u = new URL(q.url)
-    q.query = Object.fromEntries(u.searchParams)
-    for (let [M, p, H] of routes) {
-      if ((M === q.method || M === 'ALL') && (m = u.pathname.match(p))) {
-        q.params = m.groups
-        for (let h of H) {
-          if ((s = await h(q.proxy || q, ...a)) !== undefined) return s
+function Router({ base = '', routes = [] } = {}) {
+  return {
+    __proto__: new Proxy({}, {
+      get: (t, k, c) => (p, ...H) =>
+        routes.push([
+          k.toUpperCase(),
+          RegExp(`^${(base + p)
+            .replace(/(\/?)\*/g, '($1.*)?')
+            .replace(/\/$/, '')
+            .replace(/:(\w+)(\?)?(\.)?/g, '$2(?<$1>[^/]+)$2$3')
+            .replace(/\.(?=[\w(])/, '\\.')
+            .replace(/\)\.\?\(([^\[]+)\[\^/g, '?)\\.?($1(?<=\\.)[^\\.') // RIP all the bytes lost :'(
+          }/*$`),
+          H,
+        ]) && c
+    }),
+    routes,
+    async handle (q, ...a) {
+      let s, m,
+          u = new URL(q.url)
+      q.query = Object.fromEntries(u.searchParams)
+      for (let [M, p, H] of routes) {
+        if ((M === q.method || M === 'ALL') && (m = u.pathname.match(p))) {
+          q.params = m.groups
+          for (let h of H) {
+            if ((s = await h(q.proxy || q, ...a)) !== undefined) return s
+          }
         }
       }
     }
   }
-})
+}
 ```
 
 ## Special Thanks
@@ -575,8 +577,8 @@ These folks are the real heroes, making open source the powerhouse that it is!  
 - [@technoyes](https://github.com/technoyes) - three kind-of-a-big-deal errors fixed.  Imagine the look on my face... thanks man!! :)
 - [@roojay520](https://github.com/roojay520) - TS interface fixes
 #### Documentation
-- [@arunsathiya](https://github.com/arunsathiya), 
-  [@poacher2k](https://github.com/poacher2k), 
-  [@ddarkr](https://github.com/ddarkr), 
+- [@arunsathiya](https://github.com/arunsathiya),
+  [@poacher2k](https://github.com/poacher2k),
+  [@ddarkr](https://github.com/ddarkr),
   [@kclauson](https://github.com/kclauson),
   [@jcapogna](https://github.com/jcapogna)
