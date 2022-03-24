@@ -42,7 +42,7 @@ export interface IHTTPMethods {
 }
 
 export type Router<TRequest = Request, TMethods = {}> = {
-  handle: (request: TRequest, ...extra: any) => any
+  handle: (request: TRequest, ...extra: any) => Promise<any>
   routes: RouteEntry<TRequest>[]
   all: Route
 } & TMethods & {

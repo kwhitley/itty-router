@@ -104,6 +104,16 @@ it('allows loading advanced routes after config', async () => {
   })
 
   describe('.handle({ method = \'GET\', url })', () => {
+    it('always returns a Promise', () => {
+      const syncRouter = Router()
+      syncRouter.get('/foo', () => 3)
+
+      const response = syncRouter.handle(buildRequest({ path: '/foo' }))
+
+      expect(typeof response?.then).toBe('function')
+      expect(typeof response?.catch).toBe('function')
+    })
+
     it('returns { path, query } from match', async () => {
       const route = routes.find(r => r.path === '/foo/:id')
       await router.handle(buildRequest({ path: '/foo/13?foo=bar&cat=dog' }))

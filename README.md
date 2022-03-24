@@ -19,7 +19,7 @@
   <img alt="Join the discussion on Github" src="https://img.shields.io/badge/Github%20Discussions%20%26%20Support-Chat%20now!-blue" />
 </a>-->
 
-It's an itty bitty router, designed for express-like routing within [Cloudflare Workers](https://developers.cloudflare.com/workers/) (or anywhere else). Like... it's super tiny ([~500 bytes](https://bundlephobia.com/package/itty-router)), with zero dependencies. For reals.
+Tiny, zero-dependency router with route param and query parsing - built for [Cloudflare Workers](https://developers.cloudflare.com/workers/), but works everywhere!
 
 ### Addons & Related Libraries
 1. [itty-router-extras](https://www.npmjs.com/package/itty-router-extras) - adds quality-of-life improvements and utility functions for simplifying request/response code (e.g. middleware, cookies, body parsing, json handling, errors, and an itty version with automatic exception handling)!
@@ -27,9 +27,9 @@ It's an itty bitty router, designed for express-like routing within [Cloudflare 
 
 ## Features
 - [x] Tiny ([~500 bytes](https://bundlephobia.com/package/itty-router) compressed), with zero dependencies.
-- [x] [TypeScript support](#typescript)!
-- [x] Full sync/async support.  Use it when you need it!
-- [x] Route params, with wildcards and optionals (e.g. `/api/:collection/:id?`)
+- [x] [Fully typed/TypeScript support](#typescript)
+- [x] Supports sync/async handlers/middleware.
+- [x] Parses route params, with wildcards and optionals (e.g. `/api/:collection/:id?`)
 - [x] Query parsing (e.g. `?page=3&foo=bar`)
 - [x] [Middleware support](#middleware). Any number of sync/async handlers may be passed to a route.
 - [x] [Nestable](#nested-routers-with-404-handling). Supports nesting routers for API branching.
@@ -105,9 +105,9 @@ router.get('/todos/:user/:item?', (req) => {
 ```
 
 ### 3. Handle Incoming Request(s)
-##### `async router.handle(request.proxy: Proxy || request: Request, ...anything else)`
+##### `async router.handle(request.proxy: Proxy || request: Request, ...anything else) => Promise<any>`
 Requests (doesn't have to be a real Request class) should have both a **method** and full **url**.
-The `handle` method will then return the first matching route handler that returns something (or nothing at all if no match).
+The `handle` method will then return a Promise, resolving with the first matching route handler that returns something (or nothing at all if no match).
 
 ```js
 router.handle({
