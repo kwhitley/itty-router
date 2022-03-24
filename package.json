@@ -2,12 +2,20 @@
   "name": "itty-router",
   "version": "2.5.3",
   "description": "Tiny, zero-dependency router with route param and query parsing - built for Cloudflare Workers, but works everywhere!",
-  "main": "./dist/itty-router.min.js",
-  "types": "./dist/itty-router.d.ts",
+  "sourceType": "module",
   "files": [
     "dist/itty-router.min.js",
+    "dist/itty-router.min.mjs",
     "dist/itty-router.d.ts"
   ],
+  "main": "./dist/itty-router.min.js",
+  "exports": {
+    ".": {
+      "require": "./dist/itty-router.min.js",
+      "import": "./dist/itty-router.min.mjs"
+    }
+  },
+  "types": "./dist/itty-router.d.ts",
   "keywords": [
     "router",
     "cloudflare",
@@ -47,7 +55,11 @@
     "coveralls": "cat ./coverage/lcov.info | node node_modules/.bin/coveralls",
     "prerelease": "yarn verify",
     "prebuild": "rimraf dist && mkdir dist && node prebuild.js && cp src/itty-router.d.ts dist",
-    "build": "uglifyjs dist/itty-router.js -c -m --toplevel > dist/itty-router.min.js",
+    "build": "yarn uglify",
+    "uglify": "yarn uglify:cjs && yarn uglify:esm",
+    "uglify:esm": "uglifyjs dist/itty-router.mjs -c -m --toplevel > dist/itty-router.min.mjs",
+    "uglify:cjs": "uglifyjs src/itty-router.js -c -m --toplevel > dist/itty-router.min.js",
+    "build:esm": "esbuild src/itty-router.js --format=esm --outfile=./dist/itty-router.mjs",
     "postbuild": "node check-size.js",
     "release": "release --tag --push"
   },
@@ -65,6 +77,7 @@
     "@vitejs/plugin-vue": "^2.2.4",
     "@vue/compiler-sfc": "^3.2.31",
     "coveralls": "^3.1.1",
+    "esbuild": "^0.14.27",
     "eslint": "^8.11.0",
     "eslint-plugin-jest": "^26.1.2",
     "fs-extra": "^10.0.1",

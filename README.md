@@ -505,42 +505,6 @@ router.puppy('/', request => {}) // Strongly typed
 1. Submit PR with a detailed description of what you're doing
 1. I'll add you to the credits! :)
 
-### The Entire Code (for more legibility, [see src on GitHub](https://github.com/kwhitley/itty-router/blob/v2.x/src/itty-router.js))
-```js
-function Router({ base = '', routes = [] } = {}) {
-  return {
-    __proto__: new Proxy({}, {
-      get: (t, k, c) => (p, ...H) =>
-        routes.push([
-          k.toUpperCase(),
-          RegExp(`^${(base + p)
-            .replace(/(\/?)\*/g, '($1.*)?')
-            .replace(/\/$/, '')
-            .replace(/:(\w+)(\?)?(\.)?/g, '$2(?<$1>[^/]+)$2$3')
-            .replace(/\.(?=[\w(])/, '\\.')
-            .replace(/\)\.\?\(([^\[]+)\[\^/g, '?)\\.?($1(?<=\\.)[^\\.') // RIP all the bytes lost :'(
-          }/*$`),
-          H,
-        ]) && c
-    }),
-    routes,
-    async handle (q, ...a) {
-      let s, m,
-          u = new URL(q.url)
-      q.query = Object.fromEntries(u.searchParams)
-      for (let [M, p, H] of routes) {
-        if ((M === q.method || M === 'ALL') && (m = u.pathname.match(p))) {
-          q.params = m.groups
-          for (let h of H) {
-            if ((s = await h(q.proxy || q, ...a)) !== undefined) return s
-          }
-        }
-      }
-    }
-  }
-}
-```
-
 ## Special Thanks
 This repo goes out to my past and present colleagues at Arundo - who have brought me such inspiration, fun,
 and drive over the last couple years.  In particular, the absurd brevity of this code is thanks to a
