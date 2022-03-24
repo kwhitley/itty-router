@@ -5,20 +5,18 @@ function Router({ base = '', routes = [] } = {}) {
         routes.push([
           prop.toUpperCase(),
           RegExp(`^${(base + route)
-            .replace(/(\/?)\*/g, '($1.*)?')
-            .replace(/\/$/, '')
-            .replace(/:(\w+)(\?)?(\.)?/g, '$2(?<$1>[^/]+)$2$3')
-            .replace(/\.(?=[\w(])/, '\\.')
-            .replace(/\)\.\?\(([^\[]+)\[\^/g, '?)\\.?($1(?<=\\.)[^\\.') // RIP all the bytes lost :'(
+            .replace(/(\/?)\*/g, '($1.*)?')                             // trailing wildcard
+            .replace(/\/$/, '')                                         // remove trailing slash
+            .replace(/:(\w+)(\?)?(\.)?/g, '$2(?<$1>[^/]+)$2$3')         // named params
+            .replace(/\.(?=[\w(])/, '\\.')                              // dot in path
+            .replace(/\)\.\?\(([^\[]+)\[\^/g, '?)\\.?($1(?<=\\.)[^\\.') // optional image format
           }/*$`),
           handlers,
         ]) && receiver
     }),
-    // eslint-disable-next-line object-shorthand
     routes,
     async handle (request, ...args) {
-      let response, match,
-          url = new URL(request.url)
+      let response, match, url = new URL(request.url)
       request.query = Object.fromEntries(url.searchParams)
       for (let [method, route, handlers] of routes) {
         if ((method === request.method || method === 'ALL') && (match = url.pathname.match(route))) {

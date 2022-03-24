@@ -1,12 +1,15 @@
 module.exports = {
     'env': {
         'browser': true,
+        'es6': true,
         'commonjs': true,
         'es2020': true,
-        'jest/globals': true
+        'jest/globals': true,
+        'node': true,
     },
     'parserOptions': {
-        'ecmaVersion': 11
+        'ecmaVersion': 11,
+        'sourceType': 'module',
     },
     'plugins': ['jest'],
     'rules': {
@@ -139,7 +142,7 @@ module.exports = {
         'no-mixed-operators': 'error',
         'no-mixed-requires': 'error',
         'no-multi-assign': 'off',
-        'no-multi-spaces': 'error',
+        'no-multi-spaces': 'off',
         'no-multi-str': 'error',
         'no-multiple-empty-lines': 'error',
         'no-native-reassign': 'error',
@@ -202,7 +205,7 @@ module.exports = {
             'always'
         ],
         'object-shorthand': 'error',
-        'one-var-declaration-per-line': 'error',
+        'one-var-declaration-per-line': 'off',
         'operator-assignment': 'error',
         'operator-linebreak': 'error',
         'padded-blocks': 'off',
