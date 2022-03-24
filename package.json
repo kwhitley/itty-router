@@ -1,6 +1,6 @@
 {
   "name": "itty-router",
-  "version": "2.5.2",
+  "version": "2.5.3",
   "description": "Tiny, zero-dependency router with route param and query parsing - built for Cloudflare Workers, but works everywhere!",
   "main": "./dist/itty-router.min.js",
   "types": "./dist/itty-router.d.ts",
@@ -62,20 +62,19 @@
   },
   "homepage": "https://itty-router.dev",
   "devDependencies": {
-    "@vitejs/plugin-vue": "^1.4.0",
-    "@vue/compiler-sfc": "^3.2.2",
-    "chalk": "^4.1.2",
+    "@vitejs/plugin-vue": "^2.2.4",
+    "@vue/compiler-sfc": "^3.2.31",
     "coveralls": "^3.1.1",
-    "eslint": "^7.32.0",
-    "eslint-plugin-jest": "^24.4.0",
-    "fs-extra": "^10.0.0",
+    "eslint": "^8.11.0",
+    "eslint-plugin-jest": "^26.1.2",
+    "fs-extra": "^10.0.1",
     "gzip-size": "^6.0.0",
     "isomorphic-fetch": "^3.0.0",
-    "jest": "^27.0.6",
+    "jest": "^27.5.1",
     "rimraf": "^3.0.2",
-    "uglify-js": "^3.14.1",
-    "vite": "^2.4.4",
-    "yarn": "^1.22.11",
+    "uglify-js": "^3.15.3",
+    "vite": "^2.8.6",
+    "yarn": "^1.22.18",
     "yarn-release": "^1.10.3"
   }
 }
