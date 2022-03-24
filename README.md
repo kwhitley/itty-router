@@ -301,7 +301,7 @@ export default {
 export default {
   fetch: (...args) => router
                         .handle(...args)
-                        .then(response =>
+                        .then(response => {
                           // can modify response here before final return, e.g. CORS headers
 
                           return response
