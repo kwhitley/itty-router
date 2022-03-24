@@ -75,7 +75,6 @@
   "homepage": "https://itty-router.dev",
   "devDependencies": {
     "@vitejs/plugin-vue": "^2.2.4",
-    "vue/compiler-sfc": "npm:@vue/compiler-sfc^3.2.31",
     "coveralls": "^3.1.1",
     "esbuild": "^0.14.27",
     "eslint": "^8.11.0",
@@ -87,6 +86,7 @@
     "rimraf": "^3.0.2",
     "uglify-js": "^3.15.3",
     "vite": "^2.8.6",
+    "vue": "^3.2.31",
     "yarn": "^1.22.18",
     "yarn-release": "^1.10.3"
   }
