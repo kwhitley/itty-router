@@ -6,8 +6,8 @@ export interface RouteHandler<TRequest> {
   (request: TRequest, ...args: any): any
 }
 
-export interface Route {
-  <TRequest>(path: string, ...handlers: RouteHandler<TRequest & Request>[]): Router<TRequest>
+export interface Route<TRequest = Request> {
+  <RRequest>(path: string, ...handlers: RouteHandler<RRequest & TRequest & Request>[]): Router<TRequest>
 }
 
 export interface RouteEntry<TRequest> {
@@ -29,24 +29,24 @@ export interface Request {
   text?(): Promise<any>
 }
 
-export interface IHTTPMethods {
-  get: Route
-  head: Route
-  post: Route
-  put: Route
-  delete: Route
-  connect: Route
-  options: Route
-  trace: Route
-  patch: Route
+export interface IHTTPMethods<TRequest = Request> {
+  get: Route<TRequest>
+  head: Route<TRequest>
+  post: Route<TRequest>
+  put: Route<TRequest>
+  delete: Route<TRequest>
+  connect: Route<TRequest>
+  options: Route<TRequest>
+  trace: Route<TRequest>
+  patch: Route<TRequest>
 }
 
 export type Router<TRequest = Request, TMethods = {}> = {
   handle: (request: TRequest, ...extra: any) => Promise<any>
   routes: RouteEntry<TRequest>[]
-  all: Route
+  all: Route<TRequest>
 } & TMethods & {
-  [any:string]: Route
+  [any:string]: Route<TRequest>
 }
 
 export interface RouterOptions<TRequest> {
