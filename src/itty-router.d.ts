@@ -29,16 +29,16 @@ export interface Request {
   text?(): Promise<any>
 }
 
-export interface IHTTPMethods<TRequest = Request, TMethods = {}> {
-  get: Route<TRequest, TMethods>
-  head: Route<TRequest, TMethods>
-  post: Route<TRequest, TMethods>
-  put: Route<TRequest, TMethods>
-  delete: Route<TRequest, TMethods>
-  connect: Route<TRequest, TMethods>
-  options: Route<TRequest, TMethods>
-  trace: Route<TRequest, TMethods>
-  patch: Route<TRequest, TMethods>
+export interface IHTTPMethods<TRequest = Request> {
+  get: Route<TRequest, IHTTPMethods>
+  head: Route<TRequest, IHTTPMethods>
+  post: Route<TRequest, IHTTPMethods>
+  put: Route<TRequest, IHTTPMethods>
+  delete: Route<TRequest, IHTTPMethods>
+  connect: Route<TRequest, IHTTPMethods>
+  options: Route<TRequest, IHTTPMethods>
+  trace: Route<TRequest, IHTTPMethods>
+  patch: Route<TRequest, IHTTPMethods>
 }
 
 export type Router<TRequest = Request, TMethods = {}> = {
