@@ -1,6 +1,6 @@
 {
   "name": "itty-router",
-  "version": "2.6.0",
+  "version": "2.6.1",
   "description": "Tiny, zero-dependency router with route param and query parsing - built for Cloudflare Workers, but works everywhere!",
   "sourceType": "module",
   "files": [
