@@ -343,7 +343,7 @@ router
 ```
 
 ### Manual Routes
-Thanks to a pretty sick refactor by [@taralx](https://github.com/taralx), we've added the ability to fully preload or push manual routes with hand-writted regex.
+Thanks to a pretty sick refactor by [@taralx](https://github.com/taralx), we've added the ability to fully preload or push manual routes with hand-written regex.
 
 Why is this useful?
 
