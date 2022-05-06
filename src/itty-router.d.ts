@@ -9,7 +9,7 @@ export interface RouteHandler<TRequest> {
 }
 
 export interface Route {
-  <TRequest>(path: string, ...handlers: RouteHandler<TRequest & Request>[]): Router<TRequest>
+  <TRequest>(path: string, ...handlers: RouteHandler<TRequest & IttyRequest>[]): Router<TRequest>
 }
 
 export interface RouteEntry<TRequest> {
@@ -30,7 +30,17 @@ export interface IHTTPMethods {
   patch: Route
 }
 
-export type Router<TRequest = Request, TMethods = {}> = {
+interface IttyRequest extends Request {
+  params?: {
+    [key: string]: string
+  }
+  proxy?: object
+  query?: {
+    [k: string]: string | undefined
+  }
+}
+
+export type Router<TRequest = IttyRequest, TMethods = {}> = {
   handle: (request: TRequest, ...extra: any) => Promise<any>
   routes: RouteEntry<TRequest>[]
   all: Route
@@ -43,4 +53,4 @@ export interface RouterOptions<TRequest> {
   routes?: RouteEntry<TRequest>[]
 }
 
-export function Router<TRequest = Request, TMethods = {}>(options?:RouterOptions<TRequest>): Router<TRequest, TMethods>
+export function Router<TRequest = IttyRequest, TMethods = {}>(options?:RouterOptions<TRequest>): Router<TRequest, TMethods>
