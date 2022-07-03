@@ -23,7 +23,7 @@ Tiny, zero-dependency router with route param and query parsing - built for [Clo
 
 ### Addons & Related Libraries
 1. [itty-router-extras](https://www.npmjs.com/package/itty-router-extras) - adds quality-of-life improvements and utility functions for simplifying request/response code (e.g. middleware, cookies, body parsing, json handling, errors, and an itty version with automatic exception handling)!
-2. [itty-durable](https://github.com/kwhitley/itty-durable) - (EXPERIMENTAL/alpha) creates a more direct object-like API for interacting with [Cloudflare Durable Objects](https://developers.cloudflare.com/workers/learning/using-durable-objects).
+2. [itty-durable](https://github.com/kwhitley/itty-durable) - creates a more direct object-like API for interacting with [Cloudflare Durable Objects](https://developers.cloudflare.com/workers/learning/using-durable-objects).
 
 ## Features
 - [x] Tiny ([~500 bytes](https://bundlephobia.com/package/itty-router) compressed), with zero dependencies.
