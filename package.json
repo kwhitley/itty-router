@@ -12,7 +12,8 @@
   "exports": {
     ".": {
       "require": "./dist/itty-router.min.js",
-      "import": "./dist/itty-router.min.mjs"
+      "import": "./dist/itty-router.min.mjs",
+      "types": "./dist/itty-router.d.ts"
     }
   },
   "types": "./dist/itty-router.d.ts",
