@@ -1,24 +1,33 @@
+export interface createResponseTypeOptions {
+  stringify?: boolean
+}
+
 export interface CreateResponseOptions {
+  headers?: HeadersInit
   [key: string]: any
 }
 
 export const createResponseType = (
   format: string = 'text/plain; charset=utf-8',
+  options?: createResponseTypeOptions,
 ) => (
-  body: string | object,
+  body: any,
   options: CreateResponseOptions = {},
-) => {
-  const { headers = {}, ...rest } = options
+): Response => {
+  const {
+    headers = {},
+    ...rest
+  } = options
 
-  if (typeof body === 'object') {
-    return new Response(JSON.stringify(body), {
-      headers: {
-        'Content-Type': format,
-        ...headers,
-      },
-      ...rest,
-    })
+  if (options?.stringify) {
+    body = JSON.stringify(body)
   }
 
-  return new Response(body, options)
+  return new Response(body, {
+    headers: {
+      'Content-Type': format,
+      ...headers,
+    },
+    ...rest,
+  })
 }
