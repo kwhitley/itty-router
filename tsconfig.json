@@ -1,0 +1,27 @@
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "allowSyntheticDefaultImports": true,
+    "baseUrl": "src",
+    "declaration": true,
+    "esModuleInterop": true,
+    "inlineSourceMap": false,
+    "lib": ["esnext"],
+    "listEmittedFiles": false,
+    "listFiles": false,
+    "moduleResolution": "node",
+    "noFallthroughCasesInSwitch": true,
+    "pretty": true,
+    "resolveJsonModule": true,
+    "rootDir": "src",
+    "skipLibCheck": true,
+    "strict": false,
+    "traceResolution": false,
+    "types": ["@cloudflare/workers-types"],
+    "module": "commonjs",
+    "outDir": "dist",
+    "target": "es2015"
+  },
+  "exclude": ["node_modules", "dist", "**/*.spec.js"],
+  "include": ["src"]
+}

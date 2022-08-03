@@ -17,6 +17,27 @@
     }
   },
   "types": "./dist/itty-router.d.ts",
+  "scripts": {
+    "build2": "tsc -p tsconfig.json",
+    "docs:dev": "cp README.md ./docs/pages/README.md && vite",
+    "docs:build": "cp README.md ./docs/pages/README.md && vite build",
+    "docs:serve": "vite preview",
+    "lint": "npx eslint src",
+    "test:dist": "jest --verbose --coverage dist",
+    "test": "yarn lint && jest --verbose --coverage src",
+    "verify": "echo 'verifying module...' && yarn build && yarn test && yarn test:dist",
+    "dev": "yarn lint && jest --verbose --watch src",
+    "coveralls": "cat ./coverage/lcov.info | node node_modules/.bin/coveralls",
+    "prerelease": "yarn verify",
+    "prebuild": "rimraf dist && mkdir dist && node prebuild.js && cp src/itty-router.d.ts dist",
+    "build": "yarn uglify",
+    "uglify": "yarn uglify:cjs && yarn uglify:esm",
+    "uglify:esm": "uglifyjs dist/itty-router.mjs -c -m --toplevel > dist/itty-router.min.mjs",
+    "uglify:cjs": "uglifyjs src/itty-router.js -c -m --toplevel > dist/itty-router.min.js",
+    "build:esm": "esbuild src/itty-router.js --format=esm --outfile=./dist/itty-router.mjs",
+    "postbuild": "node check-size.js",
+    "release": "release --tag --push"
+  },
   "keywords": [
     "router",
     "cloudflare",
@@ -44,26 +65,6 @@
     "durable",
     "objects"
   ],
-  "scripts": {
-    "docs:dev": "cp README.md ./docs/pages/README.md && vite",
-    "docs:build": "cp README.md ./docs/pages/README.md && vite build",
-    "docs:serve": "vite preview",
-    "lint": "npx eslint src",
-    "test:dist": "jest --verbose --coverage dist",
-    "test": "yarn lint && jest --verbose --coverage src",
-    "verify": "echo 'verifying module...' && yarn build && yarn test && yarn test:dist",
-    "dev": "yarn lint && jest --verbose --watch src",
-    "coveralls": "cat ./coverage/lcov.info | node node_modules/.bin/coveralls",
-    "prerelease": "yarn verify",
-    "prebuild": "rimraf dist && mkdir dist && node prebuild.js && cp src/itty-router.d.ts dist",
-    "build": "yarn uglify",
-    "uglify": "yarn uglify:cjs && yarn uglify:esm",
-    "uglify:esm": "uglifyjs dist/itty-router.mjs -c -m --toplevel > dist/itty-router.min.mjs",
-    "uglify:cjs": "uglifyjs src/itty-router.js -c -m --toplevel > dist/itty-router.min.js",
-    "build:esm": "esbuild src/itty-router.js --format=esm --outfile=./dist/itty-router.mjs",
-    "postbuild": "node check-size.js",
-    "release": "release --tag --push"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/kwhitley/itty-router.git"
@@ -75,6 +76,7 @@
   },
   "homepage": "https://itty-router.dev",
   "devDependencies": {
+    "@cloudflare/workers-types": "^3.14.1",
     "@vitejs/plugin-vue": "^2.2.4",
     "coveralls": "^3.1.1",
     "esbuild": "^0.14.27",
@@ -85,6 +87,7 @@
     "isomorphic-fetch": "^3.0.0",
     "jest": "^27.5.1",
     "rimraf": "^3.0.2",
+    "typescript": "^4.7.4",
     "uglify-js": "^3.15.3",
     "vite": "^2.8.6",
     "vue": "^3.2.31",
