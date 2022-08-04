@@ -1,8 +1,8 @@
 import { json } from './json'
 
 export const error = (
-  status = 500,
-  content = 'Internal Server Error.',
+  status: number = 500,
+  content: string | object = 'Internal Server Error.',
 ) => json(
   {
     ...(typeof content === 'object'
@@ -14,3 +14,7 @@ export const error = (
   },
   { status },
 )
+
+// error(400) --> { status: 400 }
+// error(400, 'Bad Request.') --> { status: 400, error: 'Bad Request.' }
+// error(404, 'Not found.') --> { status: 404, error: 'Not found.' }

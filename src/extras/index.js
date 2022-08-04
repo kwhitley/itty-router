@@ -2,6 +2,7 @@ export * from './extras/error'
 export * from './extras/json'
 export * from './extras/missing'
 export * from './extras/status'
+export * from './extras/StatusError'
 export * from './extras/text'
 
 // export default {
