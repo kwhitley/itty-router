@@ -11,9 +11,10 @@
   "main": "./dist/itty-router.min.js",
   "exports": {
     ".": {
-      "require": "./dist/itty-router.min.js",
+      "types": "./dist/itty-router.d.ts",
       "import": "./dist/itty-router.min.mjs",
-      "types": "./dist/itty-router.d.ts"
+      "require": "./dist/itty-router.min.js",
+      "default": "./dist/itty-router.min.mjs"
     }
   },
   "types": "./dist/itty-router.d.ts",
