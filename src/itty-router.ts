@@ -13,7 +13,7 @@ type InferParams<Path extends string, Matched extends string = never> =
     Path extends `/:${infer OptionalMatch}?`
     ? // Log the result + the optional match
       { [K in Matched]: string } & Partial<
-        InferParams<`/:${OptionalMatch}`, Matched>
+        InferParams<`/:${OptionalMatch}`, never>
       >
     : // If there's a trailing *, we ignore it
     Path extends `/:${infer Match}*`
