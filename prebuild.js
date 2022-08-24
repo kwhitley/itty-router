@@ -1,12 +1,15 @@
-const { readFileSync, writeFileSync } = require('fs-extra')
+const { readFileSync, writeFileSync, moveSync } = require('fs-extra')
 
-console.log('writing esm version.')
-const base = readFileSync('./src/itty-router.js', { encoding: 'utf-8' })
-const esm = base
-              .replace('function Router', 'export function Router')
-              .replace('module.exports =', 'export default')
+moveSync('./dist/itty-router.js', './dist/itty-router.mjs')
+
+const base = readFileSync('./dist/itty-router.mjs', { encoding: 'utf-8' })
+const cjs = base
+              .replace('export function Router', 'function Router')
+              .replace('export default ', 'module.exports = ')
               .replace(/\s*\/\/[^\n]+/g, '')
-writeFileSync('./dist/itty-router.mjs', esm)
+
+writeFileSync('./dist/itty-router.js', cjs)
+console.log('writing cjs version.')
 
 const test = readFileSync('./src/itty-router.spec.js', { encoding: 'utf-8' })
 const minifiedTest = test.replace('itty-router', 'itty-router.min.js')

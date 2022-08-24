@@ -111,3 +111,5 @@ docs/dist
 docs/dist-ssr
 docs/*.local
 docs/pages/README.md
+
+src/itty-router.js

@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "lib": ["ESNext"],
+    "target": "ES2019",
+    "sourceMap": true,
+    "noEmit": true,
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "importsNotUsedAsValues": "error",
+    "skipLibCheck": true,
+    "declaration": true,
+    "outDir": "./dist"
+  },
+}
