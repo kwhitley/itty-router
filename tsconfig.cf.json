@@ -1,0 +1,11 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "lib": ["ES2019"],
+    "types": ["@cloudflare/workers-types"]
+  },
+  "files": [
+    "./test-utils/cloudflare/cf-typechecks.ts"
+  ],
+  "exclude": []
+}

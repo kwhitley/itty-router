@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "lib": ["ESNext"],
+    "lib": ["ESNext", "DOM", "DOM.Iterable"],
     "target": "ES2019",
     "sourceMap": true,
     "noEmit": true,
@@ -9,6 +9,10 @@
     "importsNotUsedAsValues": "error",
     "skipLibCheck": true,
     "declaration": true,
-    "outDir": "./dist"
+    "outDir": "./dist",
+    "types": []
   },
+  "exclude": [
+    "./test-utils/cloudflare/*"
+  ]
 }

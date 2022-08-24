@@ -1,5 +1,3 @@
-/// <reference types="@cloudflare/workers-types" />
-
 type InferParams<Path extends string, Matched extends string = never> =
   // Start by attempting to match something we know is a param
   Path extends `/:${infer Match}/${infer Rest}`
@@ -24,31 +22,42 @@ type InferParams<Path extends string, Matched extends string = never> =
     : // Return our matches
       { [K in Matched]: string };
 
+// Non-platform specific
+export interface IttyGenericRequest {
+  url: string;
+  method: string;
+  query?: Record<string, string>;
+  params?: Record<string, string>;
+}
+
 // Extend the standard CloudFlare Request interface, adding in properties that we've added in itty-router
-export interface IttyRequest<
+export type IttyRequest<
   Path extends string,
+  Req extends IttyGenericRequest = Request,
   Method extends string = string
-> extends Request {
+> = Req & {
   method: Method;
   params: InferParams<Path>;
   query: Record<string, string>;
-}
+};
 
 export type IttyRequestHandler<
+  HandlerArgs extends any[],
   Path extends string = string,
-  HandlerArgs extends any[] = [],
+  Req extends IttyGenericRequest = Request,
   Method extends string = string
 > = (
-  req: IttyRequest<Path, Method>,
+  req: IttyRequest<Path, Req, Method>,
   ...args: HandlerArgs
 ) => Response | Promise<Response> | void;
 
 export type IttyMethodHandler<
   Method extends string,
-  HandlerArgs extends any[]
+  HandlerArgs extends any[] = [],
+  Req extends IttyGenericRequest = Request
 > = <Path extends `/${string}`>(
   path: Path,
-  handler: IttyRequestHandler<Path, HandlerArgs, Method>
+  handler: IttyRequestHandler<HandlerArgs, Path, Req, Method>
 ) => IttyRouterApi<HandlerArgs>;
 
 export interface IttyRouterApi<HandlerArgs extends any[]> {
@@ -62,7 +71,10 @@ export interface IttyRouterApi<HandlerArgs extends any[]> {
   trace: IttyMethodHandler<"TRACE", HandlerArgs>;
   patch: IttyMethodHandler<"PATCH", HandlerArgs>;
   all: IttyMethodHandler<string, HandlerArgs>;
-  handle: (req: Request, ...args: HandlerArgs) => Promise<Response | void>;
+  handle: (
+    req: IttyGenericRequest,
+    ...args: HandlerArgs
+  ) => Promise<Response | void>;
 }
 
 export type IttyRouterDefinition = [
@@ -76,12 +88,15 @@ export interface IttyRouterConfig {
   routes?: IttyRouterDefinition[];
 }
 
-export function Router<
-  HandlerArgs extends any[] = [unknown, ExecutionContext],
-  ApiExtensions = {}
->(
+export interface IttyRouterTypeConfig {
+  handlerArgs?: any[];
+  apiExtensions?: {};
+}
+
+export function Router<TypeConfig extends IttyRouterTypeConfig>(
   ittyConfig: IttyRouterConfig = {}
-): IttyRouterApi<HandlerArgs> & ApiExtensions {
+): IttyRouterApi<Exclude<TypeConfig["handlerArgs"], undefined>> &
+  Exclude<TypeConfig["apiExtensions"], undefined> {
   const { base = "", routes = [] as IttyRouterDefinition[] } = ittyConfig;
   // The __proto__ use makes things basically impossible to type properly, so we tack an "as any" on the bottom to keep it quiet
   return {
@@ -112,11 +127,14 @@ export function Router<
       }
     ),
     routes,
-    async handle(request: Request & { proxy?: Request }, ...args: HandlerArgs) {
+    async handle(
+      request: IttyGenericRequest & { proxy?: IttyGenericRequest },
+      ...args: Exclude<TypeConfig["handlerArgs"], undefined>
+    ) {
       let response,
         match,
         url = new URL(request.url);
-      (request as IttyRequest<any>).query = Object.fromEntries(
+      (request as IttyGenericRequest).query = Object.fromEntries(
         url.searchParams
       );
       for (let [method, route, handlers] of routes) {
@@ -124,7 +142,7 @@ export function Router<
           (method === request.method || method === "ALL") &&
           (match = url.pathname.match(route))
         ) {
-          (request as IttyRequest<any>).params = match.groups as Record<
+          (request as IttyGenericRequest).params = match.groups as Record<
             string,
             string
           >;

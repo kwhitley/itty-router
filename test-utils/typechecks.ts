@@ -2,6 +2,11 @@ import { Router, IttyMethodHandler } from "../src/itty-router";
 
 const rtr = Router();
 
+rtr.get("/", (req) => {
+  // @ts-expect-error (ensure these aren't CF types)
+  req.cf;
+});
+
 // Basic methods passed through
 rtr.get("/", (req) => {
   const method: "GET" = req.method;
@@ -62,30 +67,11 @@ rtr.get("/some/:route/:id*", (req) => {
   const a: string = req.params.id;
 });
 
-interface Env {
-  SOME_BINDING: DurableObjectNamespace;
-}
-
-const rtrWithEnv = Router<[Env]>();
-
-rtrWithEnv.get("/with-env", (req, env) => {
-  const ns: DurableObjectNamespace = env.SOME_BINDING;
-  // @ts-expect-error
-  const missingNs: DurableObjectNamespace = env.SOME_UNKNOWN_BINDING;
-});
-
-const rtrWithCtx = Router<[Env, ExecutionContext]>();
-
-rtrWithCtx.get("/with-env", (req, env, ctx) => {
-  ctx.passThroughOnException();
-  // @ts-expect-error
-  ctx.nonExistentMethod();
-});
-
-const rtrWithExtensions = Router<
-  [Env, ExecutionContext],
-  { puppy: IttyMethodHandler<"PUPPY", [Env, ExecutionContext]> }
->();
+const rtrWithExtensions = Router<{
+  apiExtensions: {
+    puppy: IttyMethodHandler<"PUPPY">;
+  };
+}>();
 
 rtrWithExtensions.puppy("/:puppy", (req) => {
   const puppy: "PUPPY" = req.method;
