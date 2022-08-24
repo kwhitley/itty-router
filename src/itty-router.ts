@@ -1,10 +1,6 @@
 /// <reference types="@cloudflare/workers-types" />
 
-type InferParams<
-  Path extends string,
-  Matched extends string = never,
-  OptionalMatched extends string = never
-> =
+type InferParams<Path extends string, Matched extends string = never> =
   // Start by attempting to match something we know is a param
   Path extends `/:${infer Match}/${infer Rest}`
     ? // If we've matched, add it to the list of matches, and continue with the next piece
@@ -15,14 +11,18 @@ type InferParams<
       InferParams<`/${Rest}`, Matched>
     : // When we've gotten here, we know there are no more named segments, check if the last one is optional
     Path extends `/:${infer OptionalMatch}?`
-    ? // Log the optional match
-      InferParams<"", Matched, OptionalMatch>
+    ? // Log the result + the optional match
+      { [K in Matched]: string } & Partial<
+        InferParams<`/:${OptionalMatch}`, Matched>
+      >
+    : // If there's a trailing *, we ignore it
+    Path extends `/:${infer Match}*`
+    ? { [K in Matched | Match]: string }
     : // Otherwise, check if it's a normal final match
     Path extends `/:${infer Match}`
-    ? // If we've captured it, send us back through one more time
-      InferParams<"", Match | Matched>
+    ? { [K in Matched | Match]: string }
     : // Return our matches
-      { [K in Matched]: string } & { [K in OptionalMatched]?: string };
+      { [K in Matched]: string };
 
 // Extend the standard CloudFlare Request interface, adding in properties that we've added in itty-router
 export interface IttyRequest<
@@ -144,6 +144,5 @@ export function Router<
 }
 
 export default {
-  Router
-}
-
+  Router,
+};

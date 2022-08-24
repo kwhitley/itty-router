@@ -58,6 +58,10 @@ rtr.get("/some/:route/:id?", (req) => {
   const aIsOptional: string = req.params.id;
 });
 
+rtr.get("/some/:route/:id*", (req) => {
+  const a: string = req.params.id;
+});
+
 interface Env {
   SOME_BINDING: DurableObjectNamespace;
 }
