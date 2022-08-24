@@ -30,7 +30,8 @@ export interface IttyGenericRequest {
   params?: Record<string, string>;
 }
 
-// Extend the standard CloudFlare Request interface, adding in properties that we've added in itty-router
+// Extend the generic Request interface, with any narrowed properties that we've
+// captured & inferred in the route
 export type IttyRequest<
   Path extends string,
   Req extends IttyGenericRequest = Request,
