@@ -397,7 +397,7 @@ await router.handle({ method: 'GET', url: 'https:nowhere.com/custom-a123' })    
 
 ### Typescript
 
-For Typescript projects, the Router will use the Request in the current global namespace, it can be extended using interface merging:
+For Typescript projects, the Router will use the Request in the current global namespace, it can be extended using [declaration merging](https://www.typescriptlang.org/docs/handbook/declaration-merging.html):
 
 ```ts
 declare global {
