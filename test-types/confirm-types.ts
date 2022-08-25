@@ -1,4 +1,5 @@
 import { Router, IttyMethodHandler } from "../src/itty-router";
+import type { Router as RtrType } from "../src/itty-router";
 
 // The global Request interface is extended and reflected in the handler below
 declare global {
@@ -122,3 +123,11 @@ rtrWithStrictReturn.handle({ url: "/good", method: "GET" }).then((res) => {
   // @ts-expect-error
   const invalid: boolean = res.okk;
 });
+
+// Ensure Router can be used as a type:
+
+function routerAsType(rtr: Router) {
+  return rtr.get("/method", () => {});
+}
+
+routerAsType(rtr);
