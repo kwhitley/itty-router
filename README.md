@@ -196,7 +196,7 @@ GET /todos/jane?limit=2&page=1
 ### Nested Routers with 404 handling
 ```js
 // lets save a missing handler
-const missingHandler = new Response('Not found.', { status: 404 })
+const missingHandler = () => new Response('Not found.', { status: 404 })
 
 // create a parent router
 const parentRouter = Router({ base: '/api' })
