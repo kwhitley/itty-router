@@ -113,6 +113,9 @@ export interface IttyRouterTypeConfig {
   };
 }
 
+// For backward compat w/ previous types
+export type Route = IttyMethodHandler;
+
 export declare type Router<TypeConfig extends IttyRouterTypeConfig = any> =
   IttyRouterApi<
     Exclude<TypeConfig["handlerArgs"], undefined>,
