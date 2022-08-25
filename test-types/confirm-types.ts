@@ -25,6 +25,9 @@ const router = Router({
 
 const rtr = Router();
 
+rtr.get("*", (req) => {
+  // supports wildcard match
+});
 rtr.get("/", (req) => {
   // @ts-expect-error (ensure these aren't CF types)
   req.cf;

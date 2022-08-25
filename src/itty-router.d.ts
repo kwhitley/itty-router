@@ -58,10 +58,10 @@ export declare type IttyMethodHandler<
   HandlerArgs extends any[] = [],
   Res = any,
   Req extends IttyGenericRequest = Request
-> = <Path extends `/${string}`>(
+> = <Path extends string>(
   path: Path,
   handler: IttyRequestHandler<HandlerArgs, Path, Res, Req, Method>
-) => IttyRouterApi<HandlerArgs>;
+) => IttyRouterApi<HandlerArgs, Res>;
 
 export interface IHTTPMethods<
   HandlerArgs extends any[] = [],
@@ -113,13 +113,12 @@ export interface IttyRouterTypeConfig {
   };
 }
 
-export declare type Router<
-  TypeConfig extends IttyRouterTypeConfig = TypeConfig
-> = IttyRouterApi<
-  Exclude<TypeConfig["handlerArgs"], undefined>,
-  Exclude<TypeConfig["handlerReturn"], undefined>
-> &
-  Exclude<TypeConfig["methodExtension"], undefined>;
+export declare type Router<TypeConfig extends IttyRouterTypeConfig = any> =
+  IttyRouterApi<
+    Exclude<TypeConfig["handlerArgs"], undefined>,
+    Exclude<TypeConfig["handlerReturn"], undefined>
+  > &
+    Exclude<TypeConfig["methodExtension"], undefined>;
 
 /**
  * Creates an "itty-router"
