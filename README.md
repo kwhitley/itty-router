@@ -456,7 +456,7 @@ const router = Router<{handlerReturn: Response}>()
 router.get('/', (request, evt) => {
   return new Response(null, { status: 404 })
 })
-router.get('/', (request, evt) => {
+router.get('/', async (request, evt) => {
   return new Response(null, { status: 404 })
 })
 
