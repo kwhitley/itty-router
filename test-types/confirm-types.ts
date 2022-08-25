@@ -1,4 +1,4 @@
-import { Router, IttyMethodHandler } from "../src/itty-router";
+import { Router, IttyMethodHandler, IttyRequest } from "../src/itty-router";
 import type { Router as RtrType } from "../src/itty-router";
 
 // The global Request interface is extended and reflected in the handler below
@@ -134,3 +134,32 @@ function routerAsType(rtr: RtrType) {
 }
 
 routerAsType(rtr);
+
+const ROUTE_WITH_PARAM = "/route/with/:param" as const;
+const ROUTE_WITH_TWO_PARAMS = "/route/with/:param/:id" as const;
+
+// Class syntax:
+class Test {
+  handleRouteWithParam(req: IttyRequest<typeof ROUTE_WITH_PARAM>) {
+    const param: string = req.params.param;
+  }
+
+  handleRouteWithTwoParams(req: IttyRequest<typeof ROUTE_WITH_TWO_PARAMS>) {
+    const param: string = req.params.param;
+  }
+
+  genericHandler(req: IttyRequest) {
+    // @ts-expect-error
+    const param: string = req.params.param;
+  }
+
+  fetch(req: Request) {
+    const rtr = Router();
+    rtr.get(ROUTE_WITH_PARAM, (req) => this.handleRouteWithParam(req));
+    // @ts-expect-error
+    rtr.get(ROUTE_WITH_PARAM, (req) => this.handleRouteWithTwoParams(req));
+    rtr.get(ROUTE_WITH_PARAM, (req) => this.genericHandler(req));
+    rtr.get(ROUTE_WITH_TWO_PARAMS, (req) => this.handleRouteWithTwoParams(req));
+    rtr.all("*", (req) => this.genericHandler(req));
+  }
+}

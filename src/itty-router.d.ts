@@ -33,7 +33,7 @@ export interface IttyGenericRequest {
 // Extend the generic Request interface, with any narrowed properties that we've
 // captured & inferred in the route
 export declare type IttyRequest<
-  Path extends string,
+  Path extends string = string,
   Req extends IttyGenericRequest = Request,
   Method extends string = string
 > = Req & {
