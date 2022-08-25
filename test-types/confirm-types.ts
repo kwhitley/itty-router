@@ -126,7 +126,7 @@ rtrWithStrictReturn.handle({ url: "/good", method: "GET" }).then((res) => {
 
 // Ensure Router can be used as a type:
 
-function routerAsType(rtr: Router) {
+function routerAsType(rtr: RtrType) {
   return rtr.get("/method", () => {});
 }
 
