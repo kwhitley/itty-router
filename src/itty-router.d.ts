@@ -116,12 +116,13 @@ export interface IttyRouterTypeConfig {
 // For backward compat w/ previous types
 export type Route = IttyMethodHandler;
 
-export declare type Router<TypeConfig extends IttyRouterTypeConfig = any> =
-  IttyRouterApi<
-    Exclude<TypeConfig["handlerArgs"], undefined>,
-    Exclude<TypeConfig["handlerReturn"], undefined>
-  > &
-    Exclude<TypeConfig["methodExtension"], undefined>;
+export declare type Router<
+  TypeConfig extends IttyRouterTypeConfig = { handlerArgs: [] }
+> = IttyRouterApi<
+  Exclude<TypeConfig["handlerArgs"], undefined>,
+  Exclude<TypeConfig["handlerReturn"], undefined>
+> &
+  Exclude<TypeConfig["methodExtension"], undefined>;
 
 /**
  * Creates an "itty-router"
@@ -138,9 +139,9 @@ export declare type Router<TypeConfig extends IttyRouterTypeConfig = any> =
  *
  *   rtr.handle(req, env, ctx)
  */
-export declare function Router<TypeConfig extends IttyRouterTypeConfig>(
-  ittyConfig?: IttyRouterConfig
-): Router<TypeConfig>;
+export declare function Router<
+  TypeConfig extends IttyRouterTypeConfig = { handlerArgs: [] }
+>(ittyConfig?: IttyRouterConfig): Router<TypeConfig>;
 
 declare const _default: {
   Router: typeof Router;

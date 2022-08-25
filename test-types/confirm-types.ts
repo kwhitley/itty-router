@@ -163,3 +163,20 @@ class Test {
     rtr.all("*", (req) => this.genericHandler(req));
   }
 }
+
+class TestRouterBody {
+  router: Router;
+
+  constructor() {
+    this.router = Router();
+  }
+
+  fetch(req: Request) {
+    type Rtr = any extends typeof this.router ? never : typeof this.router;
+
+    // Asserts this is actually a router, even when used this way
+    const rtr: Rtr = Router();
+
+    return this.router.handle(req);
+  }
+}
