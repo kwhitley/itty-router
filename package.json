@@ -51,7 +51,8 @@
     "lint": "npx eslint src",
     "test:dist": "jest --verbose --coverage dist",
     "test": "yarn lint && jest --verbose --coverage src",
-    "verify": "echo 'verifying module...' && yarn build && yarn test && yarn test:dist",
+    "check-types": "yarn tsc && yarn tsc -p tsconfig.cf.json",
+    "verify": "echo 'verifying module...' && yarn build && yarn check-types && yarn test && yarn test:dist",
     "dev": "yarn lint && jest --verbose --watch src",
     "coveralls": "cat ./coverage/lcov.info | node node_modules/.bin/coveralls",
     "prerelease": "yarn verify",
@@ -60,7 +61,6 @@
     "uglify": "yarn uglify:cjs && yarn uglify:esm",
     "uglify:esm": "uglifyjs dist/itty-router.mjs -c -m --toplevel > dist/itty-router.min.mjs",
     "uglify:cjs": "uglifyjs src/itty-router.js -c -m --toplevel > dist/itty-router.min.js",
-    "build:esm": "esbuild src/itty-router.js --format=esm --outfile=./dist/itty-router.mjs",
     "postbuild": "node check-size.js",
     "release": "release --tag --push"
   },
@@ -76,8 +76,9 @@
   "homepage": "https://itty-router.dev",
   "devDependencies": {
     "@vitejs/plugin-vue": "^2.2.4",
+    "@cloudflare/workers-types": "^3.14.1",
+    "typescript": "^4.7.4",
     "coveralls": "^3.1.1",
-    "esbuild": "^0.14.27",
     "eslint": "^8.11.0",
     "eslint-plugin-jest": "^26.1.2",
     "fs-extra": "^10.0.1",

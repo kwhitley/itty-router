@@ -1,0 +1,10 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "lib": ["es2019"]
+  },
+  "include": [
+    "./test-types/cloudflare/*"
+  ],
+  "exclude": []
+}

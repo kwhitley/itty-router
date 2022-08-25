@@ -397,102 +397,145 @@ await router.handle({ method: 'GET', url: 'https:nowhere.com/custom-a123' })    
 
 ### Typescript
 
-For Typescript projects, the Router can be adorned with two generics: A custom request interface and a custom methods interface.
+For Typescript projects, the Router will use the Request in the current global namespace, it can be extended using interface merging:
 
 ```ts
-import { Router, Route, Request } from 'itty-router'
-
-type MethodType = 'GET' | 'POST' | 'PUPPY'
-
-interface IRequest extends Request {
-  method: MethodType // method is required to be on the interface
-  url: string // url is required to be on the interface
-  optional?: string
+declare global {
+  interface Request {
+    optional?: string
+  }
 }
 
-interface IMethods {
-  get: Route
-  post: Route
-  puppy: Route
+rtr.get('/route', req => {
+  req.optional = 'foo'
+})
+```
+
+The Router may also be supplied a generic object to customize several aspects of it's type behavior.
+
+```ts
+export interface IttyRouterTypeConfig {
+  // Specifies the arguments passed in the .handle function,
+  // and ensures they are correctly typed in all route method handlers
+  handlerArgs?: any[];
+  // Allows enforcing the expected return type of a handler function,
+  // causing a type error if it does not match
+  handlerReturn?: any;
+  // Adds additional custom HTTP methods we expect to be accepted by the router
+  methodExtension?: {
+    [method: string]: IttyMethodHandler;
+  };
 }
+```
 
-const router = Router<IRequest, IMethods>()
 
-router.get('/', (request: IRequest) => {})
-router.post('/', (request: IRequest) => {})
-router.puppy('/', (request: IRequest) => {})
+Typing additional args to `handle` via a custom `handlerArgs`:
+
+```ts
+import { Router } from 'itty-router'
+
+const router = Router<{handlerArgs: [FetchEvent]}>()
+
+router.get('/', (request, evt) => {
+  evt.passThroughOnException() // Properly typed
+})
+
+addEventListener('fetch', (event: FetchEvent) => {
+  event.respondWith(router.handle(event.request, event))
+})
+```
+
+Enforcing a strict return type on the router, with the `handlerReturn`:
+
+```ts
+import { Router } from 'itty-router'
+
+const router = Router<{handlerReturn: Response}>()
+
+// Good
+router.get('/', (request, evt) => {
+  return new Response(null, { status: 404 })
+})
+router.get('/', (request, evt) => {
+  return new Response(null, { status: 404 })
+})
+
+// Type Error, missing return, need to change to `handlerReturn: Response | void`
+router.get('/', (request, evt) => {
+  request.sideEffect = true
+})
+
+// Type Error, wrong type entirely:
+router.get('/', (request, evt) => {
+  return 1 // error, not a Response / Promise<Response>
+})
+```
+
+Adding custom methods handled by the router via `methodExtension`:
+
+```ts
+import { Router, IttyMethodHandler } from 'itty-router'
+
+const router = Router<{
+  handlerArgs: [FetchEvent], 
+  methodExtension: { puppy: IttyMethodHandler<"PUPPY"> }
+}>()
+
+router.get('/', (request) => {})
+router.post('/', (request) => {})
+router.puppy('/', (request) => {
+  request.method // typed as "PUPPY"
+})
 
 addEventListener('fetch', (event: FetchEvent) => {
   event.respondWith(router.handle(event.request))
 })
 ```
 
-Both generics are optional. `TRequest` defaults to `Request` and `TMethods` defaults to `{}`.
+Supplying generics is optional, everything will be properly typed without any types at all, including the params in a route:
 
 ```ts
-import { Router, Route } from 'itty-router'
-
-type MethodType = 'GET' | 'POST' | 'PUPPY'
-
-interface IRequest extends Request {
-  method: MethodType
-  url: string
-  optional?: string
-}
-
-interface IMethods {
-  get: Route
-  post: Route
-  puppy: Route
-}
+import { Router } from 'itty-router'
 
 const router = Router() // Valid
-const router = Router<IRequest>() // Valid
-const router = Router<Request, IMethods>() // Valid
-const router = Router<void, IMethods>() // Valid
+
+router.get('/post/:section/:id', (req) => {
+  // Inferred typings:
+  req.method // "GET"
+  req.params // Typed as: { section: string,  }
+})
+router.put('/update/:resource/:id?', (req) => {
+  // Inferred typings:
+  req.method // "PUT"
+  req.params // { resource: string, id?: string | undefined }
+})
 ```
 
-The router will also accept any string as a method, not just those provided on the `TMethods` type.
+While the router will technically accept any string as a method, TypeScript will complain if it's not supplied as a `methodExtension`:
 
 ```ts
-import { Router, Route } from 'itty-router'
+import { Router, IttyMethodHandler } from 'itty-router'
 
 interface IMethods {
-  get: Route
-  post: Route
-  puppy: Route
+  puppy: IttyMethodHandler<'PUPPY'>
 }
 
-const router = Router<void, IMethods>()
+const router = Router<{ methodExtension: IMethods }>()
 
 router.puppy('/', request => {}) // Valid
-router.kitten('/', request => {}) // Also Valid
+router.kitten('/', request => {}) // Will work at runtime, but it's a TypeScript error
 ```
 
-The `itty-router` package also exports an interface containing all of the HTTP methods.
+The `itty-router` package exports a convenience interface containing all of the HTTP methods.
 
 ```ts
-import { Router, Route, IHTTPMethods } from 'itty-router'
+import { IHTTPMethods } from 'itty-router'
 
-const router = Router<void, IHTTPMethods>()
+// "get" | "head" | "post" | "put" | "delete" | "connect" | "options" | "trace" | "patch"
+type HttpMethods = Extract<keyof IHTTPMethods, string>
 
-router.get('/', request => {}) // Exposed via IHTTPMethods
-router.puppy('/', request => {}) // Valid but not strongly typed
-```
-
-You can also extend `IHTTPMethods` with your own custom methods so they will be strongly typed.
-
-```ts
-import { Router, Route, IHTTPMethods } from 'itty-router'
-
-interface IMethods extends IHTTPMethods {
-  puppy: Route
-}
-
-const router = Router<void, IMethods>()
-
-router.get('/', request => {}) // Exposed via IHTTPMethods
-router.puppy('/', request => {}) // Strongly typed
+// "GET" | "PUT" | "POST" | "DELETE" | "OPTIONS" | "HEAD" | "CONNECT" | "TRACE" | "PATCH"
+type HttpMethodValues = {[K in keyof IHTTPMethods]: IHTTPMethods[K] extends IttyMethodHandler<infer U> ? U : never}[keyof IHTTPMethods]
 ```
 
 ## Testing and Contributing

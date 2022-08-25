@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "lib": ["ESNext", "DOM", "DOM.Iterable"],
+    "target": "ES2019",
+    "sourceMap": true,
+    "noEmit": true,
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "importsNotUsedAsValues": "error",
+    "skipLibCheck": true,
+    "declaration": true,
+    "types": []
+  },
+  "include": [
+    "./test-types/*"
+  ],
+  "exclude": [
+    "./test-types/cloudflare/*"
+  ]
+}
