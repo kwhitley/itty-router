@@ -1,4 +1,4 @@
-import { Router, IttyMethodHandler, IttyRequest } from "../src/itty-router";
+import { Router, IttyMethodHandler, IttyRequest, IttyRouterDefinition } from "../src/itty-router";
 import type { Router as RtrType } from "../src/itty-router";
 
 // The global Request interface is extended and reflected in the handler below
@@ -24,6 +24,7 @@ const router = Router({
 });
 
 const rtr = Router();
+const routes: IttyRouterDefinition[] = rtr.routes
 
 rtr.get("*", (req) => {
   // supports wildcard match
@@ -176,6 +177,8 @@ class TestRouterBody {
 
     // Asserts this is actually a router, even when used this way
     const rtr: Rtr = Router();
+
+    const routes: IttyRouterDefinition[] = rtr.routes
 
     return this.router.handle(req);
   }

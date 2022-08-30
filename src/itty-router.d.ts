@@ -1,4 +1,4 @@
-declare type InferParams<Path extends string, Matched extends string = never> =
+export declare type InferParams<Path extends string, Matched extends string = never> =
   // Start by attempting to match something we know is a param
   Path extends `/:${infer Match}/${infer Rest}`
     ? // If we've matched, add it to the list of matches, and continue with the next piece
@@ -83,6 +83,7 @@ export interface IttyRouterApi<
   HandlerReturn extends any
 > extends IHTTPMethods<HandlerArgs, HandlerReturn> {
   all: IttyMethodHandler<string, HandlerArgs>;
+  routes: IttyRouterDefinition[]
   handle: (
     req: IttyGenericRequest,
     ...args: HandlerArgs
