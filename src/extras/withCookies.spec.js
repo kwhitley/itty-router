@@ -1,7 +1,7 @@
-require('isomorphic-fetch')
+import 'isomorphic-fetch'
 
-const { ThrowableRouter } = require('../router/ThrowableRouter')
-const { withCookies } = require('./withCookies')
+import { ThrowableRouter } from '../router/ThrowableRouter'
+import { withCookies } from './withCookies'
 
 describe('middleware/withCookies', () => {
   it('parses cookies into request.cookies', async () => {

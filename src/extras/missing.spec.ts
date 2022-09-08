@@ -1,6 +1,6 @@
-require('isomorphic-fetch')
+import 'isomorphic-fetch'
 
-const { missing } = require('./missing')
+import { missing } from './missing'
 
 const message = 'We could not find that resource.'
 

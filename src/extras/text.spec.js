@@ -5,7 +5,7 @@ const { text } = require('./text')
 const message = 'Got it!'
 
 describe('response/text', () => {
-  describe(`text(content)`, () => {
+  describe('text(content)', () => {
     it('returns a text Response with content', async () => {
       const response = text(message)
 

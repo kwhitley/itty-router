@@ -1,7 +1,7 @@
-require('isomorphic-fetch')
+import 'isomorphic-fetch'
 
-const { ThrowableRouter } = require('../router/ThrowableRouter')
-const { withContent } = require('./withContent')
+import { ThrowableRouter } from '../router/ThrowableRouter'
+import { withContent } from './withContent'
 
 describe('middleware/withContent', () => {
   it('returns with json payload', async () => {

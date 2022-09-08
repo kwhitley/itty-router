@@ -74,7 +74,6 @@ module.exports = {
         'generator-star-spacing': 'error',
         'global-require': 'error',
         'grouped-accessor-pairs': 'error',
-        'guard-for-in': 'error',
         'handle-callback-err': 'error',
         'id-blacklist': 'error',
         'id-match': 'error',
@@ -139,7 +138,6 @@ module.exports = {
         'no-lonely-if': 'error',
         'no-loop-func': 'error',
         'no-loss-of-precision': 'error',
-        'no-mixed-operators': 'error',
         'no-mixed-requires': 'error',
         'no-multi-assign': 'off',
         'no-multi-spaces': 'off',
@@ -229,7 +227,6 @@ module.exports = {
             'single'
         ],
         'radix': 'error',
-        'require-atomic-updates': 'error',
         'require-await': 'error',
         'require-unicode-regexp': 'off',
         'rest-spread-spacing': [

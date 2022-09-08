@@ -1,5 +1,5 @@
 // withCookies - embeds cookies object into the request
-const withCookies = request => {
+export const withCookies = request => {
   request.cookies = {}
   try {
     request.cookies = (request.headers.get('Cookie') || '')
@@ -12,5 +12,3 @@ const withCookies = request => {
       }, {})
   } catch (err) {}
 }
-
-module.exports = { withCookies }

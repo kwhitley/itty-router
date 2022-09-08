@@ -17,7 +17,7 @@
     "skipLibCheck": true,
     "strict": false,
     "traceResolution": false,
-    "types": ["@cloudflare/workers-types"],
+    "types": ["@cloudflare/workers-types", "@types/jest"],
     "module": "commonjs",
     "outDir": "dist",
     "target": "es2015"

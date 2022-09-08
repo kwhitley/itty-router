@@ -1,10 +1,10 @@
-require('isomorphic-fetch')
+import 'isomorphic-fetch'
 
-const { ThrowableRouter } = require('./ThrowableRouter')
+import { ThrowableRouter } from './ThrowableRouter'
 
 describe('router/ThrowableRouter', () => {
   describe('ThrowableRouter(options = {})', () => {
-    it('is an itty proxy', async () => {
+    it('is an itty proxy', () => {
       const origin = {}
       const router = ThrowableRouter(origin)
 
@@ -17,7 +17,7 @@ describe('router/ThrowableRouter', () => {
     it('captures a throw', async () => {
       const router = ThrowableRouter()
 
-      router.get('/breaks', (request) => request.will.throw)
+      router.get('/breaks', request => request.will.throw)
 
       const response = await router.handle(new Request('https://slick/breaks'))
 
@@ -32,7 +32,7 @@ describe('router/ThrowableRouter', () => {
     it('includes a stack trace with option', async () => {
       const router = ThrowableRouter({ stack: true })
 
-      router.get('/breaks', (request) => request.will.throw)
+      router.get('/breaks', request => request.will.throw)
 
       const response = await router.handle(new Request('https://slick/breaks'))
       const payload = await response.json()

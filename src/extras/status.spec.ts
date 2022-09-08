@@ -1,12 +1,11 @@
-require('isomorphic-fetch')
+import 'isomorphic-fetch'
 
-const response = require('.')
-const { status } = require('./status')
+import { status } from './status'
 const message = 'Got it!'
 
 describe('response/error', () => {
-  describe(`status(code)`, () => {
-    it('returns an empty Response with status code', async () => {
+  describe('status(code)', () => {
+    it('returns an empty Response with status code', () => {
       const response1 = status(400)
 
       expect(response1 instanceof Response).toBe(true)

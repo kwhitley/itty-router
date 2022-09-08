@@ -1,1 +1,0 @@
-require('isomorphic-fetch')

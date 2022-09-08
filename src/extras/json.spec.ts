@@ -1,11 +1,11 @@
-require('isomorphic-fetch')
+import 'isomorphic-fetch'
 
-const { json } = require('./json')
+import { json } from './json'
 
 const message = 'Got it!'
 
 describe('response/json', () => {
-  describe(`json(content)`, () => {
+  describe('json(content)', () => {
     it('returns a JSON Response with content', async () => {
       const response = json({ message })
 

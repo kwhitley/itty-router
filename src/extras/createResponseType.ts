@@ -9,17 +9,17 @@ export interface CreateResponseOptions {
 
 export const createResponseType = (
   format: string = 'text/plain; charset=utf-8',
-  options?: createResponseTypeOptions,
+  config?: createResponseTypeOptions,
 ) => (
   body: any,
   options: CreateResponseOptions = {},
 ): Response => {
   const {
-    headers = {},
+    headers,
     ...rest
   } = options
 
-  if (options?.stringify) {
+  if (config?.stringify) {
     body = JSON.stringify(body)
   }
 

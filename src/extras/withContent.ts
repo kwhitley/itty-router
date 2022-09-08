@@ -1,5 +1,5 @@
 // withContent - embeds any request body as request.content
-const withContent = async request => {
+export const withContent = async request => {
   let contentType = request.headers.get('content-type')
   request.content = undefined
 
@@ -11,5 +11,3 @@ const withContent = async request => {
     }
   } catch (err) {} // silently fail on error
 }
-
-module.exports = { withContent }
