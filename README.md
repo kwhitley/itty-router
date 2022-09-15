@@ -1,20 +1,15 @@
-# [![Itty Router][logo-image]][itty-homepage]
+# [![Itty Router](https://user-images.githubusercontent.com/865416/146679767-16be95b4-5dd7-4bcf-aed7-b8aa8c828f48.png)](https://itty-router.dev)
 
-[![npm package][npm-image]][npm-url]
-[![minified + gzipped size][gzip-image]][gzip-url]
-![Build Status](https://github.com/kwhitley/itty-router/actions/workflows/verify.yml/badge.svg)
-[![Coverage Status][coveralls-image]][coveralls-url]
-[![Open Issues][issues-image]][issues-url]
-<a href="https://npmjs.com/package/itty-router" target="\_parent">
-  <img alt="" src="https://img.shields.io/npm/dm/itty-router.svg" />
-</a>
-[![Discord][discord-image]][discord-url]
-<a href="https://github.com/kwhitley/itty-router" target="\_parent">
-  <img alt="" src="https://img.shields.io/github/stars/kwhitley/itty-router.svg?style=social&label=Star" />
-</a>
-<a href="https://twitter.com/kevinrwhitley" target="\_parent">
-  <img alt="" src="https://img.shields.io/twitter/follow/kevinrwhitley.svg?style=social&label=Follow" />
-</a>
+[![Version](https://img.shields.io/npm/v/itty-router.svg?style=flat-square)](https://npmjs.com/package/itty-router)
+[![minified + gzipped size](https://img.shields.io/bundlephobia/minzip/itty-router?style=flat-square)](https://bundlephobia.com/result?p=itty-router)
+![GitHub Workflow Status](https://img.shields.io/github/workflow/status/kwhitley/itty-router/build?style=flat-square)
+[![Coverage Status](https://img.shields.io/coveralls/github/kwhitley/itty-router/v2.x?style=flat-square)](https://coveralls.io/github/kwhitley/itty-router?branch=v2.x)
+[![npm](https://img.shields.io/npm/dw/itty-router?style=flat-square)](https://npmjs.com/package/itty-router)
+[![Open Issues](https://img.shields.io/github/issues/kwhitley/itty-router?style=flat-square)](https://github.com/kwhitley/itty-router/issues)
+
+[![Discord](https://img.shields.io/discord/832353585802903572)](https://discord.com/channels/832353585802903572)
+[![GitHub Repo stars](https://img.shields.io/github/stars/kwhitley/itty-router?style=social)](https://github.com/kwhitley/itty-router)
+[![Twitter](https://img.shields.io/twitter/follow/kevinrwhitley?style=social)](https://www.twitter.com/kevinrwhitley)
 <!--<a href="https://github.com/kwhitley/itty-router/discussions">
   <img alt="Join the discussion on Github" src="https://img.shields.io/badge/Github%20Discussions%20%26%20Support-Chat%20now!-blue" />
 </a>-->
@@ -511,22 +506,6 @@ and drive over the last couple years.  In particular, the absurd brevity of this
 clever [abuse] of `Proxy`, courtesy of the brilliant [@mvasigh](https://github.com/mvasigh).
 This trick allows methods (e.g. "get", "post") to by defined dynamically by the router as they are requested,
 **drastically** reducing boilerplate.
-
-[twitter-image]:https://img.shields.io/twitter/url?style=social&url=https%3A%2F%2Fwww.npmjs.com%2Fpackage%2Fitty-router
-[logo-image]:https://user-images.githubusercontent.com/865416/146679767-16be95b4-5dd7-4bcf-aed7-b8aa8c828f48.png
-[gzip-image]:https://img.shields.io/bundlephobia/minzip/itty-router
-[gzip-url]:https://bundlephobia.com/result?p=itty-router
-[issues-image]:https://img.shields.io/github/issues/kwhitley/itty-router
-[issues-url]:https://github.com/kwhitley/itty-router/issues
-[npm-image]:https://img.shields.io/npm/v/itty-router.svg
-[npm-url]:http://npmjs.org/package/itty-router
-[david-image]:https://david-dm.org/kwhitley/itty-router/status.svg
-[david-url]:https://david-dm.org/kwhitley/itty-router
-[coveralls-image]:https://coveralls.io/repos/github/kwhitley/itty-router/badge.svg?branch=v2.x
-[coveralls-url]:https://coveralls.io/github/kwhitley/itty-router?branch=v2.x
-[itty-homepage]:https://itty-router.dev
-[discord-image]:https://img.shields.io/discord/832353585802903572
-[discord-url]:https://discord.com/channels/832353585802903572
 
 ## Contributors
 These folks are the real heroes, making open source the powerhouse that it is!  Help out and get your name added to this list! <3
