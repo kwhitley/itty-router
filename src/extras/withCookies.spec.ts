@@ -1,6 +1,6 @@
 import 'isomorphic-fetch'
 
-import { ThrowableRouter } from '../router/ThrowableRouter'
+import { ThrowableRouter } from './ThrowableRouter'
 import { withCookies } from './withCookies'
 
 describe('middleware/withCookies', () => {

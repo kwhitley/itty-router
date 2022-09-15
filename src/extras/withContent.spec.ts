@@ -1,6 +1,5 @@
 import 'isomorphic-fetch'
-
-import { ThrowableRouter } from '../router/ThrowableRouter'
+import { ThrowableRouter } from './ThrowableRouter'
 import { withContent } from './withContent'
 
 describe('middleware/withContent', () => {
