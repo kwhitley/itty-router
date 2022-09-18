@@ -218,6 +218,17 @@ it('allows loading advanced routes after config', async () => {
       expect(handler).toHaveBeenCalledTimes(2)
     })
 
+    it('basepath works with "/"', async () => {
+      const router = Router({ base: '/' })
+      const handler = jest.fn()
+      router.get('/foo/:id?', handler)
+
+      console.log(router.routes)
+
+      await router.handle(buildRequest({ path: '/foo' }))
+      expect(handler).toHaveBeenCalled()
+    })
+
     it('can pull route params from the basepath as well', async () => {
       const router = Router({ base: '/:collection' })
       const handler = jest.fn(req => req.params)

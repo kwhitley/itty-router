@@ -6,7 +6,7 @@ function Router({ base = '', routes = [] } = {}) {
           prop.toUpperCase(),
           RegExp(`^${(base + route)
             .replace(/(\/?)\*/g, '($1.*)?')                             // trailing wildcard
-            .replace(/\/$/, '')                                         // remove trailing slash
+            .replace(/(\/$)|((?<=\/)\/)/, '')                           // remove trailing slash or double slash from joins
             .replace(/:(\w+)(\?)?(\.)?/g, '$2(?<$1>[^/]+)$2$3')         // named params
             .replace(/\.(?=[\w(])/, '\\.')                              // dot in path
             .replace(/\)\.\?\(([^\[]+)\[\^/g, '?)\\.?($1(?<=\\.)[^\\.') // optional image format

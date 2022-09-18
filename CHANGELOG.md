@@ -3,6 +3,7 @@ Until this library makes it to a production release of v1.x, **minor versions ma
 
 [@SupremeTechnopriest)(https://github.com/SupremeTechnopriest) - improved TypeScript support and documentation! :D\
 
+- **v2.6.2** - fixes issue with using base path of "/" with route definitions starting with "/" (creating double slash)
 - **v2.6.1** - fixes named export in ESM/mjs export
 - **v2.6.0** - package now is hybrid export, supporting both ESM (.mjs) and CJS (.js) minified versions
 - **v2.5.3** - corrects type for router.handle to return Promise<any>
