@@ -16,11 +16,13 @@ export interface RouteHandler {
   (request: RequestLike, ...args: any): any
 }
 
-export interface RouteEntry {
-  0: string
-  1: RegExp
-  2: RouteHandler[]
-}
+// export interface RouteEntry extends Array<any> {
+//   0: string
+//   1: RegExp
+//   2: RouteHandler[]
+// }
+
+export type RouteEntry = [string, RegExp, RouteHandler[]]
 
 export type Route = (
   path: string,
@@ -28,16 +30,17 @@ export type Route = (
 ) => RouterType
 
 export type RouterTraps = {
-  [key: string]: Route
+  get?: Route,
+  post?: Route,
 }
 
 export type RouterType = {
+  __proto__: RouterType,
   routes: RouteEntry[],
   handle: (request: RequestLike, ...extra: any) => Promise<any>
 } & RouterTraps
 
-let url = new URL('https://foo.bar?name=Kevin&age=14&pet=Katiya&pet=Vlad&pet=Halsey')
-
+// helper function to translate query params
 const toQuery = (params) =>
   [...params.entries()].reduce((acc, [k, v]) =>
     (acc[k] === undefined
@@ -46,9 +49,10 @@ const toQuery = (params) =>
     ) && acc
   , {})
 
+// the actual router
 export function Router({ base = '', routes = [] }: RouterOptions = {}): RouterType {
   return {
-    __proto__: new Proxy({}, {
+    __proto__: new Proxy({} as RouterType, {
       get: (target, prop: string, receiver) => (route, ...handlers) =>
         routes.push([
           prop.toUpperCase(),
@@ -77,3 +81,28 @@ export function Router({ base = '', routes = [] }: RouterOptions = {}): RouterTy
     }
   }
 }
+
+// const router = Router()
+// router.routes.push(['GET', /gsadfa/, []])
+
+// type MyTraps = {
+//   foo?: Route;
+// }
+
+// const router = Router() as RouterType & MyTraps;
+
+
+/*
+
+{
+  name: string,
+  age: number,
+  handler: (name: string) => any,
+
+  ?? => Route
+  ?? => Route
+  ?? => Route
+}
+
+
+*/
