@@ -16,12 +16,6 @@ export interface RouteHandler {
   (request: RequestLike, ...args: any): any
 }
 
-// export interface RouteEntry extends Array<any> {
-//   0: string
-//   1: RegExp
-//   2: RouteHandler[]
-// }
-
 export type RouteEntry = [string, RegExp, RouteHandler[]]
 
 export type Route = (
@@ -53,7 +47,7 @@ const toQuery = (params) =>
 export function Router({ base = '', routes = [] }: RouterOptions = {}): RouterType {
   return {
     __proto__: new Proxy({} as RouterType, {
-      get: (target, prop: string, receiver) => (route, ...handlers) =>
+      get: (target, prop: string, receiver) => (route, ...handlers: RouteHandler[]) =>
         routes.push([
           prop.toUpperCase(),
           RegExp(`^${(base + route)
@@ -67,7 +61,7 @@ export function Router({ base = '', routes = [] }: RouterOptions = {}): RouterTy
         ]) && receiver
     }),
     routes,
-    async handle (request, ...args) {
+    async handle (request, ...args)  {
       let response, match, url = new URL(request.url)
       request.query = toQuery(url.searchParams)
       for (let [method, route, handlers] of routes) {
@@ -81,6 +75,29 @@ export function Router({ base = '', routes = [] }: RouterOptions = {}): RouterTy
     }
   }
 }
+
+// const router = Router()
+
+// type GetBooksResponse = {
+//   books: string[]
+// }
+
+// type RequestWithAuthors = {
+//   authors?: string[]
+// } & RequestLike
+
+// const addAuthors = (request) => {
+//   request.authors = ['foo', 'bar']
+// }
+
+// router.get('books', addAuthors, (request: RequestWithAuthors): GetBooksResponse => {
+//   request.foo = 'asd'
+//   request.authors
+
+//   return {
+//     books: ['foo', 'bar']
+//   }
+// })
 
 // const router = Router()
 // router.routes.push(['GET', /gsadfa/, []])
