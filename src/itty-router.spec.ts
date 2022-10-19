@@ -1,14 +1,7 @@
-import { Router } from './itty-router'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { buildRequest, extract, createTestRunner } from '../test-utils'
 import 'isomorphic-fetch'
-
-
-// describe('itty-router TS', () => {
-//   it('exists', () => {
-//     expect(typeof Router).toBe('function')
-//   })
-// })
+import { describe, expect, it, vi } from 'vitest'
+import { buildRequest, createTestRunner, extract } from '../test-utils'
+import { Router } from './itty-router'
 
 const ERROR_MESSAGE = 'Error Message'
 

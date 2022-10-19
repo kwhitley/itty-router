@@ -1,5 +1,5 @@
 /* istanbul ignore file */
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { expect, it, vi } from 'vitest'
 
 export const buildRequest = ({
   method = 'GET',
