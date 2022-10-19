@@ -1,7 +1,14 @@
-require('isomorphic-fetch')
+import { Router } from './itty-router'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { buildRequest, extract, createTestRunner } from '../test-utils'
+import 'isomorphic-fetch'
 
-const { Router } = require('./itty-router')
-const { buildRequest, extract, createTestRunner } = require('../test-utils')
+
+// describe('itty-router TS', () => {
+//   it('exists', () => {
+//     expect(typeof Router).toBe('function')
+//   })
+// })
 
 const ERROR_MESSAGE = 'Error Message'
 
@@ -11,13 +18,13 @@ describe('Router', () => {
   const router = Router()
 
   const routes = [
-    { path: '/', callback: jest.fn(extract), method: 'get' },
-    { path: '/foo/first', callback: jest.fn(extract), method: 'get' },
-    { path: '/foo/:id', callback: jest.fn(extract), method: 'get' },
-    { path: '/foo', callback: jest.fn(extract), method: 'post' },
+    { path: '/', callback: vi.fn(extract), method: 'get' },
+    { path: '/foo/first', callback: vi.fn(extract), method: 'get' },
+    { path: '/foo/:id', callback: vi.fn(extract), method: 'get' },
+    { path: '/foo', callback: vi.fn(extract), method: 'post' },
     {
       path: '/passthrough',
-      callback: jest.fn(({ path, name }) => ({ path, name })),
+      callback: vi.fn(({ path, name }) => ({ path, name })),
       method: 'get',
     },
   ]
@@ -52,8 +59,8 @@ describe('Router', () => {
   })
 
 it('allows preloading advanced routes', async () => {
-  const basicHandler = jest.fn(req => req.params)
-  const customHandler = jest.fn(req => req.params)
+  const basicHandler = vi.fn(req => req.params)
+  const customHandler = vi.fn(req => req.params)
 
   const router = Router({
                   routes: [
@@ -73,7 +80,7 @@ it('allows preloading advanced routes', async () => {
 })
 
 it('allows loading advanced routes after config', async () => {
-  const handler = jest.fn(req => req.params)
+  const handler = vi.fn(req => req.params)
 
   const router = Router()
 
@@ -87,13 +94,13 @@ it('allows loading advanced routes after config', async () => {
   describe('.{method}(route: string, handler1: function, ..., handlerN: function)', () => {
     it('can accept multiple handlers (each mutates request)', async () => {
       const r = Router()
-      const handler1 = jest.fn(req => { req.a = 1 })
-      const handler2 = jest.fn(req => {
+      const handler1 = vi.fn(req => { req.a = 1 })
+      const handler2 = vi.fn(req => {
         req.b = 2
 
         return req
       })
-      const handler3 = jest.fn(req => ({ c: 3, ...req }))
+      const handler3 = vi.fn(req => ({ c: 3, ...req }))
       r.get('/multi/:id', handler1, handler2, handler3)
 
       await r.handle(buildRequest({ path: '/multi/foo' }))
@@ -134,8 +141,8 @@ it('allows loading advanced routes after config', async () => {
 
     it('match earliest routes that match', async () => {
       const router = Router()
-      const handler1 = jest.fn(() => 1)
-      const handler2 = jest.fn(() => 1)
+      const handler1 = vi.fn(() => 1)
+      const handler2 = vi.fn(() => 1)
       router.get('/foo/static', handler1)
       router.get('/foo/:id', handler2)
 
@@ -166,8 +173,8 @@ it('allows loading advanced routes after config', async () => {
     })
 
     it('allows missing handler later in flow with "all" channel', async () => {
-      const missingHandler = jest.fn()
-      const matchHandler = jest.fn()
+      const missingHandler = vi.fn()
+      const matchHandler = vi.fn()
 
       const router1 = Router()
       const router2 = Router({ base: '/nested' })
@@ -195,7 +202,7 @@ it('allows loading advanced routes after config', async () => {
         req.user = { id: 13 }
       }
 
-      const handler = jest.fn(req => req.user.id)
+      const handler = vi.fn(req => req.user.id)
 
       r.get('/middleware/*', middleware)
       r.get('/middleware/:id', handler)
@@ -208,7 +215,7 @@ it('allows loading advanced routes after config', async () => {
 
     it('can accept a basepath for routes', async () => {
       const router = Router({ base: '/api' })
-      const handler = jest.fn()
+      const handler = vi.fn()
       router.get('/foo/:id?', handler)
 
       await router.handle(buildRequest({ path: '/api/foo' }))
@@ -220,7 +227,7 @@ it('allows loading advanced routes after config', async () => {
 
     it('basepath works with "/"', async () => {
       const router = Router({ base: '/' })
-      const handler = jest.fn()
+      const handler = vi.fn()
       router.get('/foo/:id?', handler)
 
       console.log(router.routes)
@@ -231,7 +238,7 @@ it('allows loading advanced routes after config', async () => {
 
     it('can pull route params from the basepath as well', async () => {
       const router = Router({ base: '/:collection' })
-      const handler = jest.fn(req => req.params)
+      const handler = vi.fn(req => req.params)
       router.get('/:id', handler)
 
       await router.handle(buildRequest({ path: '/todos/13' }))
@@ -242,9 +249,9 @@ it('allows loading advanced routes after config', async () => {
     it('can handle nested routers', async () => {
       const router1 = Router()
       const router2 = Router({ base: '/nested' })
-      const handler1 = jest.fn()
-      const handler2 = jest.fn()
-      const handler3 = jest.fn()
+      const handler1 = vi.fn()
+      const handler2 = vi.fn()
+      const handler3 = vi.fn()
       router1.get('/pet', handler1)
       router1.get('/nested/*', router2.handle)
       router2.get('/', handler3)
@@ -262,7 +269,7 @@ it('allows loading advanced routes after config', async () => {
 
     it('allows any method to match an "all" route', async () => {
       const router = Router()
-      const handler = jest.fn()
+      const handler = vi.fn()
       router.all('/crud/*', handler)
 
       await router.handle(buildRequest({ path: '/crud/foo' }))
@@ -274,9 +281,9 @@ it('allows loading advanced routes after config', async () => {
 
     it('stops at a handler that throws', async () => {
       const router = Router()
-      const handler1 = jest.fn(() => {})
-      const handler2 = jest.fn(() => { throw new Error() })
-      const handler3 = jest.fn(() => {})
+      const handler1 = vi.fn(() => {})
+      const handler2 = vi.fn(() => { throw new Error() })
+      const handler3 = vi.fn(() => {})
       router.get('/foo', handler1, handler2, handler3)
 
       const escape = err => err
@@ -292,8 +299,8 @@ it('allows loading advanced routes after config', async () => {
 
     it('can throw an error and still handle if using catch', async () => {
       const router = Router()
-      const handlerWithError = jest.fn(() => { throw new Error(ERROR_MESSAGE) })
-      const errorHandler = jest.fn(err => err.message)
+      const handlerWithError = vi.fn(() => { throw new Error(ERROR_MESSAGE) })
+      const errorHandler = vi.fn(err => err.message)
 
       router.get('/foo', handlerWithError)
 
@@ -315,9 +322,9 @@ it('allows loading advanced routes after config', async () => {
         status: 405,
         statusText: 'Method not allowed',
       })
-      const handler = jest.fn(() => new Response(okText))
-      const middleware = jest.fn()
-      const errorHandler = jest.fn(() => errorResponse)
+      const handler = vi.fn(() => new Response(okText))
+      const middleware = vi.fn()
+      const errorHandler = vi.fn(() => errorResponse)
 
       router
         .post('*', middleware, handler)
@@ -360,7 +367,7 @@ it('allows loading advanced routes after config', async () => {
       })
 
       const router = ThrowableRouter()
-      const handlerWithError = jest.fn(() => { throw new Error(ERROR_MESSAGE) })
+      const handlerWithError = vi.fn(() => { throw new Error(ERROR_MESSAGE) })
 
       router.get('/foo', handlerWithError)
 
@@ -376,8 +383,8 @@ it('allows loading advanced routes after config', async () => {
 
       expect(() => {
         router
-          .get('/foo', jest.fn())
-          .get('/foo', jest.fn())
+          .get('/foo', vi.fn())
+          .get('/foo', vi.fn())
 
       }).not.toThrow()
     })
@@ -400,7 +407,7 @@ it('allows loading advanced routes after config', async () => {
 
     it('will pass request.proxy instead of request if found', async () => {
       const router = Router()
-      const handler = jest.fn(req => req)
+      const handler = vi.fn(req => req)
       let proxy
 
       const withProxy = request => {
@@ -416,8 +423,8 @@ it('allows loading advanced routes after config', async () => {
 
     it('can handle POST body even if not used', async () => {
       const router = Router()
-      const handler = jest.fn(req => req.json())
-      const errorHandler = jest.fn()
+      const handler = vi.fn(req => req.json())
+      const errorHandler = vi.fn()
 
       router
         .post('/foo', handler)

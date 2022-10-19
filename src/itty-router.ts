@@ -1,7 +1,9 @@
-function Router({ base = '', routes = [] } = {}) {
+
+
+export function Router({ base = '', routes = [] } = {}) {
   return {
     __proto__: new Proxy({}, {
-      get: (target, prop, receiver) => (route, ...handlers) =>
+      get: (target, prop: string, receiver) => (route, ...handlers) =>
         routes.push([
           prop.toUpperCase(),
           RegExp(`^${(base + route)
@@ -28,8 +30,4 @@ function Router({ base = '', routes = [] } = {}) {
       }
     }
   }
-}
-
-module.exports = {
-  Router
 }

@@ -1,13 +1,14 @@
 /* istanbul ignore file */
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-const buildRequest = ({
+export const buildRequest = ({
   method = 'GET',
   path,
   url = `https://example.com${path}`,
   ...other
 }) => ({ method, path, url, ...other })
 
-const extract = ({ params, query }) => ({ params, query })
+export const extract = ({ params, query }) => ({ params, query })
 
 const testRoute = async ({
   route,
@@ -18,7 +19,7 @@ const testRoute = async ({
 }, Router) => {
   const routes = []
   const router = Router({ routes })
-  const handler = jest.fn(req => req.params)
+  const handler = vi.fn(req => req.params)
 
   // register route
   router[method](route, handler)
@@ -42,7 +43,7 @@ const testRoute = async ({
   }
 }
 
-const runTests = (tests, Router) => {
+export const runTests = (tests, Router) => {
   for (let test of tests) {
     let { route, path, returns = true, description } = test
     const matchNote = returns
@@ -63,11 +64,4 @@ const runTests = (tests, Router) => {
   }
 }
 
-const createTestRunner = Router => (...args) => runTests(...args, Router)
-
-module.exports = {
-  buildRequest,
-  createTestRunner,
-  extract,
-  runTests,
-}
+export const createTestRunner = Router => (...args) => runTests(...args, Router)
