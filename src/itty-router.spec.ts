@@ -223,8 +223,6 @@ it('allows loading advanced routes after config', async () => {
       const handler = vi.fn()
       router.get('/foo/:id?', handler)
 
-      console.log(router.routes)
-
       await router.handle(buildRequest({ path: '/foo' }))
       expect(handler).toHaveBeenCalled()
     })
