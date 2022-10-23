@@ -1,6 +1,6 @@
 {
   "name": "itty-router",
-  "version": "3.0.0-next.2",
+  "version": "3.0.0-next.4",
   "description": "Tiny, zero-dependency API router - built for Cloudflare Workers, but works everywhere!",
   "sourceType": "module",
   "main": "./dist/itty-router.js",
@@ -37,13 +37,14 @@
     "test:once": "vitest run",
     "coverage": "vitest run --coverage",
     "coveralls": "yarn coverage && cat ./coverage/lcov.info | coveralls",
-    "verify": "echo 'verifying module...' && yarn build && yarn test",
+    "verify": "echo 'verifying module...' && yarn build && yarn test:once",
     "dev": "yarn test",
     "prerelease": "yarn verify",
     "prebuild": "rimraf dist && mkdir dist",
     "build": "tsup src/itty-router.ts --format cjs,esm --dts --clean",
     "postbuild": "node check-size.js",
     "release": "release --tag --push --patch",
+    "prerelease:next": "yarn verify",
     "release:next": "release --push --type=next"
   },
   "repository": {
