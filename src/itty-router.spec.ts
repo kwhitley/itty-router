@@ -453,6 +453,14 @@ it('allows loading advanced routes after config', async () => {
       ])
     })
 
+    describe('greedy params', () => {
+      testRoutes([
+        { route: '/foo/:id+', path: '/foo/14', returns: { id: '14' } },
+        { route: '/foo/:id+', path: '/foo/bar/baz', returns: { id: 'bar/baz' } },
+        { route: '/foo/:id+', path: '/foo/https://foo.bar', returns: { id: 'https://foo.bar' } },
+      ])
+    })
+
     describe('formats/extensions', () => {
       testRoutes([
         { route: '/:id.:format', path: '/foo', returns: false },

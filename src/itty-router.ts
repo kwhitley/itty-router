@@ -24,8 +24,13 @@ export type Route = (
 ) => RouterType
 
 export type RouterTraps = {
+  all?: Route,
+  delete?: Route,
   get?: Route,
+  options?: Route,
+  patch?: Route,
   post?: Route,
+  put?: Route,
 }
 
 export type RouterType = {
@@ -53,6 +58,7 @@ export function Router({ base = '', routes = [] }: RouterOptions = {}): RouterTy
           RegExp(`^${(base + route)
             .replace(/(\/?)\*/g, '($1.*)?')                             // trailing wildcard
             .replace(/(\/$)|((?<=\/)\/)/, '')                           // remove trailing slash or double slash from joins
+            .replace(/(:(\w+)\+)/, '(?<$2>.*)')                         // greedy params
             .replace(/:(\w+)(\?)?(\.)?/g, '$2(?<$1>[^/]+)$2$3')         // named params
             .replace(/\.(?=[\w(])/, '\\.')                              // dot in path
             .replace(/\)\.\?\(([^\[]+)\[\^/g, '?)\\.?($1(?<=\\.)[^\\.') // optional image format
@@ -76,26 +82,46 @@ export function Router({ base = '', routes = [] }: RouterOptions = {}): RouterTy
   }
 }
 
-// const router = Router()
 
-// type GetBooksResponse = {
-//   books: string[]
+// type CustomMethods = {
+//   foo?: Route,
+//   bar?: Route,
 // }
+
+// // const router = Router() as RouterType & CustomMethods
+
+// // router.foo()
+
 
 // type RequestWithAuthors = {
 //   authors?: string[]
 // } & RequestLike
 
+// // middleware: adds authors to the request
 // const addAuthors = (request) => {
 //   request.authors = ['foo', 'bar']
 // }
 
-// router.get('books', addAuthors, (request: RequestWithAuthors): GetBooksResponse => {
+
+// const router = Router()
+
+// type BooksResponse = {
+//   books: string[]
+// }
+
+// // FAILING EXAMPLE
+// router.get('books', (request): BooksResponse => {
 //   request.foo = 'asd'
-//   request.authors
+
+//   return false // fails to return a Response with books
+// })
+
+// // PASSING EXAMPLE
+// router.get('books', (request): BooksResponse => {
+//   request.foo = 'asd'
 
 //   return {
-//     books: ['foo', 'bar']
+//     books: ['foo', 'bar'] // passes!
 //   }
 // })
 
