@@ -1,7 +1,7 @@
 import 'isomorphic-fetch'
 import { describe, expect, it, vi } from 'vitest'
 import { buildRequest, createTestRunner, extract } from '../test-utils'
-import { Router } from './itty-router'
+import { Router, Route, RouterType } from './itty-router'
 
 const ERROR_MESSAGE = 'Error Message'
 
@@ -438,101 +438,131 @@ it('allows loading advanced routes after config', async () => {
     })
   })
 
-  describe('ROUTE MATCHING', () => {
-    describe('allowed characters', () => {
-      const chars = '/foo/-.abc!@%&_=:;\',~|/bar'
-      testRoutes([
-        { route: chars, path: chars },
-      ])
+  it('can get query params', async () => {
+    const router = Router()
+    const handler = vi.fn(req => req.query)
+
+    router.get('/foo', handler)
+
+    const request = new Request('https://foo.com/foo?cat=dog&foo=bar&foo=baz&missing=')
+
+    await router.handle(request)
+    expect(handler).toHaveReturnedWith({ cat: 'dog', foo: ['bar', 'baz'], missing: '' })
+  })
+
+  it('can still get query params with POST or non-GET HTTP methods', async () => {
+    const router = Router()
+    const handler = vi.fn(req => req.query)
+
+    router.post('/foo', handler)
+
+    const request = new Request('https://foo.com/foo?cat=dog&foo=bar&foo=baz', {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json'
+      },
+      body: JSON.stringify({ success: true })
     })
 
-    describe('dots', () => {
-      testRoutes([
-        { route: '/foo.json', path: '/foo.json' },
-        { route: '/foo.json', path: '/fooXjson', returns: false },
-      ])
-    })
+    await router.handle(request)
+    expect(handler).toHaveReturnedWith({ cat: 'dog', foo: ['bar', 'baz'] })
+  })
+})
 
-    describe('greedy params', () => {
-      testRoutes([
-        { route: '/foo/:id+', path: '/foo/14', returns: { id: '14' } },
-        { route: '/foo/:id+', path: '/foo/bar/baz', returns: { id: 'bar/baz' } },
-        { route: '/foo/:id+', path: '/foo/https://foo.bar', returns: { id: 'https://foo.bar' } },
-      ])
-    })
+describe('ROUTE MATCHING', () => {
+  describe('allowed characters', () => {
+    const chars = '/foo/-.abc!@%&_=:;\',~|/bar'
+    testRoutes([
+      { route: chars, path: chars },
+    ])
+  })
 
-    describe('formats/extensions', () => {
-      testRoutes([
-        { route: '/:id.:format', path: '/foo', returns: false },
-        { route: '/:id.:format', path: '/foo.jpg', returns: { id: 'foo', format: 'jpg' } },
-        { route: '/:id.:format', path: '/foo.bar.jpg', returns: { id: 'foo.bar', format: 'jpg' } },
-        { route: '/:id.:format?', path: '/foo', returns: { id: 'foo' } },
-        { route: '/:id.:format?', path: '/foo.bar.jpg', returns: { id: 'foo.bar', format: 'jpg' } },
-        { route: '/:id.:format?', path: '/foo.jpg', returns: { id: 'foo', format: 'jpg' } },
-        { route: '/:id.:format?', path: '/foo', returns: { id: 'foo' } },
-      ])
-    })
+  describe('dots', () => {
+    testRoutes([
+      { route: '/foo.json', path: '/foo.json' },
+      { route: '/foo.json', path: '/fooXjson', returns: false },
+    ])
+  })
 
-    describe('optional params', () => {
-      testRoutes([
-        { route: '/foo/abc:id?', path: '/foo/abcbar', returns: { id: 'bar' } },
-        { route: '/foo/:id?', path: '/foo' },
-        { route: '/foo/:id?', path: '/foo/' },
-        { route: '/foo/:id?', path: '/foo/bar', returns: { id: 'bar' } },
-      ])
-    })
+  describe('greedy params', () => {
+    testRoutes([
+      { route: '/foo/:id+', path: '/foo/14', returns: { id: '14' } },
+      { route: '/foo/:id+', path: '/foo/bar/baz', returns: { id: 'bar/baz' } },
+      { route: '/foo/:id+', path: '/foo/https://foo.bar', returns: { id: 'https://foo.bar' } },
+    ])
+  })
 
-    describe('regex', () => {
-      testRoutes([
-        { route: '/foo|bar/baz', path: '/foo/baz' },
-        { route: '/foo|bar/baz', path: '/bar/baz' },
-        { route: '/foo(bar|baz)', path: '/foobar' },
-        { route: '/foo(bar|baz)', path: '/foobaz' },
-        { route: '/foo(bar|baz)', path: '/foo', returns: false },
-        { route: '/foo+', path: '/foo' },
-        { route: '/foo+', path: '/fooooooo' },
-        { route: '/foo?', path: '/foo' },
-        { route: '/foo?', path: '/fo' },
-        { route: '/foo?', path: '/fooo', returns: false },
-        { route: '/\.', path: '/f' },
-        { route: '/\.', path: '/', returns: false },
+  describe('formats/extensions', () => {
+    testRoutes([
+      { route: '/:id.:format', path: '/foo', returns: false },
+      { route: '/:id.:format', path: '/foo.jpg', returns: { id: 'foo', format: 'jpg' } },
+      { route: '/:id.:format', path: '/foo.bar.jpg', returns: { id: 'foo.bar', format: 'jpg' } },
+      { route: '/:id.:format?', path: '/foo', returns: { id: 'foo' } },
+      { route: '/:id.:format?', path: '/foo.bar.jpg', returns: { id: 'foo.bar', format: 'jpg' } },
+      { route: '/:id.:format?', path: '/foo.jpg', returns: { id: 'foo', format: 'jpg' } },
+      { route: '/:id.:format?', path: '/foo', returns: { id: 'foo' } },
+    ])
+  })
 
-        { route: '/x|y', path: '/y', returns: true },
-        { route: '/x|y', path: '/x', returns: true },
-        { route: '/x/y|z', path: '/z', returns: true }, // should require second path as y or z
-        { route: '/x/y|z', path: '/x/y', returns: true }, // shouldn't allow the weird pipe
-        { route: '/x/y|z', path: '/x/z', returns: true }, // shouldn't allow the weird pipe
-        { route: '/xy*', path: '/x', returns: false },
-        { route: '/xy*', path: '/xyz', returns: true },
-        { route: '/:x.y', path: '/a.x.y', returns: { x: 'a.x' } },
-        { route: '/x.y', path: '/xay', returns: false }, // dots are enforced as dots, not any character (e.g. extensions)
-        { route: '/xy{2}', path: '/xyxy', returns: false }, // no regex repeating supported
-        { route: '/xy{2}', path: '/xy/xy', returns: false }, // no regex repeating supported
-        { route: '/:x.:y', path: '/a.b.c', returns: { x: 'a.b', y: 'c' } }, // standard file + extension format
-        { route: '/test.:x', path: '/test.a.b', returns: { x: 'a.b' } }, // dots are still captured as part of the param
-        { route: '/:x?.y', path: '/test.y', returns: { x: 'test' } },
-        { route: '/x/:y*', path: '/x/test', returns: { y: 'test' } },
-      ])
-    })
+  describe('optional params', () => {
+    testRoutes([
+      { route: '/foo/abc:id?', path: '/foo/abcbar', returns: { id: 'bar' } },
+      { route: '/foo/:id?', path: '/foo' },
+      { route: '/foo/:id?', path: '/foo/' },
+      { route: '/foo/:id?', path: '/foo/bar', returns: { id: 'bar' } },
+    ])
+  })
 
-    describe('trailing/leading slashes', () => {
-      testRoutes([
-        { route: '/foo/bar', path: '/foo/bar' },
-        { route: '/foo/bar', path: '/foo/bar/' },
-        { route: '/foo/bar/', path: '/foo/bar/' },
-        { route: '/foo/bar/', path: '/foo/bar' },
-        { route: '/', path: '/' },
-        { route: '', path: '/' },
-      ])
-    })
+  describe('regex', () => {
+    testRoutes([
+      { route: '/foo|bar/baz', path: '/foo/baz' },
+      { route: '/foo|bar/baz', path: '/bar/baz' },
+      { route: '/foo(bar|baz)', path: '/foobar' },
+      { route: '/foo(bar|baz)', path: '/foobaz' },
+      { route: '/foo(bar|baz)', path: '/foo', returns: false },
+      { route: '/foo+', path: '/foo' },
+      { route: '/foo+', path: '/fooooooo' },
+      { route: '/foo?', path: '/foo' },
+      { route: '/foo?', path: '/fo' },
+      { route: '/foo?', path: '/fooo', returns: false },
+      { route: '/\.', path: '/f' },
+      { route: '/\.', path: '/', returns: false },
 
-    describe('wildcards', () => {
-      testRoutes([
-        { route: '*', path: '/something/foo' },
-        { route: '/*/foo', path: '/something/foo' },
-        { route: '/*/foo', path: '/something/else/foo' },
-        { route: '/foo/*/bar', path: '/foo/a/b/c/bar' },
-      ])
-    })
+      { route: '/x|y', path: '/y', returns: true },
+      { route: '/x|y', path: '/x', returns: true },
+      { route: '/x/y|z', path: '/z', returns: true }, // should require second path as y or z
+      { route: '/x/y|z', path: '/x/y', returns: true }, // shouldn't allow the weird pipe
+      { route: '/x/y|z', path: '/x/z', returns: true }, // shouldn't allow the weird pipe
+      { route: '/xy*', path: '/x', returns: false },
+      { route: '/xy*', path: '/xyz', returns: true },
+      { route: '/:x.y', path: '/a.x.y', returns: { x: 'a.x' } },
+      { route: '/x.y', path: '/xay', returns: false }, // dots are enforced as dots, not any character (e.g. extensions)
+      { route: '/xy{2}', path: '/xyxy', returns: false }, // no regex repeating supported
+      { route: '/xy{2}', path: '/xy/xy', returns: false }, // no regex repeating supported
+      { route: '/:x.:y', path: '/a.b.c', returns: { x: 'a.b', y: 'c' } }, // standard file + extension format
+      { route: '/test.:x', path: '/test.a.b', returns: { x: 'a.b' } }, // dots are still captured as part of the param
+      { route: '/:x?.y', path: '/test.y', returns: { x: 'test' } },
+      { route: '/x/:y*', path: '/x/test', returns: { y: 'test' } },
+    ])
+  })
+
+  describe('trailing/leading slashes', () => {
+    testRoutes([
+      { route: '/foo/bar', path: '/foo/bar' },
+      { route: '/foo/bar', path: '/foo/bar/' },
+      { route: '/foo/bar/', path: '/foo/bar/' },
+      { route: '/foo/bar/', path: '/foo/bar' },
+      { route: '/', path: '/' },
+      { route: '', path: '/' },
+    ])
+  })
+
+  describe('wildcards', () => {
+    testRoutes([
+      { route: '*', path: '/something/foo' },
+      { route: '/*/foo', path: '/something/foo' },
+      { route: '/*/foo', path: '/something/else/foo' },
+      { route: '/foo/*/bar', path: '/foo/a/b/c/bar' },
+    ])
   })
 })
