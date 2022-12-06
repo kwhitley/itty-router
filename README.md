@@ -259,7 +259,7 @@ const withUser = request => {
 
 router
   .get('*', withUser) // embeds user before all other matching routes
-  .get('/user', request => new Response(`Hello, ${user.name}!`))
+  .get('/user', request => new Response(`Hello, ${request.user.name}!`))
 
 router.handle({ method: 'GET', url: 'https://example.com/user' })
 // STATUS 200: Hello, Mittens!
