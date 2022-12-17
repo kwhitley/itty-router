@@ -2,8 +2,8 @@
 
 [![Version](https://img.shields.io/npm/v/itty-router.svg?style=flat-square)](https://npmjs.com/package/itty-router)
 [![Bundle Size](https://img.shields.io/bundlephobia/minzip/itty-router?style=flat-square)](https://bundlephobia.com/result?p=itty-router)
-[![Build Status](https://img.shields.io/github/actions/workflow/status/kwhitley/itty-router/verify.yml?branch=v2.x&style=flat-square)](https://github.com/kwhitley/itty-router/actions/workflows/verify.yml)
-[![Coverage Status](https://img.shields.io/coveralls/github/kwhitley/itty-router/v2.x?style=flat-square)](https://coveralls.io/github/kwhitley/itty-router?branch=v2.x)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/kwhitley/itty-router/verify.yml?branch=v3.x&style=flat-square)](https://github.com/kwhitley/itty-router/actions/workflows/verify.yml)
+[![Coverage Status](https://img.shields.io/coveralls/github/kwhitley/itty-router/v3.x?style=flat-square)](https://coveralls.io/github/kwhitley/itty-router?branch=v3.x)
 [![NPM Weekly Downloads](https://img.shields.io/npm/dw/itty-router?style=flat-square)](https://npmjs.com/package/itty-router)
 [![Open Issues](https://img.shields.io/github/issues/kwhitley/itty-router?style=flat-square)](https://github.com/kwhitley/itty-router/issues)
 
@@ -19,7 +19,7 @@ Due to an NPM hiccup, `3.0.0` went live early (instead of staying on `next`). Th
 This comes with a couple major changes, and is now a TS-first lib. 
 
 ### Increase in bundle size (~250 bytes)
-This was sadly overdue (and hopefully can be golfed down a bit), but as a result addressed the following issues from v2.x:
+This was sadly overdue (and hopefully can be golfed down a bit), but as a result addressed the following issues from v3.x:
  
 1 . Routes can now capture complex/unknown paths using the trailing `+` modifier.  As a result, this is now possible:
   ```js
