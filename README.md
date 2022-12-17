@@ -2,7 +2,7 @@
 
 [![Version](https://img.shields.io/npm/v/itty-router.svg?style=flat-square)](https://npmjs.com/package/itty-router)
 [![Bundle Size](https://img.shields.io/bundlephobia/minzip/itty-router?style=flat-square)](https://bundlephobia.com/result?p=itty-router)
-![Build Status](https://img.shields.io/github/workflow/status/kwhitley/itty-router/build?style=flat-square)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/kwhitley/itty-router/verify.yml?branch=v2.x&style=flat-square)](https://github.com/kwhitley/itty-router/actions/workflows/verify.yml)
 [![Coverage Status](https://img.shields.io/coveralls/github/kwhitley/itty-router/v2.x?style=flat-square)](https://coveralls.io/github/kwhitley/itty-router?branch=v2.x)
 [![NPM Weekly Downloads](https://img.shields.io/npm/dw/itty-router?style=flat-square)](https://npmjs.com/package/itty-router)
 [![Open Issues](https://img.shields.io/github/issues/kwhitley/itty-router?style=flat-square)](https://github.com/kwhitley/itty-router/issues)
@@ -259,7 +259,7 @@ const withUser = request => {
 
 router
   .get('*', withUser) // embeds user before all other matching routes
-  .get('/user', request => new Response(`Hello, ${user.name}!`))
+  .get('/user', request => new Response(`Hello, ${request.user.name}!`))
 
 router.handle({ method: 'GET', url: 'https://example.com/user' })
 // STATUS 200: Hello, Mittens!
