@@ -13,13 +13,38 @@
 
 Tiny, zero-dependency router with route param and query parsing - built for [Cloudflare Workers](https://developers.cloudflare.com/workers/), but works everywhere!
 
+# Major Announcement: v3.x is Live!  
+Due to an NPM hiccup, `3.0.0` went live early (instead of staying on `next`). The immediate NPM unpublish (normally fine) was rejected, so rather than deprecate the version (super dirty), it's going to stay live on the main v3 path, and we'll smoke test the issues to address them rapidly. Please [join the discussion on Discord](https://discord.gg/53vyrZAu9u) to assist in this rollout!  In the meantime, thanks everyone for your patience!
+
+This comes with a couple major changes, and is now a TS-first lib. 
+
+### Increase in bundle size (~250 bytes)
+This was sadly overdue (and hopefully can be golfed down a bit), but as a result addressed the following issues from v2.x:
+ 
+1 . Routes can now capture complex/unknown paths using the trailing `+` modifier.  As a result, this is now possible:
+  ```js
+  router.handle('/get-file/:path+', ({ params }) => params)
+  
+  // GET /get-file/with/a/long/path.png => { path: "with/a/long/path.png" }
+  ```
+    
+2. Query params with multiple same-name values now operate as you would expect (previously, they overwrote each other)
+  ```js
+  router.handle('/foo', ({ query }) => query)
+  
+  // GET /foo?pets=mittens&pets=fluffy&pets=rex&bar=baz => { bar: "baz", pets: ["mittens", "fluffy", "rex"] }
+  ```
+  
+### Breaking TS changes
+I've been forced to rewrite the TS types.  This will need a bit of documentation...
+
 ### Addons & Related Libraries
 1. [itty-router-extras](https://www.npmjs.com/package/itty-router-extras) - adds quality-of-life improvements and utility functions for simplifying request/response code (e.g. middleware, cookies, body parsing, json handling, errors, and an itty version with automatic exception handling)!
 2. [itty-cors](https://www.npmjs.com/package/itty-cors) (early access/alpha) - Easy CORS handling for itty APIs.
 2. [itty-durable](https://www.npmjs.com/package/itty-durable) - creates a more direct object-like API for interacting with [Cloudflare Durable Objects](https://developers.cloudflare.com/workers/learning/using-durable-objects).
 
 ## Features
-- [x] Tiny ([~500 bytes](https://bundlephobia.com/package/itty-router) compressed), with zero dependencies.
+- [x] Tiny ([~780 bytes](https://bundlephobia.com/package/itty-router) compressed), with zero dependencies.
 - [x] [Fully typed/TypeScript support](#typescript)
 - [x] Supports sync/async handlers/middleware.
 - [x] Parses route params, with wildcards and optionals (e.g. `/api/:collection/:id?`)
