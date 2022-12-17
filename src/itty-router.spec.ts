@@ -1,12 +1,27 @@
 import 'isomorphic-fetch'
 import { describe, expect, it, vi } from 'vitest'
 import { buildRequest, createTestRunner, extract } from '../test-utils'
-import { Router, Route, RouterType } from './itty-router'
+import { Router, Route, RouterType, RequestLike } from './itty-router'
 
 const ERROR_MESSAGE = 'Error Message'
 
 const testRoutes = createTestRunner(Router)
 
+type ALL = {
+  all: Route,
+}
+
+type GET = {
+  get: Route,
+}
+
+type PATCH = {
+  patch: Route,
+}
+
+type POST = {
+  post: Route,
+}
 describe('Router', () => {
   const router = Router()
 
@@ -383,7 +398,11 @@ it('allows loading advanced routes after config', async () => {
 
   describe('.handle({ method = \'GET\', url }, ...args)', () => {
     it('passes extra args to each handler', async () => {
-      const r = Router()
+      type GET = {
+        get: Route,
+      }
+
+      const r = Router() as RouterType & GET
       const h = (req, a, b) => { req.a = a; req.b = b }
       const originalA = 'A'
       const originalB = {}
