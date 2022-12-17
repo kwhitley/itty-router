@@ -1,11 +1,13 @@
-export type RequestTraps = {
+export type GenericTraps = {
   [key: string]: any
 }
 
-export type RequestLike = {
+export type IRequest = {
   method: string,
   url: string,
-} & RequestTraps
+  params: GenericTraps,
+  query: GenericTraps,
+} & GenericTraps
 
 export interface RouterOptions {
   base?: string
@@ -13,17 +15,17 @@ export interface RouterOptions {
 }
 
 export interface RouteHandler {
-  (request: RequestLike, ...args: any): any
+  (request: IRequest, ...args: any): any
 }
 
 export type RouteEntry = [string, RegExp, RouteHandler[]]
 
-export type Route = (
+export type Route = <T extends RouterType>(
   path: string,
   ...handlers: RouteHandler[]
-) => RouterType
+) => T
 
-export type RouterTraps = {
+export type RouterHints = {
   all?: Route,
   delete?: Route,
   get?: Route,
@@ -36,11 +38,11 @@ export type RouterTraps = {
 export type RouterType = {
   __proto__: RouterType,
   routes: RouteEntry[],
-  handle: (request: RequestLike, ...extra: any) => Promise<any>
-} & RouterTraps
+  handle: (request: IRequest, ...extra: any) => Promise<any>
+} & RouterHints
 
 // helper function to translate query params
-const toQuery = (params) =>
+const toQuery = (params: any) =>
   [...params.entries()].reduce((acc, [k, v]) =>
     (acc[k] === undefined
             ? acc[k] = v
@@ -50,7 +52,7 @@ const toQuery = (params) =>
 export const Router = ({ base = '', routes = [] }: RouterOptions = {}): RouterType =>
   ({
     __proto__: new Proxy({} as RouterType, {
-      get: (target, prop: string, receiver) => (route, ...handlers: RouteHandler[]) =>
+      get: (target, prop: string, receiver) => (route: string, ...handlers: RouteHandler[]) =>
         routes.push([
           prop.toUpperCase(),
           RegExp(`^${(base + route)
@@ -65,12 +67,12 @@ export const Router = ({ base = '', routes = [] }: RouterOptions = {}): RouterTy
         ]) && receiver
     }),
     routes,
-    async handle (request, ...args)  {
+    async handle (request: IRequest, ...args)  {
       let response, match, url = new URL(request.url)
       request.query = toQuery(url.searchParams)
       for (let [method, route, handlers] of routes) {
         if ((method === request.method || method === 'ALL') && (match = url.pathname.match(route))) {
-          request.params = match.groups
+          request.params = match.groups || {}
           for (let handler of handlers) {
             if ((response = await handler(request.proxy || request, ...args)) !== undefined) return response
           }
@@ -78,7 +80,6 @@ export const Router = ({ base = '', routes = [] }: RouterOptions = {}): RouterTy
       }
     }
   })
-
 
 // type CustomMethods = {
 //   foo?: Route,
@@ -92,7 +93,7 @@ export const Router = ({ base = '', routes = [] }: RouterOptions = {}): RouterTy
 
 // type RequestWithAuthors = {
 //   authors?: string[]
-// } & RequestLike
+// } & IRequest
 
 // // middleware: adds authors to the request
 // const addAuthors = (request) => {

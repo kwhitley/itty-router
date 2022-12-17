@@ -14,9 +14,7 @@
 Tiny, zero-dependency router with route param and query parsing - built for [Cloudflare Workers](https://developers.cloudflare.com/workers/), but works everywhere!
 
 # Major Announcement: v3.x is Live!  
-Due to an NPM hiccup, `3.0.0` went live early (instead of staying on `next`). The immediate NPM unpublish (normally fine) was rejected, so rather than deprecate the version (super dirty), it's going to stay live on the main v3 path, and we'll smoke test the issues to address them rapidly. Please [join the discussion on Discord](https://discord.gg/53vyrZAu9u) to assist in this rollout!  In the meantime, thanks everyone for your patience!
-
-This comes with a couple major changes, and is now a TS-first lib. 
+Version 3 introduces itty as a TypeScript-first library.  This version should break no existing JS users, but TS users may have to update their types, as shown below.  Please [join the discussion on Discord](https://discord.gg/53vyrZAu9u) to assist in this rollout!  In the meantime, thanks everyone for your patience!  Here are the major changes in version 3, with `itty-router-extras` (certainly) and likely `itty-cors` to be added into core as upcoming minor releases.
 
 ### Increase in bundle size (~250 bytes)
 This was sadly overdue (and hopefully can be golfed down a bit), but as a result addressed the following issues from v3.x:
@@ -48,7 +46,8 @@ I've been forced to rewrite the TS types.  This will need a bit of documentation
 - [x] [Fully typed/TypeScript support](#typescript)
 - [x] Supports sync/async handlers/middleware.
 - [x] Parses route params, with wildcards and optionals (e.g. `/api/:collection/:id?`)
-- [x] Query parsing (e.g. `?page=3&foo=bar`)
+- [x] ["Greedy" route captures](#greedy) (e.g. `/api/:path+`)
+- [x] Query parsing (e.g. `?page=3&foo=bar&foo=baz`)
 - [x] [Middleware support](#middleware). Any number of sync/async handlers may be passed to a route.
 - [x] [Nestable](#nested-routers-with-404-handling). Supports nesting routers for API branching.
 - [x] [Base path](#nested-routers-with-404-handling) for prefixing all routes.
@@ -153,14 +152,15 @@ GET /todos/jane
   query: {}
 }
 
-GET /todos/jane?limit=2&page=1
+GET /todos/jane?limit=2&page=1&foo=bar&foo=baz
 {
   params: {
     user: 'jane'
   },
   query: {
     limit: '2',
-    page: '2'
+    page: '2',
+    foo: ['bar', 'baz],
   }
 }
 */
@@ -317,16 +317,16 @@ export default {
 
 // alternative advanced/manual approach for downstream control
 export default {
-  fetch: (...args) => router
-                        .handle(...args)
-                        .then(response => {
-                          // can modify response here before final return, e.g. CORS headers
+  fetch: (request, env, context) => router
+                                      .handle(request, env, context)
+                                      .then(response => {
+                                        // can modify response here before final return, e.g. CORS headers
 
-                          return response
-                        })
-                        .catch(err => {
-                          // and do something with the errors here, like logging, error status, etc
-                        })
+                                        return response
+                                      })
+                                      .catch(err => {
+                                        // and do something with the errors here, like logging, error status, etc
+                                      })
 }
 ```
 
@@ -415,102 +415,47 @@ await router.handle({ method: 'GET', url: 'https:nowhere.com/custom-a123' })    
 
 ### Typescript
 
-For Typescript projects, the Router can be adorned with two generics: A custom request interface and a custom methods interface.
+As of version `3.x`, itty-router is TypeScript-first, meaning it has full hinting out of the box.
 
 ```ts
-import { Router, Route, Request } from 'itty-router'
+import {
+  Router,               // the router itself
+  IRequest,             // lightweight/generic Request type
+  RouterType,           // generic Router type
+  Route,                // generic Route type
+} from './itty-router'
 
-type MethodType = 'GET' | 'POST' | 'PUPPY'
-
-interface IRequest extends Request {
-  method: MethodType // method is required to be on the interface
-  url: string // url is required to be on the interface
-  optional?: string
+// declare a custom Router type with used methods
+interface CustomRouter extends RouterType {
+  all: Route,
+  get: Route,
+  puppy: Route,
 }
 
-interface IMethods {
-  get: Route
-  post: Route
-  puppy: Route
+// declare a custom Request type to allow request injection from middleware
+type RequestWithAuthors = {
+  authors?: string[]
+} & IRequest
+
+// middleware that modifies the request
+const withAuthors = (request: IRequest) => {
+  request.authors = ['foo', 'bar']
 }
 
-const router = Router<IRequest, IMethods>()
+const router = <CustomRouter>Router({ base: '/' })
 
-router.get('/', (request: IRequest) => {})
-router.post('/', (request: IRequest) => {})
-router.puppy('/', (request: IRequest) => {})
+router
+  .all<CustomRouter>('*', () => {})
+  .get<CustomRouter>('/authors', withAuthors, (request: RequestWithAuthors) => {
+    return request.authors?.[0]
+  })
+  .puppy('*', (request) => {
+    const foo = request.query.foo
+  })
 
 addEventListener('fetch', (event: FetchEvent) => {
   event.respondWith(router.handle(event.request))
 })
-```
-
-Both generics are optional. `TRequest` defaults to `Request` and `TMethods` defaults to `{}`.
-
-```ts
-import { Router, Route } from 'itty-router'
-
-type MethodType = 'GET' | 'POST' | 'PUPPY'
-
-interface IRequest extends Request {
-  method: MethodType
-  url: string
-  optional?: string
-}
-
-interface IMethods {
-  get: Route
-  post: Route
-  puppy: Route
-}
-
-const router = Router() // Valid
-const router = Router<IRequest>() // Valid
-const router = Router<Request, IMethods>() // Valid
-const router = Router<void, IMethods>() // Valid
-```
-
-The router will also accept any string as a method, not just those provided on the `TMethods` type.
-
-```ts
-import { Router, Route } from 'itty-router'
-
-interface IMethods {
-  get: Route
-  post: Route
-  puppy: Route
-}
-
-const router = Router<void, IMethods>()
-
-router.puppy('/', request => {}) // Valid
-router.kitten('/', request => {}) // Also Valid
-```
-
-The `itty-router` package also exports an interface containing all of the HTTP methods.
-
-```ts
-import { Router, Route, IHTTPMethods } from 'itty-router'
-
-const router = Router<void, IHTTPMethods>()
-
-router.get('/', request => {}) // Exposed via IHTTPMethods
-router.puppy('/', request => {}) // Valid but not strongly typed
-```
-
-You can also extend `IHTTPMethods` with your own custom methods so they will be strongly typed.
-
-```ts
-import { Router, Route, IHTTPMethods } from 'itty-router'
-
-interface IMethods extends IHTTPMethods {
-  puppy: Route
-}
-
-const router = Router<void, IMethods>()
-
-router.get('/', request => {}) // Exposed via IHTTPMethods
-router.puppy('/', request => {}) // Strongly typed
 ```
 
 ## Testing and Contributing
