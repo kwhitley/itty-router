@@ -5,8 +5,12 @@ export type GenericTraps = {
 export type IRequest = {
   method: string,
   url: string,
-  params: GenericTraps,
-  query: GenericTraps,
+  params: {
+    [key: string]: string,
+  },
+  query: {
+    [key: string]: string | undefined,
+  },
 } & GenericTraps
 
 export interface RouterOptions {
