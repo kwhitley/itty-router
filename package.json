@@ -1,6 +1,6 @@
 {
   "name": "itty-router",
-  "version": "3.0.4",
+  "version": "3.0.5",
   "description": "Tiny, zero-dependency API router - built for Cloudflare Workers, but works everywhere!",
   "sourceType": "module",
   "main": "./dist/itty-router.js",

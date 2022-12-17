@@ -14,11 +14,10 @@
 Tiny, zero-dependency router with route param and query parsing - built for [Cloudflare Workers](https://developers.cloudflare.com/workers/), but works everywhere!
 
 # Major Announcement: v3.x is Live!  
-Version 3 introduces itty as a TypeScript-first library.  This version should break no existing JS users, but TS users may have to update their types, as shown below.  Please [join the discussion on Discord](https://discord.gg/53vyrZAu9u) to assist in this rollout!  In the meantime, thanks everyone for your patience!  Here are the major changes in version 3, with `itty-router-extras` (certainly) and likely `itty-cors` to be added into core as upcoming minor releases.
+Version 3 introduces itty as a TypeScript-first library.  This version should break no existing JS users, but TS users will likely need to [update their types](#typescript).  Please [join the discussion on Discord](https://discord.gg/53vyrZAu9u) to assist in this rollout!  In the meantime, thanks everyone for your patience!  
 
-### Increase in bundle size (~250 bytes)
-This was sadly overdue (and hopefully can be golfed down a bit), but as a result addressed the following issues from v3.x:
- 
+Here are the major changes in version 3, with `itty-router-extras` (certainly) and likely `itty-cors` to be added into core as upcoming minor releases:
+
 1 . Routes can now capture complex/unknown paths using the trailing `+` modifier.  As a result, this is now possible:
   ```js
   router.handle('/get-file/:path+', ({ params }) => params)
@@ -33,9 +32,6 @@ This was sadly overdue (and hopefully can be golfed down a bit), but as a result
   // GET /foo?pets=mittens&pets=fluffy&pets=rex&bar=baz => { bar: "baz", pets: ["mittens", "fluffy", "rex"] }
   ```
   
-### Breaking TS changes
-I've been forced to rewrite the TS types.  This will need a bit of documentation...
-
 ### Addons & Related Libraries
 1. [itty-router-extras](https://www.npmjs.com/package/itty-router-extras) - adds quality-of-life improvements and utility functions for simplifying request/response code (e.g. middleware, cookies, body parsing, json handling, errors, and an itty version with automatic exception handling)!
 2. [itty-cors](https://www.npmjs.com/package/itty-cors) (early access/alpha) - Easy CORS handling for itty APIs.
