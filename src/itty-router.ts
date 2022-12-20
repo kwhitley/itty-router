@@ -30,13 +30,13 @@ export type Route = <T extends RouterType>(
 ) => T
 
 export type RouterHints = {
-  all?: Route,
-  delete?: Route,
-  get?: Route,
-  options?: Route,
-  patch?: Route,
-  post?: Route,
-  put?: Route,
+  all: Route,
+  delete: Route,
+  get: Route,
+  options: Route,
+  patch: Route,
+  post: Route,
+  put: Route,
 }
 
 export type RouterType = {
@@ -54,6 +54,7 @@ const toQuery = (params: any) =>
     ) && acc || acc, {})
 
 export const Router = ({ base = '', routes = [] }: RouterOptions = {}): RouterType =>
+  // @ts-expect-error TypeScript doesn't know that Proxy makes this work
   ({
     __proto__: new Proxy({} as RouterType, {
       get: (target, prop: string, receiver) => (route: string, ...handlers: RouteHandler[]) =>
