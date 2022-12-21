@@ -19,37 +19,37 @@ export type IRequest = {
   proxy?: any,
 } & GenericTraps
 
-export interface RouterOptions {
+export interface RouterOptions<RequestType> {
   base?: string
-  routes?: RouteEntry[]
+  routes?: RouteEntry<RequestType>[]
 }
 
-export interface RouteHandler {
-  (request: IRequest, ...args: any): any
+export interface RouteHandler<RequestType> {
+  (request: IRequest & RequestType, ...args: any): any
 }
 
-export type RouteEntry = [string, RegExp, RouteHandler[]]
+export type RouteEntry<RequestType> = [string, RegExp, RouteHandler<RequestType>[]]
 
-export type Route = <T extends RouterType>(
+export type Route<RequestType> = <T extends RouterType<RequestType>>(
   path: string,
-  ...handlers: RouteHandler[]
+  ...handlers: RouteHandler<RequestType>[]
 ) => T
 
-export type RouterHints = {
-  all: Route,
-  delete: Route,
-  get: Route,
-  options: Route,
-  patch: Route,
-  post: Route,
-  put: Route,
+export type RouterHints<RequestType> = {
+  all: Route<RequestType>,
+  delete: Route<RequestType>,
+  get: Route<RequestType>,
+  options: Route<RequestType>,
+  patch: Route<RequestType>,
+  post: Route<RequestType>,
+  put: Route<RequestType>,
 }
 
-export type RouterType = {
-  __proto__: RouterType,
-  routes: RouteEntry[],
-  handle: (request: RequestLike, ...extra: any) => Promise<any>
-} & RouterHints
+export type RouterType<RequestType> = {
+  __proto__: RouterType<RequestType>,
+  routes: RouteEntry<RequestType>[],
+  handle: (request: RequestLike & RequestType, ...extra: any) => Promise<any>
+} & RouterHints<RequestType>
 
 // helper function to translate query params
 const toQuery = (params: any) =>
@@ -59,11 +59,12 @@ const toQuery = (params: any) =>
             : acc[k] = [...[acc[k]], v].flat()
     ) && acc || acc, {})
 
-export const Router = ({ base = '', routes = [] }: RouterOptions = {}): RouterType =>
+export const Router = <RequestType = RequestLike>({ base = '', routes = [] }:
+  RouterOptions<RequestType> = {}): RouterType<RequestType> =>
   // @ts-expect-error TypeScript doesn't know that Proxy makes this work
   ({
-    __proto__: new Proxy({} as RouterType, {
-      get: (target, prop: string, receiver) => (route: string, ...handlers: RouteHandler[]) =>
+    __proto__: new Proxy({} as RouterType<RequestType>, {
+      get: (target, prop: string, receiver) => (route: string, ...handlers: RouteHandler<RequestType>[]) =>
         routes.push([
           prop.toUpperCase(),
           RegExp(`^${(base + route)

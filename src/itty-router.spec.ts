@@ -1,7 +1,7 @@
 import 'isomorphic-fetch'
 import { describe, expect, it, vi } from 'vitest'
 import { buildRequest, createTestRunner, extract } from '../test-utils'
-import { Router, Route, RouterType, RequestLike } from './itty-router'
+import { Router, Route, RouterType, RequestLike, IRequest } from './itty-router'
 
 const ERROR_MESSAGE = 'Error Message'
 
@@ -583,5 +583,43 @@ describe('ROUTE MATCHING', () => {
       { route: '/*/foo', path: '/something/else/foo' },
       { route: '/foo/*/bar', path: '/foo/a/b/c/bar' },
     ])
+  })
+})
+
+describe('RequestType Generics', async () => {
+  it('should allow custom request types', async () => {
+    type customRequest = {
+      foo: string
+    }
+    function myHandler(request: customRequest) {
+      // @ts-expect-error Correctly getting error for params not existing,
+      // but can still be used as a handler without IRequest on the type
+      return request.params
+    }
+    function myHandler2(request: customRequest & IRequest) {
+      // Both IRequest and customRequest are available
+      return request.params + request.foo
+    }
+
+    const router = Router<customRequest>()
+      .get('/foo', (request) => {
+        return request.foo // TypeScript correctly shows this is a string
+      })
+      // Both examples below are valid
+      .put('/foo', myHandler)
+      .post('/foo', myHandler2)
+
+    const response = await router.handle({ method: 'GET', url: 'https://example.com/foo', foo: 'bar' })
+    expect(response).toEqual('bar')
+  })
+
+  it('should allow using router without custom request type', async () => {
+    const router = Router()
+      .get('/foo', (request) => {
+        return request.foo // TypeScript correctly shows this is `any`
+      })
+    // Can still pass extra arguments without TS errors
+    const response = await router.handle({ method: 'GET', url: 'https://example.com/foo', foo: 'bar' })
+    expect(response).toEqual('bar')
   })
 })
