@@ -2,7 +2,8 @@ import {
   Router,               // the router itself
   IRequest,             // lightweight/generic Request type
   RouterType,           // generic Router type
-  Route,                // generic Route type
+  Route,
+  RequestLike,                // generic Route type
 } from './itty-router'
 
 // declare a custom Router type with used methods
@@ -41,3 +42,16 @@ export default {
 addEventListener('fetch', (event: FetchEvent) => {
   event.respondWith(router.handle(event.request))
 })
+
+// Add custom properties to the Request type at the Router level
+type CustomRequest = {
+  foo: string
+}
+
+const router2 = Router<CustomRequest>()
+  // middleware to poppulate request.foo
+  .get('/foo', (request) => { request.foo = 'bar' })
+  // route handler that uses request.foo
+  .get('/foo', (request) => {
+    return new Response(request.foo)
+  })

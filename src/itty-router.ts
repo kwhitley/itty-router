@@ -30,7 +30,7 @@ export interface RouteHandler<RequestType> {
 
 export type RouteEntry<RequestType> = [string, RegExp, RouteHandler<RequestType>[]]
 
-export type Route<RequestType> = <T extends RouterType<RequestType>>(
+export type Route<RequestType = RequestLike> = <T extends RouterType<RequestType>>(
   path: string,
   ...handlers: RouteHandler<RequestType>[]
 ) => T
@@ -45,7 +45,7 @@ export type RouterHints<RequestType> = {
   put: Route<RequestType>,
 }
 
-export type RouterType<RequestType> = {
+export type RouterType<RequestType = RequestLike> = {
   __proto__: RouterType<RequestType>,
   routes: RouteEntry<RequestType>[],
   handle: (request: RequestLike & RequestType, ...extra: any) => Promise<any>
