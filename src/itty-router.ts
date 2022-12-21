@@ -2,6 +2,11 @@ export type GenericTraps = {
   [key: string]: any
 }
 
+export type RequestLike = {
+  method: string,
+  url: string,
+} & GenericTraps
+
 export type IRequest = {
   method: string,
   url: string,
@@ -11,6 +16,7 @@ export type IRequest = {
   query: {
     [key: string]: string | undefined,
   },
+  proxy?: any,
 } & GenericTraps
 
 export interface RouterOptions {
@@ -42,7 +48,7 @@ export type RouterHints = {
 export type RouterType = {
   __proto__: RouterType,
   routes: RouteEntry[],
-  handle: (request: IRequest, ...extra: any) => Promise<any>
+  handle: (request: RequestLike, ...extra: any) => Promise<any>
 } & RouterHints
 
 // helper function to translate query params
@@ -72,7 +78,7 @@ export const Router = ({ base = '', routes = [] }: RouterOptions = {}): RouterTy
         ]) && receiver
     }),
     routes,
-    async handle (request: IRequest, ...args)  {
+    async handle (request: RequestLike, ...args)  {
       let response, match, url = new URL(request.url)
       request.query = toQuery(url.searchParams)
       for (let [method, route, handlers] of routes) {

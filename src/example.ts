@@ -27,6 +27,17 @@ router
   .get<CustomRouter>('/authors', withAuthors, (request: RequestWithAuthors) => {
     return request.authors?.[0]
   })
-  .puppy('*', (request) => {
+  .puppy('/:name', (request) => {
+    const name = request.params.name
     const foo = request.query.foo
   })
+
+// CF ES6 module syntax
+export default {
+  fetch: (request, env, context) => router.handle(request, env, context)
+}
+
+// test traditional eventListener Worker syntax
+addEventListener('fetch', (event: FetchEvent) => {
+  event.respondWith(router.handle(event.request))
+})
