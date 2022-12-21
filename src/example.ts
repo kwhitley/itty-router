@@ -7,8 +7,6 @@ import {
 
 // declare a custom Router type with used methods
 interface CustomRouter extends RouterType {
-  all: Route,
-  get: Route,
   puppy: Route,
 }
 
@@ -22,10 +20,10 @@ const withAuthors = (request: IRequest) => {
   request.authors = ['foo', 'bar']
 }
 
-const router = <CustomRouter>Router({ base: '/' })
+const router = Router({ base: '/' })
 
 router
-  .all<CustomRouter>('*', () => {})
+  .all('*', () => {})
   .get<CustomRouter>('/authors', withAuthors, (request: RequestWithAuthors) => {
     return request.authors?.[0]
   })

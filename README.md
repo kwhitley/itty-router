@@ -483,6 +483,7 @@ These folks are the real heroes, making open source the powerhouse that it is!  
 - [@taralx](https://github.com/taralx) - QOL fixes for contributing (dev dep fix and test file consistency) <3
 - [@technoyes](https://github.com/technoyes) - three kind-of-a-big-deal errors fixed.  Imagine the look on my face... thanks man!! :)
 - [@roojay520](https://github.com/roojay520) - TS interface fixes
+- [@jahands](https://github.com/jahands) - v3.x TS fixes
 #### Documentation
 - [@arunsathiya](https://github.com/arunsathiya),
   [@poacher2k](https://github.com/poacher2k),

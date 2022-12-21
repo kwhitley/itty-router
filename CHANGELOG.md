@@ -3,6 +3,7 @@ Until this library makes it to a production release of v1.x, **minor versions ma
 
 [@SupremeTechnopriest)(https://github.com/SupremeTechnopriest) - improved TypeScript support and documentation! :D\
 
+- **v3.0.9** - fixes some TS issue, previously requiring you to define Router Methods to chain request definitions. (credit [@jahands](https://github.com/jahands))
 - **v3.0.0** - total TS conversion with improved types, adding greedy params (credit [@markusahlstrand](https://github.com/markusahlstrand))
 - **v2.6.4** - merely a republish, attempting to solve NPM test scores vs CI/CD
 - **v2.6.2** - fixes issue with using base path of "/" with route definitions starting with "/" (creating double slash)
