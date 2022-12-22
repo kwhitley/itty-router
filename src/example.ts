@@ -57,3 +57,16 @@ const router2 = Router<customRequestProps>()
   .get('/authors', withAuthors, (request: RequestWithAuthors) => {
     return request.authors?.[0]
   })
+
+// Use custom request props and custom methods
+type customMethods = {
+  puppy: Route<customRequestProps>
+}
+
+const router3 = Router<customRequestProps, customMethods>()
+  .get('/foo', (request) => {
+    return request.foo
+  })
+  .puppy('/:name', (request) => {
+    return request.foo
+  })
