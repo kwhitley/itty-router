@@ -1,3 +1,5 @@
+type None = {}
+
 export type GenericTraps = {
   [key: string]: any
 }
@@ -19,37 +21,38 @@ export type IRequest = {
   proxy?: any,
 } & GenericTraps
 
-export interface RouterOptions<RequestType> {
+export interface RouterOptions<RequestProperties> {
   base?: string
-  routes?: RouteEntry<RequestType>[]
+  routes?: RouteEntry<RequestProperties>[]
 }
 
-export interface RouteHandler<RequestType> {
-  (request: IRequest & RequestType, ...args: any): any
+export interface RouteHandler<RequestProperties> {
+  (request: IRequest & RequestProperties, ...args: any): any
 }
 
-export type RouteEntry<RequestType> = [string, RegExp, RouteHandler<RequestType>[]]
+export type RouteEntry<RequestProperties> = [string, RegExp, RouteHandler<RequestProperties>[]]
 
-export type Route<RequestType = RequestLike> = <T extends RouterType<RequestType>>(
-  path: string,
-  ...handlers: RouteHandler<RequestType>[]
-) => T
+export type Route<RequestProperties = None, CustomMethods = None> = <T
+  extends RouterType<RequestProperties, CustomMethods>>(
+    path: string,
+    ...handlers: RouteHandler<RequestProperties>[]
+  ) => T
 
-export type RouterHints<RequestType> = {
-  all: Route<RequestType>,
-  delete: Route<RequestType>,
-  get: Route<RequestType>,
-  options: Route<RequestType>,
-  patch: Route<RequestType>,
-  post: Route<RequestType>,
-  put: Route<RequestType>,
-}
+export type RouterHints<RequestProperties, CustomMethods> = {
+  all: Route<RequestProperties, CustomMethods>,
+  delete: Route<RequestProperties, CustomMethods>,
+  get: Route<RequestProperties, CustomMethods>,
+  options: Route<RequestProperties, CustomMethods>,
+  patch: Route<RequestProperties, CustomMethods>,
+  post: Route<RequestProperties, CustomMethods>,
+  put: Route<RequestProperties, CustomMethods>,
+} & CustomMethods
 
-export type RouterType<RequestType = RequestLike> = {
-  __proto__: RouterType<RequestType>,
-  routes: RouteEntry<RequestType>[],
-  handle: (request: RequestLike & RequestType, ...extra: any) => Promise<any>
-} & RouterHints<RequestType>
+export type RouterType<RequestProperties = None, CustomMethods = None> = {
+  __proto__: RouterType<RequestProperties, CustomMethods>,
+  routes: RouteEntry<RequestProperties>[],
+  handle: (request: RequestLike & RequestProperties, ...extra: any) => Promise<any>
+} & RouterHints<RequestProperties, CustomMethods>
 
 // helper function to translate query params
 const toQuery = (params: any) =>
@@ -59,12 +62,12 @@ const toQuery = (params: any) =>
             : acc[k] = [...[acc[k]], v].flat()
     ) && acc || acc, {})
 
-export const Router = <RequestType = RequestLike>({ base = '', routes = [] }:
-  RouterOptions<RequestType> = {}): RouterType<RequestType> =>
+export const Router = <RequestProperties = None, CustomMethods = None>({ base = '', routes = [] }:
+  RouterOptions<RequestProperties> = {}): RouterType<RequestProperties, CustomMethods> =>
   // @ts-expect-error TypeScript doesn't know that Proxy makes this work
   ({
-    __proto__: new Proxy({} as RouterType<RequestType>, {
-      get: (target, prop: string, receiver) => (route: string, ...handlers: RouteHandler<RequestType>[]) =>
+    __proto__: new Proxy({} as RouterType<RequestProperties, CustomMethods>, {
+      get: (target, prop: string, receiver) => (route: string, ...handlers: RouteHandler<RequestProperties>[]) =>
         routes.push([
           prop.toUpperCase(),
           RegExp(`^${(base + route)

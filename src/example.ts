@@ -1,13 +1,11 @@
 import {
   Router,               // the router itself
   IRequest,             // lightweight/generic Request type
-  RouterType,           // generic Router type
   Route,
-  RequestLike,                // generic Route type
 } from './itty-router'
 
-// declare a custom Router type with used methods
-interface CustomRouter extends RouterType {
+// declare a custom methods type to allow custom methods
+interface CustomMethods {
   puppy: Route,
 }
 
@@ -21,11 +19,11 @@ const withAuthors = (request: IRequest) => {
   request.authors = ['foo', 'bar']
 }
 
-const router = Router({ base: '/' })
+const router = Router<{}, CustomMethods>({ base: '/' })
 
 router
-  .all('*', () => {})
-  .get<CustomRouter>('/authors', withAuthors, (request: RequestWithAuthors) => {
+  .all('*', () => { })
+  .get('/authors', withAuthors, (request: RequestWithAuthors) => {
     return request.authors?.[0]
   })
   .puppy('/:name', (request) => {
@@ -44,14 +42,18 @@ addEventListener('fetch', (event: FetchEvent) => {
 })
 
 // Add custom properties to the Request type at the Router level
-type CustomRequest = {
+type customRequestProps = {
   foo: string
 }
 
-const router2 = Router<CustomRequest>()
+const router2 = Router<customRequestProps>()
   // middleware to poppulate request.foo
   .get('/foo', (request) => { request.foo = 'bar' })
   // route handler that uses request.foo
   .get('/foo', (request) => {
     return new Response(request.foo)
+  })
+  // Still able to use custom route-specific request properties
+  .get('/authors', withAuthors, (request: RequestWithAuthors) => {
+    return request.authors?.[0]
   })
