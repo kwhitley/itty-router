@@ -14,7 +14,7 @@ export type IRequest = {
     [key: string]: string,
   },
   query: {
-    [key: string]: string | undefined,
+    [key: string]: string | string[] | undefined,
   },
   proxy?: any,
 } & GenericTraps
