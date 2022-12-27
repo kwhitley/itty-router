@@ -8,7 +8,8 @@
     "inlineSourceMap": false,
     "lib": [
       "esnext",
-      "dom"
+      "dom",
+      "dom.iterable"
     ],
     "listEmittedFiles": false,
     "listFiles": false,

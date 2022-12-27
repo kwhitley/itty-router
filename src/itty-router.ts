@@ -51,14 +51,6 @@ export type RouterType = {
   handle: (request: RequestLike, ...extra: any) => Promise<any>
 } & RouterHints
 
-// helper function to translate query params
-const toQuery = (params: any) =>
-  [...params.entries()].reduce((acc, [k, v]) =>
-    (acc[k] === undefined
-            ? acc[k] = v
-            : acc[k] = [...[acc[k]], v].flat()
-    ) && acc || acc, {})
-
 export const Router = ({ base = '', routes = [] }: RouterOptions = {}): RouterType =>
   // @ts-expect-error TypeScript doesn't know that Proxy makes this work
   ({
@@ -79,8 +71,10 @@ export const Router = ({ base = '', routes = [] }: RouterOptions = {}): RouterTy
     }),
     routes,
     async handle (request: RequestLike, ...args)  {
-      let response, match, url = new URL(request.url)
-      request.query = toQuery(url.searchParams)
+      let response, match, url = new URL(request.url), query: any = request.query = {}
+      for (let [k, v] of url.searchParams) {
+        query[k] = query[k] === undefined ? v : [query[k], v].flat()
+      }
       for (let [method, route, handlers] of routes) {
         if ((method === request.method || method === 'ALL') && (match = url.pathname.match(route))) {
           request.params = match.groups || {}
