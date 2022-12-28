@@ -29,7 +29,8 @@ Here are the major changes in version 3, with `itty-router-extras` (certainly) a
   ```js
   router.handle('/foo', ({ query }) => query)
   
-  // GET /foo?pets=mittens&pets=fluffy&pets=rex&bar=baz => { bar: "baz", pets: ["mittens", "fluffy", "rex"] }
+  // GET /foo?pets=mittens&pets=fluffy&pets=rex&bar=baz
+  // ==> { bar: "baz", pets: ["mittens", "fluffy", "rex"] }
   ```
   
 ### Addons & Related Libraries
@@ -38,7 +39,7 @@ Here are the major changes in version 3, with `itty-router-extras` (certainly) a
 2. [itty-durable](https://www.npmjs.com/package/itty-durable) - creates a more direct object-like API for interacting with [Cloudflare Durable Objects](https://developers.cloudflare.com/workers/learning/using-durable-objects).
 
 ## Features
-- [x] Tiny ([~780 bytes](https://bundlephobia.com/package/itty-router) compressed), with zero dependencies.
+- [x] Tiny ([~550 bytes](https://bundlephobia.com/package/itty-router) compressed), with zero dependencies.
 - [x] [Fully typed/TypeScript support](#typescript)
 - [x] Supports sync/async handlers/middleware.
 - [x] Parses route params, with wildcards and optionals (e.g. `/api/:collection/:id?`)
@@ -467,12 +468,14 @@ This trick allows methods (e.g. "get", "post") to by defined dynamically by the 
 ## Contributors
 These folks are the real heroes, making open source the powerhouse that it is!  Help out and get your name added to this list! <3
 
-#### Core, Concepts, and Codebase
+#### Core Concepts
 - [@mvasigh](https://github.com/mvasigh) - proxy hack wizard behind itty, coding partner in crime, maker of the entire doc site, etc, etc.
-- [@taralx](https://github.com/taralx) - router internal code-golfing refactor for performance and character savings
 - [@hunterloftis](https://github.com/hunterloftis) - router.handle() method now accepts extra arguments and passed them to route functions
 - [@SupremeTechnopriest](https://github.com/SupremeTechnopriest) - improved TypeScript support and documentation! :D
-#### Fixes
+#### Code Golfing
+- [@taralx](https://github.com/taralx) - router internal code-golfing refactor for performance and character savings
+- [@DrLoopFall](https://github.com/DrLoopFall) - v3.x re-minification
+#### Fixes & Build
 - [@taralx](https://github.com/taralx) - QOL fixes for contributing (dev dep fix and test file consistency) <3
 - [@technoyes](https://github.com/technoyes) - three kind-of-a-big-deal errors fixed.  Imagine the look on my face... thanks man!! :)
 - [@roojay520](https://github.com/roojay520) - TS interface fixes
