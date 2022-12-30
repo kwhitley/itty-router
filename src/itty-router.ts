@@ -59,12 +59,11 @@ export const Router = ({ base = '', routes = [] }: RouterOptions = {}): RouterTy
         routes.push([
           prop.toUpperCase(),
           RegExp(`^${(base + route)
-            .replace(/(\/?)\*/g, '($1.*)?')                             // trailing wildcard
-            .replace(/(\/$)|((?<=\/)\/)/, '')                           // remove trailing slash or double slash from joins
-            .replace(/(:(\w+)\+)/, '(?<$2>.*)')                         // greedy params
-            .replace(/:(\w+)(\?)?(\.)?/g, '$2(?<$1>[^/]+)$2$3')         // named params
-            .replace(/\.(?=[\w(])/, '\\.')                              // dot in path
-            .replace(/\)\.\?\(([^\[]+)\[\^/g, '?)\\.?($1(?<=\\.)[^\\.') // optional image format
+            .replace(/:(\w+)\+/, '(?<$1>*)')                          // greedy params
+            .replace(/(\/?\.?):(\w+)(\?)?/g, '($1(?<$2>[^$1/]+?))$3') // named params and image format
+            .replace(/\./g, '\\.')                                    // dot in path
+            .replace(/\/+(\/|$)/g, '$1')                              // remove multiple/trailing slash
+            .replace(/(\/?)\*/g, '($1.*)?')                           // wildcard
           }/*$`),
           handlers,
         ]) && receiver
