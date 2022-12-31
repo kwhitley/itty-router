@@ -59,11 +59,11 @@ export const Router = ({ base = '', routes = [] }: RouterOptions = {}): RouterTy
         routes.push([
           prop.toUpperCase(),
           RegExp(`^${(base + '/' + route)
-            .replace(/:(\w+)\+/, '(?<$1>*)')                          // greedy params
-            .replace(/(\/?\.?):(\w+)(\?)?/g, '($1(?<$2>[^$1/]+?))$3') // named params and image format
-            .replace(/\./g, '\\.')                                    // dot in path
-            .replace(/\/+(\/|$)/g, '$1')                              // remove multiple/trailing slash
-            .replace(/(\/?)\*/g, '($1.*)?')                           // wildcard
+            .replace(/\/+(\/|$)/g, '$1')                       // remove multiple/trailing slash
+            .replace(/(\/?\.?):(\w+)\+/g, '($1(?<$2>*))')      // greedy params
+            .replace(/(\/?\.?):(\w+)/g, '($1(?<$2>[^$1/]+?))') // named params and image format
+            .replace(/\./g, '\\.')                             // dot in path
+            .replace(/(\/?)\*/g, '($1.*)?')                    // wildcard
           }/*$`),
           handlers,
         ]) && receiver
