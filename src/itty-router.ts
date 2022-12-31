@@ -58,7 +58,7 @@ export const Router = ({ base = '', routes = [] }: RouterOptions = {}): RouterTy
       get: (target, prop: string, receiver) => (route: string, ...handlers: RouteHandler[]) =>
         routes.push([
           prop.toUpperCase(),
-          RegExp(`^${(base + route)
+          RegExp(`^${(base + '/' + route)
             .replace(/:(\w+)\+/, '(?<$1>*)')                          // greedy params
             .replace(/(\/?\.?):(\w+)(\?)?/g, '($1(?<$2>[^$1/]+?))$3') // named params and image format
             .replace(/\./g, '\\.')                                    // dot in path
