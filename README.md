@@ -34,9 +34,10 @@ Here are the major changes in version 3, with `itty-router-extras` (certainly) a
   ```
   
 ### Addons & Related Libraries
-1. [itty-router-extras](https://www.npmjs.com/package/itty-router-extras) - adds quality-of-life improvements and utility functions for simplifying request/response code (e.g. middleware, cookies, body parsing, json handling, errors, and an itty version with automatic exception handling)!
-2. [itty-cors](https://www.npmjs.com/package/itty-cors) (early access/alpha) - Easy CORS handling for itty APIs.
+1. [itty-cors](https://www.npmjs.com/package/itty-cors) (early access/alpha) - Easy CORS handling for itty APIs.
 2. [itty-durable](https://www.npmjs.com/package/itty-durable) - creates a more direct object-like API for interacting with [Cloudflare Durable Objects](https://developers.cloudflare.com/workers/learning/using-durable-objects).
+3. [itty-router-extras](https://www.npmjs.com/package/itty-router-extras) - adds quality-of-life improvements and utility functions for simplifying request/response code (e.g. middleware, cookies, body parsing, json handling, errors, and an itty version with automatic exception handling)!
+4. [itty-router-openapi](https://www.npmjs.com/package/@cloudflare/itty-router-openapi) - OpenAPI 3 schema generator and validator for Cloudflare Workers.
 
 ## Features
 - [x] Tiny ([~550 bytes](https://bundlephobia.com/package/itty-router) compressed), with zero dependencies.
