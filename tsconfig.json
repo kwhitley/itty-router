@@ -22,7 +22,7 @@
     "strict": true,
     "traceResolution": false,
     "module": "esnext",
-    "outDir": "dist/mjs",
+    "outDir": "dist/extras",
     "target": "esnext",
     "types": [
       "@cloudflare/workers-types"

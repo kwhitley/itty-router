@@ -34,7 +34,7 @@ router
 
 // CF ES6 module syntax
 export default {
-  fetch: (request, env, context) => router.handle(request, env, context)
+  fetch: (request: IRequest, env: object, context: object) => router.handle(request, env, context)
 }
 
 // test traditional eventListener Worker syntax
