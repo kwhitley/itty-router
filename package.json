@@ -6,6 +6,16 @@
   "main": "index.js",
   "module": "index.mjs",
   "typings": "index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./esm/index.mjs",
+      "require": "./cjs/index.js"
+    },
+    "./extras": {
+      "import": "./extras/index.mjs",
+      "require": "./extras/index.js"
+    }
+  },
   "keywords": [
     "api",
     "router",
