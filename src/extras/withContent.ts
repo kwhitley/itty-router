@@ -1,4 +1,4 @@
-import { IRequest } from 'itty-router'
+import { IRequest } from 'index'
 
 // withContent - embeds any request body as request.content
 export const withContent = async (request: IRequest): Promise<void> => {

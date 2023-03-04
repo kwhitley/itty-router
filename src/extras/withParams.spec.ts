@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest'
 import { withParams } from './withParams'
-import { Router } from '../itty-router'
+import { Router } from '..'
 
 describe('extras/withParams', () => {
   describe(`is middleware that embeds request.params into the request`, () => {

@@ -1,4 +1,4 @@
-import { IRequest } from '../itty-router'
+import { IRequest } from '..'
 
 export const withParams = (request: IRequest): void => {
   request.proxy = new Proxy(request.proxy || request, {

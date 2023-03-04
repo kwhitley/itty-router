@@ -3,7 +3,7 @@ import {
   IRequest,             // lightweight/generic Request type
   RouterType,           // generic Router type
   Route,                // generic Route type
-} from './itty-router'
+} from '.'
 
 // declare a custom Router type with used methods
 interface CustomRouter extends RouterType {

@@ -1,7 +1,7 @@
 import 'isomorphic-fetch'
 import { describe, expect, it, vi } from 'vitest'
 import { buildRequest, createTestRunner, extract } from '../test-utils'
-import { Router, Route, RouterType, RequestLike } from './itty-router'
+import { Router, Route, RouterType, RequestLike } from '.'
 
 const ERROR_MESSAGE = 'Error Message'
 

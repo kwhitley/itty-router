@@ -1,4 +1,4 @@
-import { IRequest } from '../itty-router'
+import { IRequest } from '..'
 
 // withCookies - embeds cookies object into the request
 export const withCookies = (request: IRequest): void => {
