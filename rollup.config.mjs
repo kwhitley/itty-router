@@ -16,7 +16,7 @@ export default async () => {
   return files.map(path => ({
     input: path,
     output: [
-      { format: 'cjs', file: path.replace(/src/g, 'dist').replace(/\.ts$/, '.js') },
+      { format: 'cjs', file: path.replace(/src/g, 'dist').replace(/\.ts$/, '.cjs') },
       { format: 'esm', file: path.replace(/src/g, 'dist').replace(/\.ts$/, '.mjs') },
     ],
     plugins: [
@@ -31,7 +31,7 @@ export default async () => {
     {
       input: ['src/index.ts'],
       output: [
-        { format: 'cjs', file: 'dist/index.js' },
+        { format: 'cjs', file: 'dist/index.cjs' },
         { format: 'esm', file: 'dist/index.mjs' },
       ],
       plugins: [
