@@ -4,6 +4,7 @@
     "allowSyntheticDefaultImports": true,
     "baseUrl": "src",
     "declaration": true,
+    "sourceMap": true,
     "esModuleInterop": true,
     "inlineSourceMap": false,
     "lib": [
@@ -21,13 +22,17 @@
     "skipLibCheck": true,
     "strict": true,
     "traceResolution": false,
-    "module": "esnext",
-    "outDir": "dist/extras",
+    "outDir": "dist",
     "target": "esnext",
+    "module": "esnext",
     "types": [
       "@cloudflare/workers-types"
 		],
   },
-  "exclude": ["node_modules", "dist", "**/*.spec.ts"],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "**/*.spec.ts"
+  ],
   "include": ["src"]
 }

@@ -1,17 +1,45 @@
-import bundleSize from 'rollup-plugin-bundle-size'
-import { defineConfig } from 'rollup'
 import terser from '@rollup/plugin-terser'
 import typescript from '@rollup/plugin-typescript'
+import bundleSize from 'rollup-plugin-bundle-size'
+import { globby } from 'globby'
 
-export default defineConfig({
-  input: 'src/index.ts',
-  output: [
-    { format: 'cjs', file: 'dist/index.js' },
-    { format: 'es', file: 'dist/index.mjs' },
-  ],
-  plugins: [
-    typescript({ exclude: ['**/example.ts'] }),
-    terser(),
-    bundleSize(),
-  ],
-})
+export default async () => {
+  const files = await globby('src/**/*.ts', {
+    ignore: [
+      'src/**/*.spec.ts',
+      'src/example.ts',
+    ]
+  })
+
+  console.log({ files })
+
+  return files.map(path => ({
+    input: path,
+    output: [
+      { format: 'cjs', file: path.replace(/src/g, 'dist').replace(/\.ts$/, '.js') },
+      { format: 'esm', file: path.replace(/src/g, 'dist').replace(/\.ts$/, '.mjs') },
+    ],
+    plugins: [
+      // multi(),
+      typescript(),
+      terser(),
+      bundleSize(),
+    ],
+  }))
+
+  return [
+    {
+      input: ['src/index.ts'],
+      output: [
+        { format: 'cjs', file: 'dist/index.js' },
+        { format: 'esm', file: 'dist/index.mjs' },
+      ],
+      plugins: [
+        // multi(),
+        typescript({ exclude: ['**/example.ts'] }),
+        terser(),
+        bundleSize(),
+      ],
+    }
+  ]
+}
