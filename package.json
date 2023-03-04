@@ -1,10 +1,10 @@
 {
   "name": "itty-router",
-  "version": "3.0.11-next.3",
+  "version": "3.0.11-next.4",
   "description": "Tiny, zero-dependency API router - built for Cloudflare Workers, but works everywhere!",
   "sourceType": "module",
-  "main": "./dist/itty-router.js",
-  "types": "./dist/itty-router.d.ts",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
