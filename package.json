@@ -1,28 +1,11 @@
 {
   "name": "itty-router",
-  "version": "3.0.11-next.10",
+  "version": "3.0.11-next.11",
   "description": "Tiny, zero-dependency API router - built for Cloudflare Workers, but works everywhere!",
   "sourceType": "module",
-  "main": "dist/index.js",
-  "module": "dist/index.mjs",
-  "typings": "dist/index.d.ts",
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.js"
-    },
-    "./extras/": {
-      "types": "./dist/extras/",
-      "import": "./dist/extras/",
-      "require": "./dist/extras/"
-    }
-  },
-  "files": [
-    "dist",
-    "LICENSE",
-    "README.md"
-  ],
+  "main": "index.js",
+  "module": "index.mjs",
+  "typings": "index.d.ts",
   "keywords": [
     "api",
     "router",
@@ -52,7 +35,7 @@
     "build": "rollup -c",
     "release": "release --tag --push --patch",
     "prerelease:next": "yarn verify",
-    "release:next": "release --push --type=next"
+    "release:next": "release --push --type=next --src=dist"
   },
   "repository": {
     "type": "git",
