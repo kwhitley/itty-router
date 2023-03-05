@@ -1,11 +1,11 @@
 {
   "name": "itty-router",
-  "version": "3.0.11-next.17",
+  "version": "3.0.11-next.18",
   "description": "Tiny, zero-dependency API router - built for Cloudflare Workers, but works everywhere!",
   "sourceType": "module",
-  "main": "index.js",
-  "module": "index.mjs",
-  "typings": "index.d.ts",
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/esm/index.js",
+  "typings": "./dist/cjs/index.d.ts",
   "exports": {
     ".": {
       "import": "./esm/index.js",
