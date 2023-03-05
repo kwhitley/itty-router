@@ -16,13 +16,23 @@ export default async () => {
   return files.map(path => ({
     input: path,
     output: [
-      { format: 'cjs', file: path.replace(/src/g, 'dist').replace(/\.ts$/, '.cjs') },
-      { format: 'esm', file: path.replace(/src/g, 'dist').replace(/\.ts$/, '.mjs') },
+      {
+        format: 'cjs',
+        file: path.replace(/src/g, 'dist').replace(/\.ts$/, '.cjs'),
+        sourcemap: true,
+        exports: 'named',
+       },
+      {
+        format: 'esm',
+        file: path.replace(/src/g, 'dist').replace(/\.ts$/, '.mjs'),
+        sourcemap: true,
+        exports: 'named',
+      },
     ],
     plugins: [
       // multi(),
       typescript(),
-      terser(),
+      // terser(),
       bundleSize(),
     ],
   }))
