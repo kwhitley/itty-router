@@ -23,7 +23,7 @@ export default async () => {
        },
       {
         format: 'esm',
-        file: path.replace(/src/g, 'dist').replace(/\.ts$/, '.mjs'),
+        file: path.replace(/src/g, 'dist').replace(/\.ts$/, '.js'),
         sourcemap: true,
       },
     ],
