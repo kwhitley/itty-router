@@ -86,6 +86,8 @@ export const Router = ({ base = '', routes = [] }: RouterOptions = {}): RouterTy
     }
   })
 
+export * from './extras'
+
 // type CustomMethods = {
 //   foo?: Route,
 //   bar?: Route,
