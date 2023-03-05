@@ -22,7 +22,7 @@
     "skipLibCheck": true,
     "strict": true,
     "traceResolution": false,
-    "outDir": "dist",
+    "outDir": "",
     "target": "esnext",
     "module": "esnext",
     "types": [

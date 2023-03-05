@@ -2,13 +2,21 @@ import 'isomorphic-fetch'
 import { describe, expect, it } from 'vitest'
 import { createResponse } from './createResponse'
 
+// test each format type
+import { json } from './json'
+import { text } from './text'
+import { html } from './html'
+import { jpeg } from './jpeg'
+import { png } from './png'
+import { webp } from './webp'
+
 describe('extras/createResponse', () => {
   it('can create custom response handlers', () => {
     const payload = { foo: 'bar' }
     const type = 'application/json; charset=utf-8'
-    const json = createResponse(type)
+    const customJSON = createResponse(type)
 
-    const response = json(payload)
+    const response = customJSON(payload)
     expect(response.headers.get('content-type')).toBe(type)
   })
 
@@ -25,5 +33,24 @@ describe('extras/createResponse', () => {
 
     expect(response.headers.get('fooHeader')).toBe(fooHeader)
     expect(response.status).toBe(400)
+  })
+
+  describe('format helpers', () => {
+    const formats = [
+      { name: 'json', fn: json, mime: 'application/json; charset=utf-8' },
+      { name: 'text', fn: text, mime: 'text/plain' },
+      { name: 'html', fn: html, mime: 'text/html' },
+      { name: 'jpeg', fn: jpeg, mime: 'image/jpeg' },
+      { name: 'png', fn: png, mime: 'image/png' },
+      { name: 'webp', fn: webp, mime: 'image/webp' },
+    ]
+
+    for (const { name, fn, mime } of formats) {
+      it(`${name}`, async () => {
+        const response = fn('foo')
+
+        expect(response.headers.get('content-type')?.includes(mime)).toBe(true)
+      })
+    }
   })
 })

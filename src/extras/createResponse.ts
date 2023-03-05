@@ -2,23 +2,23 @@ export interface ResponseFormatter {
   (body?: any, options?: object): Response
 }
 
+export interface BodyTransformer {
+  (body: any): string
+}
+
 type ResponseFormatterOptions = {
   headers?: object
 } & ResponseInit
 
-export const createResponse = (format: string = 'text/plain; charset=utf-8'): ResponseFormatter =>
+export const createResponse = (format: string = 'text/plain; charset=utf-8', transform?: BodyTransformer): ResponseFormatter =>
   (body, options: ResponseFormatterOptions = {}) => {
     const { headers = {}, ...rest } = options
 
-    if (typeof body === 'object') {
-      return new Response(JSON.stringify(body), {
-        headers: {
-          'Content-Type': format,
-          ...headers,
-        },
-        ...rest,
-      })
-    }
-
-    return new Response(body, options)
+    return new Response(transform ? transform(body) : body, {
+      headers: {
+        'content-type': format,
+        ...headers,
+      },
+      ...rest,
+    })
   }
