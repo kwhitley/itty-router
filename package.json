@@ -1,22 +1,27 @@
 {
   "name": "itty-router",
-  "version": "3.0.11-next.20",
+  "version": "3.0.11-next.21",
   "description": "Tiny, zero-dependency API router - built for Cloudflare Workers, but works everywhere!",
   "sourceType": "module",
-  "main": "./index.js",
-  "types": "./index.d.ts",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "types": "./index.d.ts",
-      "import": "./index.mjs",
-      "require": "./index.js"
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
     },
     "./extras": {
-      "types": "./extras/index.d.ts",
-      "import": "./extras/index.mjs",
-      "require": "./extras/index.js"
+      "types": "./dist/extras/index.d.ts",
+      "import": "./dist/extras/index.mjs",
+      "require": "./dist/extras/index.js"
     }
   },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
   "keywords": [
     "api",
     "router",
@@ -44,9 +49,7 @@
     "build:core": "rollup -c",
     "build:extras": "rollup --config rollup.config.extras.mjs",
     "build": "rollup -c",
-    "release": "release --tag --push --patch",
-    "prerelease:next": "yarn verify",
-    "release:next": "release --push --type=next --src=dist"
+    "release": "release --tag --push --type=next"
   },
   "repository": {
     "type": "git",
@@ -63,6 +66,7 @@
     "@rollup/plugin-multi-entry": "^6.0.0",
     "@rollup/plugin-terser": "^0.2.1",
     "@rollup/plugin-typescript": "^10.0.1",
+    "@skypack/package-check": "^0.2.2",
     "@vitejs/plugin-vue": "^2.2.4",
     "@vitest/coverage-c8": "^0.24.3",
     "coveralls": "^3.1.1",
