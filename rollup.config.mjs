@@ -18,13 +18,13 @@ export default async () => {
     output: [
       {
         format: 'cjs',
-        file: path.replace(/src/g, 'dist').replace(/\.ts$/, '.cjs'),
+        file: path.replace(/src/g, 'dist/cjs').replace(/\.ts$/, '.js'),
         sourcemap: true,
         exports: 'named',
        },
       {
         format: 'esm',
-        file: path.replace(/src/g, 'dist').replace(/\.ts$/, '.mjs'),
+        file: path.replace(/src/g, 'dist/esm').replace(/\.ts$/, '.js'),
         sourcemap: true,
         exports: 'named',
       },
