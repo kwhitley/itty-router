@@ -18,15 +18,13 @@ export default async () => {
     output: [
       {
         format: 'cjs',
-        file: path.replace(/src/g, 'dist').replace(/\.ts$/, '.js'),
+        file: path.replace(/src/g, 'dist/cjs').replace(/\.ts$/, '.js'),
         sourcemap: true,
-        exports: 'named',
        },
       {
         format: 'esm',
         file: path.replace(/src/g, 'dist').replace(/\.ts$/, '.mjs'),
         sourcemap: true,
-        exports: 'named',
       },
     ],
     plugins: [
@@ -36,20 +34,4 @@ export default async () => {
       bundleSize(),
     ],
   }))
-
-  return [
-    {
-      input: 'src/index.ts',
-      output: [
-        { format: 'cjs', file: 'dist/index.js' },
-        { format: 'es', file: 'dist/index.mjs' },
-      ],
-      plugins: [
-        // multi(),
-        typescript({ exclude: ['**/example.ts'] }),
-        terser(),
-        bundleSize(),
-      ],
-    }
-  ]
 }
