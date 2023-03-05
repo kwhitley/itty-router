@@ -18,13 +18,13 @@ export default async () => {
     output: [
       {
         format: 'cjs',
-        file: path.replace(/src/g, 'dist/cjs').replace(/\.ts$/, '.js'),
+        file: path.replace(/src/g, 'dist').replace(/\.ts$/, '.js'),
         sourcemap: true,
         exports: 'named',
        },
       {
         format: 'esm',
-        file: path.replace(/src/g, 'dist/esm').replace(/\.ts$/, '.js'),
+        file: path.replace(/src/g, 'dist').replace(/\.ts$/, '.mjs'),
         sourcemap: true,
         exports: 'named',
       },
@@ -39,10 +39,10 @@ export default async () => {
 
   return [
     {
-      input: ['src/index.ts'],
+      input: 'src/index.ts',
       output: [
-        { format: 'cjs', file: 'dist/index.cjs' },
-        { format: 'esm', file: 'dist/index.mjs' },
+        { format: 'cjs', file: 'dist/index.js' },
+        { format: 'es', file: 'dist/index.mjs' },
       ],
       plugins: [
         // multi(),
