@@ -1,8 +1,9 @@
-export * from './createResponse'
+// classes
 export * from './StatusError'
-export * from './withContent'
-export * from './withCookies'
-export * from './withParams'
+
+// response creation
+export * from './createResponse'
+export * from './error'
 
 // response formats
 export * from './text'
@@ -11,4 +12,14 @@ export * from './html'
 export * from './jpeg'
 export * from './png'
 export * from './webp'
+
+// middleware
+export * from './withContent'
+export * from './withCookies'
+export * from './withParams'
+
+// downstream handlers
+export * from './respondWithError'
+export * from './respondWithJSON'
+
 

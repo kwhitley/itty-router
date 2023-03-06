@@ -1,20 +1,20 @@
 import { json } from './json'
 
 export interface ErrorFormatter {
-  (status?: number, content?: string | object): Response
+  (status?: number, body?: string | object): Response
 }
 
 export const error: ErrorFormatter = (
   status = 500,
-  content,
+  body,
 ) => json({
-  ...(typeof content === 'object'
+  ...(typeof body === 'object'
     ? {
       status,
-      ...content,
+      ...body,
     }
     : {
         status,
-        error: content,
+        error: body,
       }),
 }, { status })

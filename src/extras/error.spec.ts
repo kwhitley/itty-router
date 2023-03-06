@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest'
 import { error } from './error'
 
 describe('error(status: number, body: string | object)', () => {
-  it('creates a Response with 500 status code by default', async () => {
+  it('creates a 500 Response with default body of { status: 500 }', async () => {
     const response = error()
     const payload = await response.json()
 

@@ -1,62 +1,30 @@
 import 'isomorphic-fetch'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { Router } from '..'
-import { respondWithError } from './respondWithError'
-import { StatusError } from './StatusError'
+import { respondWithJSON } from './respondWithJSON'
 
-describe('respondWithError(err: Error | StatusError): Response', () => {
-  it('takes an Error or StatusError and returns a Response', async () => {
-    const router = Router().get('*', r => r.a.b.c)
+describe('respondWithJSON(response: any): Response', () => {
+  it('if given a Response, return it unchanged', async () => {
+    const response = new Response()
+    const router = Router().get('*', () => response)
+    const inspect = vi.fn()
 
-    const response = await router
-                              .handle(new Request('https://foo.bar'))
-                              .catch(respondWithError)
+    await router
+            .handle(new Request('https://foo.bar'))
+            .then(respondWithJSON)
+            .then(inspect)
 
-    expect(response.status).toBe(500)
-    expect(response.statusText).toBe('Internal Server Error')
+    expect(inspect).toHaveBeenCalledWith(response)
   })
 
-  it('can take a custom StatusError', async () => {
-    const errorMessage = 'Bad Thing'
-    const router = Router().get('*', () => {
-      throw new StatusError(400, errorMessage)
-    })
-
+  it('if given anything else, return it as a JSON Response', async () => {
+    const payload = { foo: 'bar' }
+    const router = Router().get('*', () => payload)
     const response = await router
-                              .handle(new Request('https://foo.bar'))
-                              .catch(respondWithError)
+                            .handle(new Request('https://foo.bar'))
+                            .then(respondWithJSON)
+                            .then(r => r.json())
 
-    const body = await response.json()
-
-    expect(response.status).toBe(400)
-    expect(body).toEqual({
-      status: 400,
-      error: errorMessage,
-    })
-  })
-
-  it('can deliver anything embedded in the error', async () => {
-    const errorMessage = 'Bad Thing'
-    const details = 'error details'
-
-    const router = Router().get('*', () => {
-      const customError = new StatusError(400, {
-        details,
-      })
-
-      throw customError
-    })
-
-    const response = await router
-                              .handle(new Request('https://foo.bar'))
-                              .catch(respondWithError)
-
-    const body = await response.json()
-
-    expect(response.status).toBe(400)
-    expect(body).toEqual({
-      status: 400,
-      details,
-    })
+    expect(response).toEqual(payload)
   })
 })
