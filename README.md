@@ -22,11 +22,10 @@ you can even make your own, more opinionated router with itty at the core, for a
 ```js
 import { 
   error,                  // create an error response
-  json,                   // manually create a JSON response
   respondWithError,       // downstream handler for thrown errors
   respondWithJSON,        // downstream handler to send data as JSON
   Router,                 // the ~470 byte router itself
-  status,                 // for sending no-content status codes
+  withParams,             // middleware to auto-embed route params
 } from 'itty-router'
 
 const router = Router()   // create a new Router
@@ -46,35 +45,15 @@ router
                 || error(404, 'That todo was not found')
   )
 
-  // POST some JSON to the collection (parsed using withContent middleware)
-  // e.g. POST { id: 1, text: 'Pet my dog.' }
-  .post('/todos', withContent, ({ content }) => {
-    if (!content.id) return error(400, 'Todos must have an id.')
-
-    todos.push(content)
-    
-    return status(204)
-  })
-
   // 404 for everything else
   .all('*', () => error(404))
 
-// Example1: Implementing with a Service Worker
-addEventListener('fetch', event =>
-  event.respondWith(
-    router
-      .handle(event.request)    // handle the Request
-      .then(respondWithJSON)    // any non-Response is transformed to JSON
-      .catch(respondWithError)  // any thrown errors return an error Response
-    )
-)
-
-// Example2: Cloudflare ESM Worker syntax
+// Example: Cloudflare ESM Worker syntax
 export default {
   fetch: (request, env, context) => router
                                       .handle(request, env, context)
-                                      .then(respondWithJSON)
-                                      .catch(respondWithError)
+                                      .then(respondWithJSON)    // automatically send as JSON
+                                      .catch(respondWithError)  // and send error Responses for thrown errors
 }
 ```
 
