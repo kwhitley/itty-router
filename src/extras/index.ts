@@ -4,6 +4,7 @@ export * from './StatusError'
 // response creation
 export * from './createResponse'
 export * from './error'
+export * from './status'
 
 // response formats
 export * from './text'
