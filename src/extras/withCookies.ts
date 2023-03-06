@@ -8,15 +8,12 @@ type CookieObject = {
 
 // withCookies - embeds cookies object into the request
 export const withCookies = (request: IRequest): void => {
-  request.cookies = {}
-  try {
-    request.cookies = (request.headers.get('Cookie') || '')
-      .split(/;\s*/)
-      .map((pair: string): string[] => pair.split(/=(.+)/))
-      .reduce((acc: CookieObject, [key, value]: KVPair) => {
-        acc[key] = value
+  request.cookies = (request.headers.get('Cookie') || '')
+    .split(/;\s*/)
+    .map((pair: string): string[] => pair.split(/=(.+)/))
+    .reduce((acc: CookieObject, [key, value]: KVPair) => {
+      acc[key] = value
 
-        return acc
-      }, {})
-  } catch (err) {}
+      return acc
+    }, {})
 }

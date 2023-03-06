@@ -24,11 +24,11 @@ const testRoute = async ({
   // register route
   router[method](route, handler)
 
-  log && console.log({
-    routes,
-    route,
-    path,
-  })
+  // log && console.log({
+  //   routes,
+  //   route,
+  //   path,
+  // })
 
   await router.handle(buildRequest({ method: method.toUpperCase(), path }))
 

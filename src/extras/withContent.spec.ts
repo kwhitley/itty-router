@@ -1,29 +1,26 @@
 import 'isomorphic-fetch'
-import { describe, expect, it } from 'vitest'
-import { createResponse } from './createResponse'
+import { describe, expect, it, vi } from 'vitest'
+import { withContent } from './withContent'
+import { Router } from '..'
+import { json } from './json'
+import { text } from './text'
 
-describe('extras/createResponse', () => {
-  it('can create custom response handlers', () => {
-    const payload = { foo: 'bar' }
-    const type = 'application/json; charset=utf-8'
-    const json = createResponse(type)
-
-    const response = json(payload)
-    expect(response.headers.get('content-type')).toBe(type)
-  })
-
-  it('returned formatter with accept ResponseInit options, including headers', () => {
-    const payload = { foo: 'bar' }
-    const type = 'application/json; charset=utf-8'
-    const fooHeader = 'bar'
-    const json = createResponse(type)
-
-    const response = json(payload, {
-      headers: { fooHeader },
-      status: 400,
+describe('withContent (middleware)', () => {
+  it('can access the awaited Response body as request.content', async () => {
+    const router = Router()
+    const handler = vi.fn(({ content }) => content)
+    const request = new Request('https://foo.bar', {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json'
+      },
+      body: JSON.stringify({ foo: 'bar' })
     })
 
-    expect(response.headers.get('fooHeader')).toBe(fooHeader)
-    expect(response.status).toBe(400)
+    await router
+            .post('/', withContent, handler)
+            .handle(request)
+
+    expect(handler).toHaveReturnedWith({ foo: 'bar' })
   })
 })

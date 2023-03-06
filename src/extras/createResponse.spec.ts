@@ -10,7 +10,7 @@ import { jpeg } from './jpeg'
 import { png } from './png'
 import { webp } from './webp'
 
-describe('extras/createResponse', () => {
+describe('createResponse(mimeType: string, transform?: Function)', () => {
   it('can create custom response handlers', () => {
     const payload = { foo: 'bar' }
     const type = 'application/json; charset=utf-8'
@@ -35,6 +35,15 @@ describe('extras/createResponse', () => {
     expect(response.status).toBe(400)
   })
 
+  it('can pass in custom body transform function', async () => {
+    const stars = createResponse('text/plain', s => s.replace(/./g, '*'))
+
+    const response = stars('foo')
+    const body = await response.text()
+
+    expect(body).toBe('***')
+  })
+
   describe('format helpers', () => {
     const formats = [
       { name: 'json', fn: json, mime: 'application/json; charset=utf-8' },
@@ -46,7 +55,7 @@ describe('extras/createResponse', () => {
     ]
 
     for (const { name, fn, mime } of formats) {
-      it(`${name}`, async () => {
+      it(`${name}(body)`, async () => {
         const response = fn('foo')
 
         expect(response.headers.get('content-type')?.includes(mime)).toBe(true)
