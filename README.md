@@ -17,7 +17,6 @@ This router avoids all assumptions about how or where you'll use it, what you'll
 most power and flexibility in middleware chaining (including other routers for nested APIs). By giving you complete control over the routes, middleware chain, and downstream handling, 
 you can even make your own, more opinionated router with itty at the core, for a mere ~500 bytes.
 
-
 ## Example
 ```js
 import { 
