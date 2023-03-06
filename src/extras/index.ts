@@ -23,4 +23,7 @@ export * from './withParams'
 export * from './respondWithError'
 export * from './respondWithJSON'
 
+// CORS
+export * from './createCors'
+
 

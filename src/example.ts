@@ -3,6 +3,9 @@ import {
   IRequest,             // lightweight/generic Request type
   RouterType,           // generic Router type
   Route,                // generic Route type
+  createCors,
+  respondWithJSON,
+  respondWithError,
 } from '.'
 
 // declare a custom Router type with used methods
@@ -20,10 +23,12 @@ const withAuthors = (request: IRequest) => {
   request.authors = ['foo', 'bar']
 }
 
+const { corsify, preflight } = createCors()
+
 const router = Router({ base: '/' })
 
 router
-  .all('*', () => {})
+  .all('*', preflight)
   .get<CustomRouter>('/authors', withAuthors, (request: RequestWithAuthors) => {
     return request.authors?.[0]
   })
@@ -34,7 +39,12 @@ router
 
 // CF ES6 module syntax
 export default {
-  fetch: (request: IRequest, env: object, context: object) => router.handle(request, env, context)
+  fetch: (request: IRequest, env: object, context: object) =>
+            router
+              .handle(request, env, context)
+              .then(respondWithJSON)
+              .catch(respondWithError)
+              .then(corsify)
 }
 
 // test traditional eventListener Worker syntax
