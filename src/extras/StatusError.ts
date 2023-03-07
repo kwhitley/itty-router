@@ -1,5 +1,4 @@
 type StatusErrorObject = {
-  message?: string,
   error?: string,
   [key: string]: any
 }
@@ -12,11 +11,10 @@ export class StatusError extends Error {
     if (typeof body === 'string') {
       super(body)
     } else {
-      super(body.error || body.message)
+      super(body.error)
       Object.assign(this, body)
     }
 
-    this.name = 'StatusError'
     this.status = status
   }
 }

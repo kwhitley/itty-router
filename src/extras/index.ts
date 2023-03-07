@@ -19,10 +19,6 @@ export * from './withContent'
 export * from './withCookies'
 export * from './withParams'
 
-// downstream handlers
-export * from './respondWithError'
-export * from './respondWithJSON'
-
 // CORS
 export * from './createCors'
 

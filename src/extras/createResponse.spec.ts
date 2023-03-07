@@ -44,6 +44,13 @@ describe('createResponse(mimeType: string, transform?: Function)', () => {
     expect(body).toBe('***')
   })
 
+  it('will ignore a Response, to allow downstream use', async () => {
+    const r1 = json({ foo: 'bar' })
+    const r2 = json(r1)
+
+    expect(r2).toBe(r1)
+  })
+
   describe('format helpers', () => {
     const formats = [
       { name: 'json', fn: json, mime: 'application/json; charset=utf-8' },

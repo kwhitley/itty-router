@@ -14,6 +14,8 @@ export const createResponse = (format: string = 'text/plain; charset=utf-8', tra
   (body, options: ResponseFormatterOptions = {}) => {
     const { headers = {}, ...rest } = options
 
+    if (body?.constructor.name === 'Response') return body
+
     return new Response(transform ? transform(body) : body, {
       headers: {
         'content-type': format,
