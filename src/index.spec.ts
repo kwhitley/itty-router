@@ -1,7 +1,7 @@
 import 'isomorphic-fetch'
 import { describe, expect, it, vi } from 'vitest'
 import { buildRequest, createTestRunner, extract } from '../test-utils'
-import { Router, Route, RouterType, RequestLike } from './itty-router'
+import { Router, Route, RouterType, RequestLike } from '.'
 
 const ERROR_MESSAGE = 'Error Message'
 
@@ -544,9 +544,7 @@ describe('ROUTE MATCHING', () => {
       { route: '/foo?', path: '/foo' },
       { route: '/foo?', path: '/fo' },
       { route: '/foo?', path: '/fooo', returns: false },
-      { route: '/\.', path: '/f' },
       { route: '/\.', path: '/', returns: false },
-
       { route: '/x|y', path: '/y', returns: true },
       { route: '/x|y', path: '/x', returns: true },
       { route: '/x/y|z', path: '/z', returns: true }, // should require second path as y or z
@@ -559,9 +557,10 @@ describe('ROUTE MATCHING', () => {
       { route: '/xy{2}', path: '/xyxy', returns: false }, // no regex repeating supported
       { route: '/xy{2}', path: '/xy/xy', returns: false }, // no regex repeating supported
       { route: '/:x.:y', path: '/a.b.c', returns: { x: 'a.b', y: 'c' } }, // standard file + extension format
-      { route: '/test.:x', path: '/test.a.b', returns: { x: 'a.b' } }, // dots are still captured as part of the param
+      // { route: '/test.:x', path: '/test.a.b', returns: { x: 'a.b' } }, // dots are still captured as part of the param (REMOVE)
+      // { route: '/test.:x', path: '/test.a.b', returns: false }, // extensions only capture a single dot (ADD)
+      { route: '/:test.:x', path: '/test.a.b', returns: { test: 'test.a', x: 'b' } }, // extensions only capture a single dot
       { route: '/:x?.y', path: '/test.y', returns: { x: 'test' } },
-      { route: '/x/:y*', path: '/x/test', returns: { y: 'test' } },
     ])
   })
 

@@ -58,12 +58,12 @@ export const Router = ({ base = '', routes = [] }: RouterOptions = {}): RouterTy
       get: (target, prop: string, receiver) => (route: string, ...handlers: RouteHandler[]) =>
         routes.push([
           prop.toUpperCase(),
-          RegExp(`^${(base + '/' + route)
-            .replace(/\/+(\/|$)/g, '$1')                       // remove multiple/trailing slash
-            .replace(/(\/?\.?):(\w+)\+/g, '($1(?<$2>*))')      // greedy params
-            .replace(/(\/?\.?):(\w+)/g, '($1(?<$2>[^$1/]+?))') // named params and image format
-            .replace(/\./g, '\\.')                             // dot in path
-            .replace(/(\/?)\*/g, '($1.*)?')                    // wildcard
+            RegExp(`^${(base + '/' + route)
+              .replace(/\/+(\/|$)/g, '$1')                       // remove multiple/trailing slash
+              .replace(/(\/?\.?):(\w+)\+/g, '($1(?<$2>*))')      // greedy params
+              .replace(/(\/?\.?):(\w+)/g, '($1(?<$2>[^$1/]+?))') // named params and image format
+              .replace(/\./g, '\\.')                             // dot in path
+              .replace(/(\/?)\*/g, '($1.*)?')                    // wildcard
           }/*$`),
           handlers,
         ]) && receiver
@@ -84,6 +84,8 @@ export const Router = ({ base = '', routes = [] }: RouterOptions = {}): RouterTy
       }
     }
   })
+
+export * from './extras'
 
 // type CustomMethods = {
 //   foo?: Route,
