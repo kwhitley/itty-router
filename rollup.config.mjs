@@ -8,12 +8,14 @@ export default async () => ({
       {
         format: 'cjs',
         file: './dist/index.js',
-        sourcemap: true,
+        // sourcemap: true,
+        exports: 'named',
        },
       {
         format: 'esm',
         file: './dist/index.mjs',
-        sourcemap: true,
+        // sourcemap: true,
+        exports: 'named',
       },
     ],
     plugins: [
