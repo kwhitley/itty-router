@@ -13,17 +13,30 @@ export interface ErrorFormatter {
   (error: ErrorLike): Response
 }
 
-export const error: ErrorFormatter = (a = 500, b: ErrorBody = 'Internal Server Error') => {
+const getMessage = (code: number): string => {
+  return {
+    400: 'Not Found',
+    401: 'Unauthorized',
+    403: 'Forbidden',
+    404: 'Not Found',
+    500: 'Internal Server Error'
+  }[code] || 'Unknown Error'
+}
+
+export const error: ErrorFormatter = (a = 500, b?: ErrorBody) => {
   // handle passing an Error | StatusError directly in
   if (a instanceof Error) {
     const { message, ...err } = a
-    b = { error: a.message, ...err }
     a = a.status || 500
+    b = {
+      error: message || getMessage(a),
+      ...err
+    }
   }
 
   b = {
     status: a,
-    ...(typeof b === 'object' ? b : { error: b })
+    ...(typeof b === 'object' ? b : { error: b || getMessage(a) })
   }
 
   return json(b, { status: a })
