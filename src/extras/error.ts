@@ -17,17 +17,16 @@ export const error: ErrorFormatter = (a = 500, b?: ErrorBody) => {
   // handle passing an Error | StatusError directly in
   if (a instanceof Error) {
     const { message, ...err } = a
-    b = {
-      error: a.message,
-      ...err
-    }
-    return error(a.status || 500, b)
+    b = { error: a.message, ...err }
+    a = a.status || 500
   }
 
   // return simple status code if no body or passed the raw Request
-  if (!b || b?.constructor?.name === 'Request')
-    return status(a)
+  if (!b || b?.constructor?.name !== 'Request')
+    b = {
+      status: a,
+      ...(typeof b === 'object' ? b : { error: b })
+    }
 
-  // otherwise return json
-  return json({ status: a, ...(typeof b === 'object' ? b : { error: b }) }, { status: a })
+  return json(b, { status: a })
 }

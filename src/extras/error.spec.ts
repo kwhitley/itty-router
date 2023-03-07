@@ -11,8 +11,10 @@ describe('error(status: number, body: string | object)', () => {
 
   it('error() creates a 500 Response with no body', async () => {
     const response = error()
+    const payload = await response.json()
 
     expect(response.status).toBe(500)
+    expect(payload).toEqual({ status: 500 })
   })
 
   it('can accept a custom status code', async () => {
@@ -62,24 +64,58 @@ describe('error(status: number, body: string | object)', () => {
       expect(notFound().status).toBe(404)
     })
 
-    it('badRequest - 400', async () => {
-      expect(badRequest().status).toBe(400)
+    describe('badRequest(message | Request)', () => {
+      it('sends a 400 error', () => {
+        expect(badRequest().status).toBe(400)
+      })
+      it('sends a { status: 400, error: "Bad Request" } default message', async () => {
+        const response = badRequest()
+        const payload = await response.json()
+
+        expect(payload).toEqual({ status: 400, error: 'Bad Request' })
+      })
+      it('can accept a custom message (ignore for others)', async () => {
+        const response = badRequest(customMessage)
+        const payload = await response.json()
+
+        expect(payload).toEqual({ status: 400, error: customMessage })
+      })
     })
 
-    it('unauthorized - 401', async () => {
-      expect(unauthorized().status).toBe(401)
+    describe('unauthorized(message | Request)', () => {
+      it('sends a 401 error', () => {
+        expect(unauthorized().status).toBe(401)
+      })
+      it('sends a { status: 401, error: "Unauthorized" } default message', async () => {
+        const response = unauthorized()
+        const payload = await response.json()
+
+        expect(payload).toEqual({ status: 401, error: 'Unauthorized' })
+      })
     })
 
-    it('forbidden - 403', async () => {
-      expect(forbidden().status).toBe(403)
+    describe('forbidden(message | Request)', () => {
+      it('sends a 403 error', () => {
+        expect(forbidden().status).toBe(403)
+      })
+      it('sends a { status: 403, error: "Forbidden" } default message', async () => {
+        const response = forbidden()
+        const payload = await response.json()
+
+        expect(payload).toEqual({ status: 403, error: 'Forbidden' })
+      })
     })
 
-    it('notFound - 404', async () => {
-      const customNotFound = notFound(customMessage)
-      const payload = await customNotFound.json()
+    describe('notFound(message | Request)', () => {
+      it('sends a 404 error', () => {
+        expect(notFound().status).toBe(404)
+      })
+      it('sends a { status: 404, error: "Not Found" } default message', async () => {
+        const response = notFound()
+        const payload = await response.json()
 
-      expect(notFound().status).toBe(404)
-      expect(payload).toEqual({ status: 404, error: customMessage })
+        expect(payload).toEqual({ status: 404, error: 'Not Found' })
+      })
     })
   })
 })
