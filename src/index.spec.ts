@@ -520,6 +520,10 @@ describe('ROUTE MATCHING', () => {
       { route: '/:id.:format?', path: '/foo.bar.jpg', returns: { id: 'foo.bar', format: 'jpg' } },
       { route: '/:id.:format?', path: '/foo.jpg', returns: { id: 'foo', format: 'jpg' } },
       { route: '/:id.:format?', path: '/foo', returns: { id: 'foo' } },
+      { route: '/:id.:format.:compress', path: '/foo.gz', returns: false },
+      { route: '/:id.:format.:compress', path: '/foo.txt.gz', returns: { id: 'foo', format: 'txt', compress: 'gz' } },
+      { route: '/:id.:format.:compress?', path: '/foo.txt', returns: { id: 'foo', format: 'txt' } },
+      { route: '/:id.:format?.:compress', path: '/foo.gz', returns: { id: 'foo', compress: 'gz' } },
     ])
   })
 
@@ -539,6 +543,7 @@ describe('ROUTE MATCHING', () => {
       { route: '/foo(bar|baz)', path: '/foobar' },
       { route: '/foo(bar|baz)', path: '/foobaz' },
       { route: '/foo(bar|baz)', path: '/foo', returns: false },
+      { route: '/foo:bar?', path: '/foXbar', returns: false },
       { route: '/foo+', path: '/foo' },
       { route: '/foo+', path: '/fooooooo' },
       { route: '/foo?', path: '/foo' },
@@ -557,9 +562,8 @@ describe('ROUTE MATCHING', () => {
       { route: '/xy{2}', path: '/xyxy', returns: false }, // no regex repeating supported
       { route: '/xy{2}', path: '/xy/xy', returns: false }, // no regex repeating supported
       { route: '/:x.:y', path: '/a.b.c', returns: { x: 'a.b', y: 'c' } }, // standard file + extension format
-      // { route: '/test.:x', path: '/test.a.b', returns: { x: 'a.b' } }, // dots are still captured as part of the param (REMOVE)
-      // { route: '/test.:x', path: '/test.a.b', returns: false }, // extensions only capture a single dot (ADD)
-      { route: '/:test.:x', path: '/test.a.b', returns: { test: 'test.a', x: 'b' } }, // extensions only capture a single dot
+      { route: '/test.:x', path: '/test.a.b', returns: false }, // extensions only capture a single dot
+      { route: '/test.:x', path: '/test.a', returns: { x: 'a' } },
       { route: '/:x?.y', path: '/test.y', returns: { x: 'test' } },
     ])
   })
