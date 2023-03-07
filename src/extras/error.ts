@@ -6,14 +6,14 @@ interface ErrorLike extends Error {
   [any: string]: any,
 }
 
-export type ErrorBody = string | object | Request
+export type ErrorBody = string | object
 
 export interface ErrorFormatter {
   (statusCode?: number, body?: ErrorBody): Response
   (error: ErrorLike): Response
 }
 
-export const error: ErrorFormatter = (a = 500, b?: ErrorBody) => {
+export const error: ErrorFormatter = (a = 500, b: ErrorBody = 'Internal Server Error') => {
   // handle passing an Error | StatusError directly in
   if (a instanceof Error) {
     const { message, ...err } = a
@@ -21,12 +21,10 @@ export const error: ErrorFormatter = (a = 500, b?: ErrorBody) => {
     a = a.status || 500
   }
 
-  // return simple status code if no body or passed the raw Request
-  if (!b || b?.constructor?.name !== 'Request')
-    b = {
-      status: a,
-      ...(typeof b === 'object' ? b : { error: b })
-    }
+  b = {
+    status: a,
+    ...(typeof b === 'object' ? b : { error: b })
+  }
 
   return json(b, { status: a })
 }

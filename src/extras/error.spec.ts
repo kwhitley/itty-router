@@ -14,7 +14,7 @@ describe('error(status: number, body: string | object)', () => {
     const payload = await response.json()
 
     expect(response.status).toBe(500)
-    expect(payload).toEqual({ status: 500 })
+    expect(payload).toEqual({ status: 500, error: 'Internal Server Error' })
   })
 
   it('can accept a custom status code', async () => {
@@ -57,12 +57,6 @@ describe('error(status: number, body: string | object)', () => {
 
   describe('additional error helpers', () => {
     const customMessage = 'custom message'
-    it('will ignore a Request as 2nd param, returning status error instead (allows use downstream or as middleware)', async () => {
-      const r = new Request('https://foo.bar')
-      const middleware = notFound(r)
-
-      expect(notFound().status).toBe(404)
-    })
 
     describe('badRequest(message | Request)', () => {
       it('sends a 400 error', () => {
