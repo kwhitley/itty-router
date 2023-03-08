@@ -1,4 +1,4 @@
-import { IRequest } from 'index'
+import { IRequest } from './Router'
 
 // withContent - embeds any request body as request.content
 export const withContent = async (request: IRequest): Promise<void> => {

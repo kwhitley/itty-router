@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest'
+import { Router } from './Router'
 import { withParams } from './withParams'
-import { Router } from '..'
 
 describe('withParams (middleware)', () => {
   it('allows accessing route params from the request itself', async () => {

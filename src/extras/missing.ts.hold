@@ -1,3 +1,0 @@
-import { error } from './error'
-
-export const missing = (body?: string | object): Response => error(404, body)

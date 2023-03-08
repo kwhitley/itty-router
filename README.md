@@ -25,6 +25,7 @@ import {
   respondWithJSON,        // downstream handler to send data as JSON
   Router,                 // the ~470 byte router itself
   withParams,             // middleware to auto-embed route params
+  notFound,               // create a 404
 } from 'itty-router'
 
 const router = Router()   // create a new Router
@@ -41,11 +42,11 @@ router
   // GET single todo, by ID
   .get('/todos/:id', 
     ({ id }) => todos.find(todo => todo.id === id) 
-                || error(404, 'That todo was not found')
+                || notFound('That todo was not found')
   )
 
   // 404 for everything else
-  .all('*', () => error(404))
+  .all('*', notFound)
 
 // Example: Cloudflare ESM Worker syntax
 export default {

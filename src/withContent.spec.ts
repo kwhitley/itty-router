@@ -1,9 +1,7 @@
 import 'isomorphic-fetch'
 import { describe, expect, it, vi } from 'vitest'
+import { Router } from './Router'
 import { withContent } from './withContent'
-import { Router } from '..'
-import { json } from './json'
-import { text } from './text'
 
 describe('withContent (middleware)', () => {
   it('can access the awaited Response body as request.content', async () => {

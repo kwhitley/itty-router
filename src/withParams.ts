@@ -1,4 +1,4 @@
-import { IRequest } from '..'
+import { IRequest } from './Router'
 
 export const withParams = (request: IRequest): void => {
   request.proxy = new Proxy(request.proxy || request, {

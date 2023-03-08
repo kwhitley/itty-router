@@ -1,12 +1,13 @@
+import { notFound } from 'notFound'
 import {
   Router,               // the router itself
   IRequest,             // lightweight/generic Request type
   RouterType,           // generic Router type
   Route,                // generic Route type
   createCors,
-  respondWithJSON,
-  respondWithError,
-} from '.'
+  json,
+  error,
+} from '..'
 
 // declare a custom Router type with used methods
 interface CustomRouter extends RouterType {
@@ -36,14 +37,15 @@ router
     const name = request.params.name
     const foo = request.query.foo
   })
+  .all('*', () => notFound())
 
 // CF ES6 module syntax
 export default {
   fetch: (request: IRequest, env: object, context: object) =>
             router
               .handle(request, env, context)
-              .then(respondWithJSON)
-              .catch(respondWithError)
+              .then(json)
+              .catch(error)
               .then(corsify)
 }
 

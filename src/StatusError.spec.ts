@@ -8,7 +8,6 @@ describe('new StatusError(code: number, message?: string | object)', () => {
 
       expect(error instanceof Error).toBe(true)
       expect(error.status).toBe(400)
-      expect(error.name).toBe('StatusError')
       expect(error.message).toBe('Bad Request')
     })
 

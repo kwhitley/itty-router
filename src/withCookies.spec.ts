@@ -1,7 +1,7 @@
 import 'isomorphic-fetch'
 import { describe, expect, it, vi } from 'vitest'
+import { Router } from './Router'
 import { withCookies } from './withCookies'
-import { Router } from '..'
 
 describe('withCookies (middleware)', () => {
   it('can access params from the request itself', async () => {

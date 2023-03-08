@@ -1,10 +1,8 @@
 import 'isomorphic-fetch'
 import { describe, expect, it, vi } from 'vitest'
-import { withContent } from './withContent'
-import { Router } from '..'
-import { json } from './json'
-import { text } from './text'
 import { createCors } from './createCors'
+import { json } from './json'
+import { Router } from './Router'
 
 describe('createCors(options)', () => {
   it('returns { preflight, corsify }', async () => {
@@ -132,6 +130,31 @@ describe('createCors(options)', () => {
                               .then(corsify)
 
       expect(response.headers.get('Access-Control-Allow-Origin')).toBe(null)
+    })
+
+    describe('repeated use', () => {
+      const { preflight, corsify } = createCors()
+      const router = Router().all('*', preflight)
+      const origin = 'http://localhost:3000'
+
+      const generateRequest = () => new Request('https://foo.bar', {
+        method: 'OPTIONS',
+        headers: {
+          'Access-Control-Request-Method': 'GET',
+          'Access-Control-Request-Headers': 'content-type',
+          origin,
+        }
+      })
+
+      it('will work multiple times in a row', async () => {
+        const response1 = await router.handle(generateRequest())
+        expect(response1.status).toBe(200)
+        expect(response1.headers.get('Access-Control-Allow-Origin')).toBe(origin)
+
+        const response2 = await router.handle(generateRequest())
+        expect(response2.status).toBe(200)
+        expect(response2.headers.get('Access-Control-Allow-Origin')).toBe(origin)
+      })
     })
   })
 

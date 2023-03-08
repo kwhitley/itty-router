@@ -1,4 +1,4 @@
-import { IRequest } from '..'
+import { IRequest } from './Router'
 
 interface CorsOptions {
   origins?: string[],
