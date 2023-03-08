@@ -25,7 +25,7 @@ export default async () => {
             ],
             plugins: [
               typescript(),
-              // terser(),
+              terser(),
               bundleSize(),
             ],
           })
