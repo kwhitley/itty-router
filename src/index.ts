@@ -8,6 +8,12 @@ export * from './createResponse'
 export * from './error'
 export * from './status'
 
+// error helpers
+export * from './badRequest'
+export * from './forbidden'
+export * from './notFound'
+export * from './unauthorized'
+
 // response formats
 export * from './text'
 export * from './json'
