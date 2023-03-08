@@ -1,3 +1,4 @@
+import { notFound } from 'notFound'
 import {
   Router,               // the router itself
   IRequest,             // lightweight/generic Request type
@@ -36,6 +37,7 @@ router
     const name = request.params.name
     const foo = request.query.foo
   })
+  .all('*', () => notFound())
 
 // CF ES6 module syntax
 export default {

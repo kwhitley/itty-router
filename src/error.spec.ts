@@ -66,6 +66,13 @@ describe('error(status: number, body: string | object)', () => {
   describe('additional error helpers', () => {
     const customMessage = 'custom message'
 
+    it('can accept a custom message', async () => {
+      const response = badRequest(customMessage)
+      const payload = await response.json()
+
+      expect(payload).toEqual({ status: 400, error: customMessage })
+    })
+
     describe('badRequest(message | Request)', () => {
       it('sends a 400 error', () => {
         expect(badRequest().status).toBe(400)
@@ -75,12 +82,6 @@ describe('error(status: number, body: string | object)', () => {
         const payload = await response.json()
 
         expect(payload).toEqual({ status: 400, error: 'Bad Request' })
-      })
-      it('can accept a custom message (ignore for others)', async () => {
-        const response = badRequest(customMessage)
-        const payload = await response.json()
-
-        expect(payload).toEqual({ status: 400, error: customMessage })
       })
     })
 
