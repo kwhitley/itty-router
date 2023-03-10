@@ -65,7 +65,7 @@ export type RouteEntry = [string, RegExp, RouteHandler[]];
 
 type ExtractBaseRoute<T extends RouterType> = T extends RouterType<infer TBaseRoute> ? TBaseRoute : undefined;
 
-export type Route = <T extends RouterType, TRoute extends string, TBaseRoute extends string | undefined = ExtractBaseRoute<T>>(
+export type Route = <T extends RouterType, TRoute extends string = string, TBaseRoute extends string | undefined = ExtractBaseRoute<T>>(
   this: T,
   path: TRoute,
   ...handlers: RouteHandler<TBaseRoute, TRoute>[]
@@ -81,15 +81,16 @@ export type RouterHints = {
   put: Route;
 };
 
-export type RouterType<TBaseRoute extends string | undefined = undefined> = {
+export type RouterType<TBaseRoute extends string | undefined = undefined, TMethods extends string | undefined = undefined> = {
   __proto__: RouterType<TBaseRoute>;
   routes: RouteEntry[];
   handle: (request: RequestLike, ...extra: any) => Promise<any>;
-} & RouterHints;
+} & RouterHints & ( TMethods extends string ? Record<TMethods, Route> : {});
 
 export const Router = <
-  TBaseRoute extends string | undefined
->({ base = '', routes = [] }: RouterOptions<TBaseRoute> = {}): RouterType<TBaseRoute> =>
+  TBaseRoute extends string | undefined,
+  TMethods extends string | undefined = undefined,
+>({ base = '', routes = [] }: RouterOptions<TBaseRoute> = {}): RouterType<TBaseRoute, TMethods> =>
   // @ts-expect-error TypeScript doesn't know that Proxy makes this work
   ({
     __proto__: new Proxy({} as RouterType<TBaseRoute>, {
