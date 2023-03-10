@@ -21,6 +21,7 @@
     "docs:serve": "vite preview",
     "lint": "npx eslint src",
     "test": "vitest --coverage --reporter verbose",
+    "test:types": "vitest typecheck --coverage --reporter verbose",
     "test:once": "vitest run",
     "coverage": "vitest run --coverage",
     "coveralls": "yarn coverage && cat ./coverage/lcov.info | coveralls",

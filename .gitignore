@@ -111,3 +111,6 @@ docs/dist
 docs/dist-ssr
 docs/*.local
 docs/pages/README.md
+
+# Vitest output
+*.vitest-temp.*
