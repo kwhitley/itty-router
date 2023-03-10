@@ -19,7 +19,7 @@ export default async () => {
             output: [
               {
                 format: 'esm',
-                file: path.replace('/src/', '/dist/').replace('.ts', '.mjs'),
+                file: path.replace('/src/', '/dist/').replace('.ts', '.js'),
                 // exports: 'named',
               },
               {
