@@ -35,5 +35,5 @@
     "**/*.spec.ts",
     "**/example.ts",
   ],
-  "include": ["src"]
+  "include": ["src", "example"]
 }

@@ -1,4 +1,3 @@
-import { notFound } from 'notFound'
 import {
   Router,               // the router itself
   IRequest,             // lightweight/generic Request type
@@ -7,7 +6,7 @@ import {
   createCors,
   json,
   error,
-} from '..'
+} from '../src'
 
 // declare a custom Router type with used methods
 interface CustomRouter extends RouterType {
@@ -37,7 +36,7 @@ router
     const name = request.params.name
     const foo = request.query.foo
   })
-  .all('*', () => notFound())
+  .all('*', () => error(404))
 
 // CF ES6 module syntax
 export default {

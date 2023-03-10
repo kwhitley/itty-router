@@ -22,6 +22,11 @@ export default async () => {
                 file: path.replace('/src/', '/dist/').replace('.ts', '.js'),
                 // exports: 'named',
               },
+              {
+                format: 'cjs',
+                file: path.replace('/src/', '/dist/cjs/').replace('.ts', '.js'),
+                // exports: 'named',
+              },
             ],
             plugins: [
               typescript(),
