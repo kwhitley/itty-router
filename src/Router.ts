@@ -16,25 +16,36 @@ type CleanRouteParameters<Params extends { [key: string]: any }> = {
   [Entry in keyof Params as Entry extends string ? EatModifiers<Entry> : Entry]: Params[Entry];
 };
 
-type InferRouteParameters<Route> = Route extends `${string}/:${infer Param}/${infer Rest}`
+type UnknownRouteParameters = { [key: string]: string | undefined };
+
+type InferParameterType<Entry> = string | (Entry extends `${string}${Modifier}` ? undefined : never);
+
+type InferRouteParameters<Route> = Route extends `${string}/:${infer Param}/${infer Rest}*`
   ? {
-      [Entry in Param | keyof InferRouteParameters<`/${Rest}`>]:
-        | string
-        | (Entry extends `${string}${Modifier}` ? undefined : never);
+      [Entry in Param | keyof InferRouteParameters<`/${Rest}`>]: InferParameterType<Entry>;
+    } & UnknownRouteParameters
+  : Route extends `${string}/:${infer Param}*`
+  ? {
+      [Entry in Param]: InferParameterType<Entry>;
+    } & UnknownRouteParameters
+  : Route extends `${string}*`
+  ? UnknownRouteParameters
+  : Route extends `${string}/:${infer Param}/${infer Rest}`
+  ? {
+      [Entry in Param | keyof InferRouteParameters<`/${Rest}`>]: InferParameterType<Entry>;
     }
   : Route extends `${string}/:${infer Param}`
-  ? { [Entry in Param]: string | (Entry extends `${string}${Modifier}` ? undefined : never) }
+  ? { [Entry in Param]: InferParameterType<Entry> }
   : {};
 
 export type ParseRouteParameters<Route> = CleanRouteParameters<InferRouteParameters<Route>>;
- 
 
-export type IRequest<TBaseRoute extends string | undefined, TRoute extends string> = {
+export type IRequest<TBaseRoute extends string | undefined = undefined, TRoute extends string = string> = {
   method: string;
   url: string;
   params: string | undefined extends TRoute
-    ? { [key: string]: string }
-    : CleanRouteParameters<ParseRouteParameters<`${TBaseRoute extends `/${string}` ? TBaseRoute : ''}${TRoute}`>>;
+    ? UnknownRouteParameters
+    : ParseRouteParameters<`${TBaseRoute extends `/${string}` ? TBaseRoute : ''}${TRoute}`>;
   query: {
     [key: string]: string | string[] | undefined;
   };
