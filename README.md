@@ -11,11 +11,21 @@
 [![GitHub Repo stars](https://img.shields.io/github/stars/kwhitley/itty-router?style=social)](https://github.com/kwhitley/itty-router)
 [![Twitter](https://img.shields.io/twitter/follow/kevinrwhitley.svg?style=social&label=Follow)](https://www.twitter.com/kevinrwhitley)
 
-Tiny (the router alone is >500 bytes), zero-dependency router - built for [Cloudflare Workers](https://developers.cloudflare.com/workers/), but works everywhere!
+Itty aims to be the world's smallest (430 bytes), feature-rich JavaScript, enabling lightweight code with a lightweight bundlesize.  Designed originally for Cloudflare Workers, itty can be used in browsers, Service Workers, edge functions, or standalone runtimes like Node!
 
-This router avoids all assumptions about how or where you'll use it, what you'll return with it, etc.  It specifically chooses a linear flow-through route-matching pattern to allow the 
-most power and flexibility in middleware chaining (including other routers for nested APIs). By giving you complete control over the routes, middleware chain, and downstream handling, 
-you can even make your own, more opinionated router with itty at the core, for a mere ~500 bytes.
+**Features:**
+- [route params](https://itty.dev/itty-router/route-patterns#params) (including [optional params](https://itty.dev/itty-router/route-patterns#optional))
+- [wildcards](https://itty.dev/itty-router/route-patterns#wildcards) and [greedy params](https://itty.dev/itty-router/route-patterns#greedy)
+- [query parsing](https://itty.dev/itty-router/route-patterns#query)
+- [middleware](https://itty.dev/itty-router/middleware)
+- [router nesting](https://itty.dev/itty-router/nesting)
+- any real/fake HTTP method
+- lightweight, easy-to-understand route code
+- works in *any* runtime/environment (including the browser)
+- fully typed/TS
+
+## Full Documentation
+For complete docs/API, please visit [itty.dev](https://itty.dev), or join our [Discord](https://discord.com/channels/832353585802903572) channel for direct conversation with our community :)
 
 ## Example
 ```js
