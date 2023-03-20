@@ -11,9 +11,9 @@
 [![GitHub Repo stars](https://img.shields.io/github/stars/kwhitley/itty-router?style=social)](https://github.com/kwhitley/itty-router)
 [![Twitter](https://img.shields.io/twitter/follow/kevinrwhitley.svg?style=social&label=Follow)](https://www.twitter.com/kevinrwhitley)
 
-Itty aims to be the world's smallest (430 bytes), feature-rich JavaScript, enabling lightweight code with a lightweight bundlesize.  Designed originally for Cloudflare Workers, itty can be used in browsers, Service Workers, edge functions, or standalone runtimes like Node!
+Itty aims to be the world's smallest (430 bytes), feature-rich JavaScript router, enabling low-calorie code with a low-calorie bundlesize.  Designed originally for Cloudflare Workers, itty can be used in browsers, Service Workers, edge functions, or standalone runtimes like Node!
 
-**Features:**
+## Features:
 - [route params](https://itty.dev/itty-router/route-patterns#params) (including [optional params](https://itty.dev/itty-router/route-patterns#optional))
 - [wildcards](https://itty.dev/itty-router/route-patterns#wildcards) and [greedy params](https://itty.dev/itty-router/route-patterns#greedy)
 - [query parsing](https://itty.dev/itty-router/route-patterns#query)
@@ -24,8 +24,13 @@ Itty aims to be the world's smallest (430 bytes), feature-rich JavaScript, enabl
 - works in *any* runtime/environment (including the browser)
 - fully typed/TS
 
-## Full Documentation
-For complete docs/API, please visit [itty.dev](https://itty.dev), or join our [Discord](https://discord.com/channels/832353585802903572) channel for direct conversation with our community :)
+## [Full Documentation](https://itty.dev/itty-router)
+Complete docs/API available on [itty.dev](https://itty.dev/itty-router), or join our [Discord](https://discord.com/channels/832353585802903572) channel to chat.
+
+## Installation
+```
+npm install itty-router@next
+```
 
 ## Example
 ```js
@@ -66,9 +71,6 @@ export default {
                                       .catch(respondWithError)  // and send error Responses for thrown errors
 }
 ```
-
-## Full Documentation
-For complete API documentation, please visit [itty.dev](https://itty.dev).
 
 ## Join the Discussion!
 Have a question? Suggestion? Complaint? Want to send me a gift basket?
