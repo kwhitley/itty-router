@@ -13,25 +13,10 @@
 
 Tiny, zero-dependency router with route param and query parsing - built for [Cloudflare Workers](https://developers.cloudflare.com/workers/), but works everywhere!
 
-# Major Announcement: v3.x is Live!  
-Version 3 introduces itty as a TypeScript-first library.  This version should break no existing JS users, but TS users will likely need to [update their types](#typescript).  Please [join the discussion on Discord](https://discord.gg/53vyrZAu9u) to assist in this rollout!  In the meantime, thanks everyone for your patience!  
+# v4.x Announcement
+CORS and extras are coming in-house to **itty-router** core in 4.x!  We're still ironing out all the types and exports, but if you'd like to test this early, please visit [itty.dev](https://itty.dev/itty-router) for the full documentation, and join us in [Discord](https://discord.com/channels/832353585802903572) for questions, help, suggestions, etc.  
 
-Here are the major changes in version 3, with `itty-router-extras` (certainly) and likely `itty-cors` to be added into core as upcoming minor releases:
-
-1 . Routes can now capture complex/unknown paths using the trailing `+` modifier.  As a result, this is now possible:
-  ```js
-  router.handle('/get-file/:path+', ({ params }) => params)
-  
-  // GET /get-file/with/a/long/path.png => { path: "with/a/long/path.png" }
-  ```
-    
-2. Query params with multiple same-name values now operate as you would expect (previously, they overwrote each other)
-  ```js
-  router.handle('/foo', ({ query }) => query)
-  
-  // GET /foo?pets=mittens&pets=fluffy&pets=rex&bar=baz
-  // ==> { bar: "baz", pets: ["mittens", "fluffy", "rex"] }
-  ```
+**NOTE: This will be a non-breaking DX upgrade for 99.9% of you, simply allowing you to share a single dependecy.**
   
 ### Addons & Related Libraries
 1. [itty-cors](https://www.npmjs.com/package/itty-cors) (early access/alpha) - Easy CORS handling for itty APIs.
@@ -47,13 +32,11 @@ Here are the major changes in version 3, with `itty-router-extras` (certainly) a
 - [x] ["Greedy" route captures](#greedy) (e.g. `/api/:path+`)
 - [x] Query parsing (e.g. `?page=3&foo=bar&foo=baz`)
 - [x] [Middleware support](#middleware). Any number of sync/async handlers may be passed to a route.
+- [x] [Global middleware support](#nested-routers-with-404-handling) using the `.all()` channel.
 - [x] [Nestable](#nested-routers-with-404-handling). Supports nesting routers for API branching.
 - [x] [Base path](#nested-routers-with-404-handling) for prefixing all routes.
-- [x] [Multi-method support](#nested-routers-with-404-handling) using the `.all()` channel.
 - [x] Supports **any** method type (e.g. `.get() --> 'GET'` or `.puppy() --> 'PUPPY'`).
 - [x] Supports [Cloudflare ES Module syntax](#cf-es6-module-syntax)! :)
-- [x] [Preload or manually inject custom regex for routes](#manual-routes) (advanced usage)
-- [x] [Extendable](#extending-itty-router). Use itty as the internal base for more feature-rich/elaborate routers.
 - [x] Chainable route declarations (why not?)
 - [ ] Readable internal code (yeah right...)
 
