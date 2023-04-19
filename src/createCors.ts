@@ -16,8 +16,9 @@ export const createCors = (options: CorsOptions = {}) => {
   } = options
 
   let allowOrigin: any
-  const isAllowOrigin = typeof origins === 'function' ? origins : (origin: string) => 
-    (origins.includes(origin) || origins.includes('*'))
+  const isAllowOrigin = typeof origins === 'function' 
+    ? origins
+    : (origin: string) => (origins.includes(origin) || origins.includes('*'))
 
   const responseHeaders = {
     'content-type': 'application/json',

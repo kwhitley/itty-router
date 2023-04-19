@@ -49,7 +49,6 @@ describe('createCors(options)', () => {
 
       const response1 = await router.handle(generateRequest('http://localhost:3000'))
       expect(response1.headers.get('Access-Control-Allow-Origin')).toBe('http://localhost:3000')
-
       const response2 = await router.handle(generateRequest('http://localhost:4000'))
       expect(response2.headers.get('Access-Control-Allow-Origin')).toBe('http://localhost:4000')
 
