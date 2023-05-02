@@ -8,11 +8,6 @@ import {
   error,
 } from '../src'
 
-// declare a custom Router type with used methods
-interface CustomRouter extends RouterType {
-  puppy: Route,
-}
-
 // declare a custom Request type to allow request injection from middleware
 type RequestWithAuthors = {
   authors?: string[]
@@ -25,11 +20,11 @@ const withAuthors = (request: IRequest) => {
 
 const { corsify, preflight } = createCors()
 
-const router = Router({ base: '/' })
+const router = Router<'/', 'puppy'>({ base: '/' })
 
 router
   .all('*', preflight)
-  .get<CustomRouter>('/authors', withAuthors, (request: RequestWithAuthors) => {
+  .get('/authors', withAuthors, (request: RequestWithAuthors) => {
     return request.authors?.[0]
   })
   .puppy('/:name', (request) => {

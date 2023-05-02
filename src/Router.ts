@@ -1,60 +1,99 @@
 export type GenericTraps = {
-  [key: string]: any
-}
+  [key: string]: any;
+};
 
 export type RequestLike = {
-  method: string,
-  url: string,
-} & GenericTraps
+  method: string;
+  url: string;
+} & GenericTraps;
 
-export type IRequest = {
-  method: string,
-  url: string,
-  params: {
-    [key: string]: string,
-  },
+type Modifier = '?' | '+';
+type EatModifiers<Input extends string> = Input extends `${infer Remainder}${Modifier}`
+  ? EatModifiers<Remainder>
+  : Input;
+
+type CleanRouteParameters<Params extends { [key: string]: any }> = {
+  [Entry in keyof Params as Entry extends string ? EatModifiers<Entry> : Entry]: Params[Entry];
+};
+
+type UnknownRouteParameters = { [key: string]: string | undefined };
+
+type InferParameterType<Entry> = string | (Entry extends `${string}${Modifier}` ? undefined : never);
+
+type InferRouteParameters<Route> = Route extends `${string}/:${infer Param}/${infer Rest}*`
+  ? {
+      [Entry in Param | keyof InferRouteParameters<`/${Rest}`>]: InferParameterType<Entry>;
+    } & UnknownRouteParameters
+  : Route extends `${string}/:${infer Param}*`
+  ? {
+      [Entry in Param]: InferParameterType<Entry>;
+    } & UnknownRouteParameters
+  : Route extends `${string}*`
+  ? UnknownRouteParameters
+  : Route extends `${string}/:${infer Param}/${infer Rest}`
+  ? {
+      [Entry in Param | keyof InferRouteParameters<`/${Rest}`>]: InferParameterType<Entry>;
+    }
+  : Route extends `${string}/:${infer Param}`
+  ? { [Entry in Param]: InferParameterType<Entry> }
+  : {};
+
+export type ParseRouteParameters<Route> = CleanRouteParameters<InferRouteParameters<Route>>;
+
+export type IRequest<TBaseRoute extends string | undefined = undefined, TRoute extends string = string> = {
+  method: string;
+  url: string;
+  params: string | undefined extends TRoute
+    ? UnknownRouteParameters
+    : ParseRouteParameters<`${TBaseRoute extends `/${string}` ? TBaseRoute : ''}${TRoute}`>;
   query: {
-    [key: string]: string | string[] | undefined,
-  },
-  proxy?: any,
-} & GenericTraps
+    [key: string]: string | string[] | undefined;
+  };
+  proxy?: any;
+} & GenericTraps;
 
-export interface RouterOptions {
-  base?: string
-  routes?: RouteEntry[]
+export interface RouterOptions<TBaseRoute extends string | undefined> {
+  base?: TBaseRoute;
+  routes?: RouteEntry[];
 }
 
-export interface RouteHandler {
-  (request: IRequest, ...args: any): any
+export interface RouteHandler<TBaseRoute extends string | undefined = undefined, TRoute extends string = string> {
+  (request: IRequest<TBaseRoute, TRoute>, ...args: any): any;
 }
 
-export type RouteEntry = [string, RegExp, RouteHandler[]]
+export type RouteEntry = [string, RegExp, RouteHandler[]];
 
-export type Route = <T extends RouterType>(
-  path: string,
-  ...handlers: RouteHandler[]
-) => T
+type ExtractBaseRoute<T extends RouterType> = T extends RouterType<infer TBaseRoute> ? TBaseRoute : undefined;
+
+export type Route = <T extends RouterType, TRoute extends string = string, TBaseRoute extends string | undefined = ExtractBaseRoute<T>>(
+  this: T,
+  path: TRoute,
+  ...handlers: RouteHandler<TBaseRoute, TRoute>[]
+) => T;
 
 export type RouterHints = {
-  all: Route,
-  delete: Route,
-  get: Route,
-  options: Route,
-  patch: Route,
-  post: Route,
-  put: Route,
-}
+  all: Route;
+  delete: Route;
+  get: Route;
+  options: Route;
+  patch: Route;
+  post: Route;
+  put: Route;
+};
 
-export type RouterType = {
-  __proto__: RouterType,
-  routes: RouteEntry[],
-  handle: (request: RequestLike, ...extra: any) => Promise<any>
-} & RouterHints
+export type RouterType<TBaseRoute extends string | undefined = undefined, TMethods extends string | undefined = undefined> = {
+  __proto__: RouterType<TBaseRoute>;
+  routes: RouteEntry[];
+  handle: (request: RequestLike, ...extra: any) => Promise<any>;
+} & RouterHints & ( TMethods extends string ? Record<TMethods, Route> : {});
 
-export const Router = ({ base = '', routes = [] }: RouterOptions = {}): RouterType =>
+export const Router = <
+  TBaseRoute extends string | undefined,
+  TMethods extends string | undefined = undefined,
+>({ base = '', routes = [] }: RouterOptions<TBaseRoute> = {}): RouterType<TBaseRoute, TMethods> =>
   // @ts-expect-error TypeScript doesn't know that Proxy makes this work
   ({
-    __proto__: new Proxy({} as RouterType, {
+    __proto__: new Proxy({} as RouterType<TBaseRoute>, {
       get: (target, prop: string, receiver) => (route: string, ...handlers: RouteHandler[]) =>
         routes.push([
           prop.toUpperCase(),
@@ -94,7 +133,6 @@ export const Router = ({ base = '', routes = [] }: RouterOptions = {}): RouterTy
 
 // // router.foo()
 
-
 // type RequestWithAuthors = {
 //   authors?: string[]
 // } & IRequest
@@ -103,7 +141,6 @@ export const Router = ({ base = '', routes = [] }: RouterOptions = {}): RouterTy
 // const addAuthors = (request) => {
 //   request.authors = ['foo', 'bar']
 // }
-
 
 // const router = Router()
 
@@ -135,7 +172,6 @@ export const Router = ({ base = '', routes = [] }: RouterOptions = {}): RouterTy
 // }
 
 // const router = Router() as RouterType & MyTraps;
-
 
 /*
 

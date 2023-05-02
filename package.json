@@ -21,6 +21,7 @@
     "docs:serve": "vite preview",
     "lint": "npx eslint src",
     "test": "vitest --coverage --reporter verbose",
+    "test:types": "vitest typecheck --coverage --reporter verbose",
     "test:once": "vitest run",
     "coverage": "vitest run --coverage",
     "coveralls": "yarn coverage && cat ./coverage/lcov.info | coveralls",
@@ -67,7 +68,7 @@
     "rollup-plugin-multi-input": "^1.3.3",
     "typescript": "^4.8.4",
     "vite": "^2.8.6",
-    "vitest": "^0.24.3",
+    "vitest": "0.29.2",
     "vue": "^3.2.31",
     "yarn": "^1.22.18",
     "yarn-release": "^1.10.3"
