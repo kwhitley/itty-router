@@ -60,8 +60,7 @@ export const Router = ({ base = '', routes = [] }: RouterOptions = {}): RouterTy
         routes.push(
           [
             prop.toUpperCase(),
-            RegExp(`^${(path = base + '/' + route)
-              .replace(/\/+(\/|$)/g, '$1')                       // remove multiple/trailing slash
+            RegExp(`^${(path = (base + '/' + route).replace(/\/+(\/|$)/g, '$1'))
               .replace(/(\/?\.?):(\w+)\+/g, '($1(?<$2>*))')      // greedy params
               .replace(/(\/?\.?):(\w+)/g, '($1(?<$2>[^$1/]+?))') // named params and image format
               .replace(/\./g, '\\.')                             // dot in path
@@ -81,7 +80,7 @@ export const Router = ({ base = '', routes = [] }: RouterOptions = {}): RouterTy
       for (let [method, regex, handlers, path] of routes) {
         if ((method === request.method || method === 'ALL') && (match = url.pathname.match(regex))) {
           request.params = match.groups || {}
-          request.route = path?.replace('//', '/')
+          request.route = path
           for (let handler of handlers) {
             if ((response = await handler(request.proxy || request, ...args)) !== undefined) return response
           }
