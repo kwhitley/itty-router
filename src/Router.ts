@@ -28,7 +28,7 @@ export interface RouteHandler {
   (request: IRequest, ...args: any): any
 }
 
-export type RouteEntry = [string, RegExp, RouteHandler[]]
+export type RouteEntry = [string, RegExp, RouteHandler[], string]
 
 export type Route = <T extends RouterType>(
   path: string,
@@ -55,18 +55,22 @@ export const Router = ({ base = '', routes = [] }: RouterOptions = {}): RouterTy
   // @ts-expect-error TypeScript doesn't know that Proxy makes this work
   ({
     __proto__: new Proxy({} as RouterType, {
-      get: (target, prop: string, receiver) => (route: string, ...handlers: RouteHandler[]) =>
-        routes.push([
-          prop.toUpperCase(),
-            RegExp(`^${(base + '/' + route)
-            .replace(/\/+(\/|$)/g, '$1')                       // remove multiple/trailing slash
-            .replace(/(\/?\.?):(\w+)\+/g, '($1(?<$2>*))')      // greedy params
-            .replace(/(\/?\.?):(\w+)/g, '($1(?<$2>[^$1/]+?))') // named params and image format
-            .replace(/\./g, '\\.')                             // dot in path
-            .replace(/(\/?)\*/g, '($1.*)?')                    // wildcard
-          }/*$`),
-          handlers,
-        ]) && receiver
+      // @ts-expect-error (we're adding an expected prop "path" to the get)
+      get: (target: any, prop: string, receiver: object, path: string) => (route: string, ...handlers: RouteHandler[]) =>
+        routes.push(
+          [
+            prop.toUpperCase(),
+            RegExp(`^${(path = base + '/' + route)
+              .replace(/\/+(\/|$)/g, '$1')                       // remove multiple/trailing slash
+              .replace(/(\/?\.?):(\w+)\+/g, '($1(?<$2>*))')      // greedy params
+              .replace(/(\/?\.?):(\w+)/g, '($1(?<$2>[^$1/]+?))') // named params and image format
+              .replace(/\./g, '\\.')                             // dot in path
+              .replace(/(\/?)\*/g, '($1.*)?')                    // wildcard
+            }/*$`),
+            handlers,
+            path,
+          ]
+        ) && receiver
     }),
     routes,
     async handle (request: RequestLike, ...args)  {
@@ -74,9 +78,10 @@ export const Router = ({ base = '', routes = [] }: RouterOptions = {}): RouterTy
       for (let [k, v] of url.searchParams) {
         query[k] = query[k] === undefined ? v : [query[k], v].flat()
       }
-      for (let [method, route, handlers] of routes) {
-        if ((method === request.method || method === 'ALL') && (match = url.pathname.match(route))) {
+      for (let [method, regex, handlers, path] of routes) {
+        if ((method === request.method || method === 'ALL') && (match = url.pathname.match(regex))) {
           request.params = match.groups || {}
+          request.route = path?.slice(1)
           for (let handler of handlers) {
             if ((response = await handler(request.proxy || request, ...args)) !== undefined) return response
           }

@@ -66,38 +66,38 @@ describe('Router', () => {
     expect(router.routes.length).toBe(3) // accessible off the main router
   })
 
-it('allows preloading advanced routes', async () => {
-  const basicHandler = vi.fn(req => req.params)
-  const customHandler = vi.fn(req => req.params)
+  it('allows preloading advanced routes', async () => {
+    const basicHandler = vi.fn(req => req.params)
+    const customHandler = vi.fn(req => req.params)
 
-  const router = Router({
-                  routes: [
-                    [ 'GET', /^\/test\.(?<x>[^/]+)\/*$/, [basicHandler] ],
-                    [ 'GET', /^\/custom-(?<custom>\d{2,4})$/, [customHandler] ],
-                  ]
-                })
+    const router = Router({
+                    routes: [
+                      [ 'GET', /^\/test\.(?<x>[^/]+)\/*$/, [basicHandler] ],
+                      [ 'GET', /^\/custom-(?<custom>\d{2,4})$/, [customHandler] ],
+                    ]
+                  })
 
-  await router.handle(buildRequest({ path: '/test.a.b' }))
-  expect(basicHandler).toHaveReturnedWith({ x: 'a.b' })
+    await router.handle(buildRequest({ path: '/test.a.b' }))
+    expect(basicHandler).toHaveReturnedWith({ x: 'a.b' })
 
-  await router.handle(buildRequest({ path: '/custom-12345' }))
-  expect(customHandler).not.toHaveBeenCalled() // custom route mismatch
+    await router.handle(buildRequest({ path: '/custom-12345' }))
+    expect(customHandler).not.toHaveBeenCalled() // custom route mismatch
 
-  await router.handle(buildRequest({ path: '/custom-123' }))
-  expect(customHandler).toHaveReturnedWith({ custom: '123' }) // custom route hit
-})
+    await router.handle(buildRequest({ path: '/custom-123' }))
+    expect(customHandler).toHaveReturnedWith({ custom: '123' }) // custom route hit
+  })
 
-it('allows loading advanced routes after config', async () => {
-  const handler = vi.fn(req => req.params)
+  it('allows loading advanced routes after config', async () => {
+    const handler = vi.fn(req => req.params)
 
-  const router = Router()
+    const router = Router()
 
-  // allows manual loading (after config)
-  router.routes.push([ 'GET', /^\/custom2-(?<custom>\w\d{3})$/, [handler] ])
+    // allows manual loading (after config)
+    router.routes.push([ 'GET', /^\/custom2-(?<custom>\w\d{3})$/, [handler] ])
 
-  await router.handle(buildRequest({ path: '/custom2-a456' }))
-  expect(handler).toHaveReturnedWith({ custom: 'a456' }) // custom route hit
-})
+    await router.handle(buildRequest({ path: '/custom2-a456' }))
+    expect(handler).toHaveReturnedWith({ custom: 'a456' }) // custom route hit
+  })
 
   describe('.{method}(route: string, handler1: function, ..., handlerN: function)', () => {
     it('can accept multiple handlers (each mutates request)', async () => {
@@ -145,6 +145,23 @@ it('allows loading advanced routes after config', async () => {
       await router.handle(buildRequest({ path: '/foo' }))
 
       expect(route.callback).not.toHaveBeenCalled()
+    })
+
+    it('returns { method, route } from matched route', async () => {
+      const route1 = '/foo/bar/:baz+'
+      const route2 = '/items'
+      const handler = vi.fn(({ method, route }) => ({ method, route }))
+
+      const router = Router()
+      router
+        .get(route1, handler)
+        .post(route2, handler)
+
+      await router.handle(buildRequest({ path: route1, method: 'GET' }))
+      expect(handler).toHaveReturnedWith({ method: 'GET', route: route1 })
+
+      await router.handle(buildRequest({ path: route2, method: 'POST' }))
+      expect(handler).toHaveReturnedWith({ method: 'POST', route: route2 })
     })
 
     it('match earliest routes that match', async () => {
