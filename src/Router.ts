@@ -81,7 +81,7 @@ export const Router = ({ base = '', routes = [] }: RouterOptions = {}): RouterTy
       for (let [method, regex, handlers, path] of routes) {
         if ((method === request.method || method === 'ALL') && (match = url.pathname.match(regex))) {
           request.params = match.groups || {}
-          request.route = path?.slice(1)
+          request.route = path?.replace('//', '/')
           for (let handler of handlers) {
             if ((response = await handler(request.proxy || request, ...args)) !== undefined) return response
           }
