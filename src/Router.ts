@@ -46,42 +46,47 @@ export type RouteHandler<I = IRequest, A extends any[] = any[]> = {
 
 export type RouteEntry = [string, RegExp, RouteHandler[], string]
 
-export type Route = <RequestType = IRequest, Args extends any[] = any[], RT = RouterType>(
+// export type Route = <RequestType = IRequest, Args extends any[] = any[], RT = RouterType>(
+//   path: string,
+//   ...handlers: RouteHandler<RequestType, Args>[]
+// ) => RT
+
+export type Route<RequestType = IRequest, Args extends any[] = any[]> = {
+  (
+    path: string,
+    ...handlers: RouteHandler<RequestType, Args>[]
+  ): RouterType<RequestType>
+  }
+
+export type GenericRoute<RequestType = IRequest, Args extends any[] = any[]> = (
   path: string,
   ...handlers: RouteHandler<RequestType, Args>[]
-) => RT
+) => RouterType<RequestType>
 
-export type GenericRoute<RequestType = IRequest, Args extends any[] = any[], RT = RouterType> = (
-  path: string,
-  ...handlers: RouteHandler<RequestType, Args>[]
-) => RT
-
-export type RouterHints = {
-  all: Route,
-  delete: Route,
-  get: Route,
-  head: Route,
-  options: Route,
-  patch: Route,
-  post: Route,
-  put: Route,
-  [key: string]: Route,
+export type RouterHints<I> = {
+  all: Route<I>,
+  delete: Route<I>,
+  get: Route<I>,
+  head: Route<I>,
+  options: Route<I>,
+  patch: Route<I>,
+  post: Route<I>,
+  put: Route<I>,
+  [key: string]: Route<I>,
 }
 
-export type RouterType = {
-  __proto__: RouterType,
+export type RouterType<I> = {
   routes: RouteEntry[],
   handle: (request: RequestLike, ...extra: any) => Promise<any>
-} & RouterHints
+} & RouterHints<I>
 
 export const Router = <
   I = IRequest,
   Args extends any[] = any[],
-  RT = RouterType,
->({ base = '', routes = [] }: RouterOptions = {}): RT =>
+>({ base = '', routes = [] }: RouterOptions = {}): RouterType<I> =>
   // @ts-expect-error TypeScript doesn't know that Proxy makes this work
   ({
-    __proto__: new Proxy({} as RT, {
+    __proto__: new Proxy({}, {
       // @ts-expect-error (we're adding an expected prop "path" to the get)
       get: (target: any, prop: string, receiver: object, path: string) => (route: string, ...handlers: RouteHandler<I>[]) =>
         routes.push(

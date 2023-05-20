@@ -13,10 +13,6 @@ type BarRequest = {
   bar: string
 } & IRequest
 
-type MyRouter = {
-  puppy: Route
-} & RouterType
-
 type Env = {
   KV: string
 }
@@ -26,11 +22,14 @@ type CF = [
   ctx: ExecutionContext
 ]
 
-const router = Router<FooRequest, CF, MyRouter>({ base: '/' })
+// all of this is basically useless, but acting as a placeholder for hopefully an eventual fix
+const router = Router<FooRequest, CF>({ base: '/' })
 
 router
   // call custom HTTP method
-  .puppy('/cat', () => {})
+  .puppy('/cat', (request) => {
+    request.foo
+  })
 
   // standard request
   .get('*', (request, env: Env, ctx: ExecutionContext) => {
