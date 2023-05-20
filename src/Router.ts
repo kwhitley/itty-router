@@ -29,7 +29,7 @@ export type IRequest = {
     [key: string]: string | string[] | undefined,
   },
   proxy?: any,
-} & GenericTraps
+} & GenericTraps & Request
 
 export type RouterOptions = {
   base?: string

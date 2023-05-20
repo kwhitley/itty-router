@@ -13,9 +13,9 @@ type BarRequest = {
   bar: string
 } & IRequest
 
-type MyRouter = {
-  puppy: Route
-} & RouterType
+// type MyRouter = {
+//   puppy: Route
+// } & RouterType
 
 type Env = {
   KV: string
@@ -26,11 +26,14 @@ type CF = [
   ctx: ExecutionContext
 ]
 
-const router = Router<FooRequest, CF, MyRouter>({ base: '/' })
+const router = Router({ base: '/' })
 
 router
   // call custom HTTP method
-  .puppy('/cat', () => {})
+  .puppy('/cat', (request) => {
+    // supports standard Request by default
+    request.arrayBuffer()
+  })
 
   // standard request
   .get('*', (request, env: Env, ctx: ExecutionContext) => {
@@ -57,8 +60,8 @@ router
   })
 
   // how to return another custom router method
-  .get<FooRequest, CF, MyRouter>('*', (request) => {
-    const foo = request.foo
+  .get<FooRequest, CF>('*', (request) => {
+    request.foo
   })
 
   // call custom HTTP method again (to ensure preserved through chain)
