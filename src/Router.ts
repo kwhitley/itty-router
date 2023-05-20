@@ -63,7 +63,7 @@ export type RouterType = {
   handle: (request: RequestLike, ...extra: any) => Promise<any>
 } & RouterHints
 
-export const Router = <RT = RouterType, R = IRequest>({ base = '', routes = [] }: RouterOptions = {}): RT =>
+export const Router = <RT = RouterType>({ base = '', routes = [] }: RouterOptions = {}): RT =>
   // @ts-expect-error TypeScript doesn't know that Proxy makes this work
   ({
     __proto__: new Proxy({} as RT, {

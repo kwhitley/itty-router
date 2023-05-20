@@ -3,10 +3,7 @@ import {
   IRequest,             // lightweight/generic Request type
   RouterType,           // generic Router type
   Route,                // generic Route type
-  createCors,
-  json,
-  error,
-} from '../src'
+} from '../src/Router'
 
 type FooRequest = {
   foo: string
@@ -16,16 +13,11 @@ type MyRouter = {
   puppy: Route
 } & RouterType
 
-const router = <MyRouter>Router({ base: '/' })
+const router = Router<MyRouter>({ base: '/' })
 
 router
   // call custom HTTP method
   .puppy('/cat', () => {})
-
-
-  .get('/foo/:id', ({ id }) => {
-
-  })
 
   // custom request from handler
   .get('*', (request: FooRequest) => {
