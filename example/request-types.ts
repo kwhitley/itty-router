@@ -13,7 +13,7 @@ type MyRouter = {
   puppy: Route
 } & RouterType
 
-const router = Router<MyRouter>({ base: '/' })
+const router = Router<FooRequest, MyRouter>({ base: '/' })
 
 router
   // call custom HTTP method
@@ -21,7 +21,7 @@ router
 
   // custom request from handler
   .get('*', (request) => {
-    const foo = request.
+    const foo = request.proxy
   })
 
   // custom request from handler
@@ -35,7 +35,7 @@ router
   })
 
   // custom request and router from Route
-  .get<FooRequest, MyRouter>('*', (request) => {
+  .get<FooRequest>('*', (request) => {
     const foo = request.foo
   })
 

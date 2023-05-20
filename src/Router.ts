@@ -35,8 +35,8 @@ export type RouterOptions = {
   routes?: RouteEntry[]
 }
 
-export type RouteHandler<R = IRequest> = {
-  (request: R, ...args: any): any
+export type RouteHandler<I = IRequest> = {
+  (request: I, ...args: any): any
 }
 
 export type RouteEntry = [string, RegExp, RouteHandler[], string]
@@ -63,12 +63,12 @@ export type RouterType = {
   handle: (request: RequestLike, ...extra: any) => Promise<any>
 } & RouterHints
 
-export const Router = <RT = RouterType>({ base = '', routes = [] }: RouterOptions = {}): RT =>
+export const Router = <I = IRequest, RT = RouterType>({ base = '', routes = [] }: RouterOptions = {}): RT =>
   // @ts-expect-error TypeScript doesn't know that Proxy makes this work
   ({
     __proto__: new Proxy({} as RT, {
       // @ts-expect-error (we're adding an expected prop "path" to the get)
-      get: (target: any, prop: string, receiver: object, path: string) => (route: string, ...handlers: RouteHandler<R>[]) =>
+      get: (target: any, prop: string, receiver: object, path: string) => (route: string, ...handlers: RouteHandler<I>[]) =>
         routes.push(
           [
             prop.toUpperCase(),
