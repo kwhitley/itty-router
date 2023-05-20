@@ -9,6 +9,10 @@ type FooRequest = {
   foo: string
 } & IRequest
 
+type BarRequest = {
+  bar: string
+} & IRequest
+
 type MyRouter = {
   puppy: Route
 } & RouterType
@@ -26,6 +30,11 @@ router
 
   // custom request from handler
   .get('*', (request: FooRequest) => {
+    const foo = request.foo
+  })
+
+  // custom request from handler
+  .get('*', (request: BarRequest) => {
     const foo = request.foo
   })
 
