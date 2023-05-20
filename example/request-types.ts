@@ -56,10 +56,15 @@ router
     request.bar
   })
 
-  // custom request and router from Route
+  // how to return another custom router method
   .get<FooRequest, CF, MyRouter>('*', (request) => {
     const foo = request.foo
   })
 
   // call custom HTTP method again (to ensure preserved through chain)
   .puppy('/cat', () => {})
+
+  // undeclared HTTP method?
+  .kitten<FooRequest>('/', (request) => {
+    request.foo
+  })
