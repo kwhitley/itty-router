@@ -32,25 +32,28 @@ router
   // call custom HTTP method
   .puppy('/cat', () => {})
 
-  // custom request from handler
-  .get('*', (request) => {
-    const foo = request.proxy
+  // standard request
+  .get('*', (request, env: Env, ctx: ExecutionContext) => {
+    request.url
+    env.KV
+    ctx.waitUntil
   })
 
-  // custom request from handler
+  // custom request from handler argument
   .get('*', (request: FooRequest) => {
-    const foo = request.foo
+    request.foo
   })
 
-  // custom request from handler
+  // custom request from handler argument
   .get('*', (request: BarRequest) => {
-    const foo = request.bar
+    request.bar
   })
 
   // custom request from Route
   .get<BarRequest, CF>('*', (request, env, ctx) => {
+    env.KV
     ctx.waitUntil
-    const foo = request.bar
+    request.bar
   })
 
   // custom request and router from Route
