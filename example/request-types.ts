@@ -26,7 +26,7 @@ type CF = [
   ctx: ExecutionContext
 ]
 
-const router = Router<FooRequest, MyRouter>({ base: '/' })
+const router = Router<FooRequest, CF, MyRouter>({ base: '/' })
 
 router
   // call custom HTTP method
@@ -44,17 +44,17 @@ router
 
   // custom request from handler
   .get('*', (request: BarRequest) => {
-    const foo = request.foo
+    const foo = request.bar
   })
 
   // custom request from Route
-  .get<FooRequest, CF>('*', (request, env, ctx) => {
+  .get<BarRequest, CF>('*', (request, env, ctx) => {
     ctx.waitUntil
-    const foo = request.foo
+    const foo = request.bar
   })
 
   // custom request and router from Route
-  .get<FooRequest, [], MyRouter>('*', (request) => {
+  .get<FooRequest, CF, MyRouter>('*', (request) => {
     const foo = request.foo
   })
 
