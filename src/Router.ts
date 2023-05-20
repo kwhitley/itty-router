@@ -1,3 +1,14 @@
+/*
+TYPE REQUIREMENTS
+
+- ability to define custom methods on the router
+  - these should chain
+
+- ability to define custom request types on a route
+  - NICE TO HAVE: define request type for entire router
+
+*/
+
 export type GenericTraps = {
   [key: string]: any
 }
@@ -19,26 +30,27 @@ export type IRequest = {
   proxy?: any,
 } & GenericTraps
 
-export interface RouterOptions {
+export type RouterOptions = {
   base?: string
   routes?: RouteEntry[]
 }
 
-export interface RouteHandler {
-  (request: IRequest, ...args: any): any
+export type RouteHandler<R = IRequest> = {
+  (request: R, ...args: any): any
 }
 
 export type RouteEntry = [string, RegExp, RouteHandler[], string]
 
-export type Route = <T extends RouterType>(
+export type Route = <R = IRequest, RT = RouterType>(
   path: string,
-  ...handlers: RouteHandler[]
-) => T
+  ...handlers: RouteHandler<R>[]
+) => RT
 
 export type RouterHints = {
   all: Route,
   delete: Route,
   get: Route,
+  head: Route,
   options: Route,
   patch: Route,
   post: Route,
@@ -51,12 +63,12 @@ export type RouterType = {
   handle: (request: RequestLike, ...extra: any) => Promise<any>
 } & RouterHints
 
-export const Router = ({ base = '', routes = [] }: RouterOptions = {}): RouterType =>
+export const Router = <RT = RouterType, R = IRequest>({ base = '', routes = [] }: RouterOptions = {}): RT =>
   // @ts-expect-error TypeScript doesn't know that Proxy makes this work
   ({
-    __proto__: new Proxy({} as RouterType, {
+    __proto__: new Proxy({} as RT, {
       // @ts-expect-error (we're adding an expected prop "path" to the get)
-      get: (target: any, prop: string, receiver: object, path: string) => (route: string, ...handlers: RouteHandler[]) =>
+      get: (target: any, prop: string, receiver: object, path: string) => (route: string, ...handlers: RouteHandler<R>[]) =>
         routes.push(
           [
             prop.toUpperCase(),
