@@ -1,6 +1,7 @@
 import {
   Router,               // the router itself
   IRequest,             // lightweight/generic Request type
+  IRequestStrict,       // stricter Request type
   RouterType,           // generic Router type
   Route,                // generic Route type
 } from '../src/Router'
@@ -10,8 +11,8 @@ type FooRequest = {
 } & IRequest
 
 type BarRequest = {
-  bar: string
-} & IRequest
+  bar: number
+} & IRequestStrict
 
 // type MyRouter = {
 //   puppy: Route
@@ -52,11 +53,15 @@ router
     request.bar
   })
 
+  // custom request from handler argument
+  .get<BarRequest>('*', (request) => {
+    request.bar
+  })
+
   // custom request from Route
-  .get<BarRequest, CF>('*', (request, env, ctx) => {
+  .get<BarRequest, CF>('*', ({ bar }, env, ctx) => {
     env.KV
     ctx.waitUntil
-    request.bar
   })
 
   // how to return another custom router method

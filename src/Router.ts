@@ -10,7 +10,7 @@ TYPE REQUIREMENTS
 */
 
 export type GenericTraps = {
-  [key: string]: any
+  // [key: string]: any
 }
 
 export type RequestLike = {
@@ -18,7 +18,7 @@ export type RequestLike = {
   url: string,
 } & GenericTraps
 
-export type IRequest = {
+export type IRequestStrict = {
   method: string,
   url: string,
   route: string,
@@ -29,7 +29,9 @@ export type IRequest = {
     [key: string]: string | string[] | undefined,
   },
   proxy?: any,
-} & GenericTraps & Request
+} & Request
+
+export type IRequest = IRequestStrict & GenericTraps
 
 export type RouterOptions = {
   base?: string
