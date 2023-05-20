@@ -20,6 +20,11 @@ router
   .puppy('/cat', () => {})
 
   // custom request from handler
+  .get('*', (request) => {
+    const foo = request.
+  })
+
+  // custom request from handler
   .get('*', (request: FooRequest) => {
     const foo = request.foo
   })
