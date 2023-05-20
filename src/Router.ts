@@ -60,14 +60,14 @@ export const Router = ({ base = '', routes = [] }: RouterOptions = {}): RouterTy
         routes.push(
           [
             prop.toUpperCase(),
-            RegExp(`^${(path = (base + '/' + route).replace(/\/+(\/|$)/g, '$1'))
-              .replace(/(\/?\.?):(\w+)\+/g, '($1(?<$2>*))')      // greedy params
-              .replace(/(\/?\.?):(\w+)/g, '($1(?<$2>[^$1/]+?))') // named params and image format
-              .replace(/\./g, '\\.')                             // dot in path
-              .replace(/(\/?)\*/g, '($1.*)?')                    // wildcard
+            RegExp(`^${(path = (base + '/' + route).replace(/\/+(\/|$)/g, '$1'))  // strip double & trailing splash
+              .replace(/(\/?\.?):(\w+)\+/g, '($1(?<$2>*))')                       // greedy params
+              .replace(/(\/?\.?):(\w+)/g, '($1(?<$2>[^$1/]+?))')                  // named params and image format
+              .replace(/\./g, '\\.')                                              // dot in path
+              .replace(/(\/?)\*/g, '($1.*)?')                                     // wildcard
             }/*$`),
-            handlers,
-            path,
+            handlers,                                                             // embed handlers
+            path,                                                                 // embed clean route path
           ]
         ) && receiver
     }),
@@ -79,8 +79,8 @@ export const Router = ({ base = '', routes = [] }: RouterOptions = {}): RouterTy
       }
       for (let [method, regex, handlers, path] of routes) {
         if ((method === request.method || method === 'ALL') && (match = url.pathname.match(regex))) {
-          request.params = match.groups || {}
-          request.route = path
+          request.params = match.groups || {}                                     // embed params in request
+          request.route = path                                                    // embed route path in request
           for (let handler of handlers) {
             if ((response = await handler(request.proxy || request, ...args)) !== undefined) return response
           }

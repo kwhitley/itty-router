@@ -26,7 +26,8 @@
     "target": "esnext",
     "module": "esnext",
     "types": [
-      "@cloudflare/workers-types"
+      "@cloudflare/workers-types",
+      "@types/node"
 		],
   },
   "exclude": [
