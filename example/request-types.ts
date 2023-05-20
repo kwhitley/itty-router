@@ -17,6 +17,15 @@ type MyRouter = {
   puppy: Route
 } & RouterType
 
+type Env = {
+  KV: string
+}
+
+type CF = [
+  env: Env,
+  ctx: ExecutionContext
+]
+
 const router = Router<FooRequest, MyRouter>({ base: '/' })
 
 router
@@ -39,12 +48,13 @@ router
   })
 
   // custom request from Route
-  .get<FooRequest>('*', (request) => {
+  .get<FooRequest, CF>('*', (request, env, ctx) => {
+    ctx.waitUntil
     const foo = request.foo
   })
 
   // custom request and router from Route
-  .get<FooRequest>('*', (request) => {
+  .get<FooRequest, [], MyRouter>('*', (request) => {
     const foo = request.foo
   })
 

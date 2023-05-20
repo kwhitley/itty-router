@@ -35,15 +35,19 @@ export type RouterOptions = {
   routes?: RouteEntry[]
 }
 
-export type RouteHandler<I = IRequest> = {
-  (request: I, ...args: any): any
+// export type RouteHandler<I = IRequest> = {
+//   (request: I, ...args: any): any
+// }
+
+export type RouteHandler<I = IRequest, A extends any[] = any[]> = {
+  (request: I, ...args: A): any
 }
 
 export type RouteEntry = [string, RegExp, RouteHandler[], string]
 
-export type Route = <R = IRequest, RT = RouterType>(
+export type Route = <RequestType = IRequest, Args extends any[] = any[], RT = RouterType>(
   path: string,
-  ...handlers: RouteHandler<R>[]
+  ...handlers: RouteHandler<RequestType, Args>[]
 ) => RT
 
 export type RouterHints = {
