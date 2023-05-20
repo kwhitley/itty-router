@@ -3,7 +3,9 @@ import {
   IRequest,             // lightweight/generic Request type
   IRequestStrict,       // stricter Request type
   RouterType,           // generic Router type
+  RouteHandler,         // generic Router type
   Route,                // generic Route type
+  Strict,               // Strict mode router
 } from '../src/Router'
 
 type FooRequest = {
@@ -26,6 +28,26 @@ type CF = [
   env: Env,
   ctx: ExecutionContext
 ]
+
+type CustomRoute<RequestType = FooRequest, Args extends any[] = CF> = (
+  path: string,
+  ...handlers: RouteHandler<RequestType, Args>[]
+) => CustomRouterType
+
+type CustomRouterType<I = IRequest> = {
+  [key: string]: CustomRoute<I>
+} & RouterType
+
+
+const custom = Router<Strict<IRequest, CF>>()
+
+custom
+  .get('/', ({ bar, json }) => {
+    console.log('bar', bar)
+  })
+
+  .get('/foo/:bar', ({ }))
+
 
 const router = Router({ base: '/' })
 
@@ -59,7 +81,7 @@ router
   })
 
   // custom request from Route
-  .get<BarRequest, CF>('*', ({ bar }, env, ctx) => {
+  .get<BarRequest, CF>('*', ({ bar, foo }, env, ctx) => {
     env.KV
     ctx.waitUntil
   })

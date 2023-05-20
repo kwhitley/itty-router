@@ -10,7 +10,7 @@ TYPE REQUIREMENTS
 */
 
 export type GenericTraps = {
-  // [key: string]: any
+  [key: string]: any
 }
 
 export type RequestLike = {
@@ -53,37 +53,41 @@ export type Route = <RequestType = IRequest, Args extends any[] = any[], RT = Ro
   ...handlers: RouteHandler<RequestType, Args>[]
 ) => RT
 
-export type GenericRoute<RequestType = IRequest, Args extends any[] = any[], RT = RouterType> = (
+export type Strict<RequestType = IRequest, Args extends any[] = any[]> = (
   path: string,
+  custom: Equal<RequestType, IRequest> extends true ? false : true,
   ...handlers: RouteHandler<RequestType, Args>[]
-) => RT
+) => CustomRouterType
 
-export type RouterHints = {
-  all: Route,
-  delete: Route,
-  get: Route,
-  head: Route,
-  options: Route,
-  patch: Route,
-  post: Route,
-  put: Route,
-  [key: string]: Route,
+export type CustomRouterType<I = IRequest> = {
+  [key: string]: Strict<I>
+} & RouterType
+
+type Equal<X, Y> = (<T>() => T extends X ? 1 : 2) extends (<T>() => T extends Y ? 1 : 2) ? true : false;
+
+
+export type CustomRoutes<R = Route> = {
+  [key: string]: R,
 }
 
-export type RouterType = {
-  __proto__: RouterType,
+export type RouterType<R = Route> = {
+  __proto__: RouterType<R>,
   routes: RouteEntry[],
   handle: (request: RequestLike, ...extra: any) => Promise<any>
-} & RouterHints
+  all: R,
+  delete: R,
+  get: R,
+  head: R,
+  options: R,
+  patch: R,
+  post: R,
+  put: R,
+} & CustomRoutes<R>
 
-export const Router = <
-  I = IRequest,
-  Args extends any[] = any[],
-  RT = RouterType,
->({ base = '', routes = [] }: RouterOptions = {}): RT =>
+export const Router = <RouteType = Route>({ base = '', routes = [] }: RouterOptions = {}): RouterType<RouteType> =>
   // @ts-expect-error TypeScript doesn't know that Proxy makes this work
   ({
-    __proto__: new Proxy({} as RT, {
+    __proto__: new Proxy({}, {
       // @ts-expect-error (we're adding an expected prop "path" to the get)
       get: (target: any, prop: string, receiver: object, path: string) => (route: string, ...handlers: RouteHandler<I>[]) =>
         routes.push(
