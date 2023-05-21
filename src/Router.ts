@@ -44,16 +44,7 @@ export type Route = <RequestType = IRequest, Args extends any[] = any[], RT = Ro
 export type UniversalRoute<RequestType = IRequest, Args extends any[] = any[]> = (
   path: string,
   ...handlers: RouteHandler<RequestType, Args>[]
-) => RouterType<UniversalRoute<RequestType, Args>>
-
-// export type CustomRouterType<I = IRequest> = {
-//   routes: RouteEntry[],
-//   handle: (request: RequestLike, ...extra: any) => Promise<any>,
-// } & CustomRouterMethods<I>
-
-// export type CustomRouterMethods<I = IRequest> = {
-//   [key: string]: UniversalRoute<I>
-// }
+) => RouterType<UniversalRoute<RequestType, Args>, Args>
 
 type Equal<X, Y> = (<T>() => T extends X ? 1 : 2) extends (<T>() => T extends Y ? 1 : 2) ? true : false;
 type IsCustom<RequestType = IRequest, Args extends any[] = any[]> =
@@ -66,10 +57,10 @@ export type CustomRoutes<R = Route> = {
   [key: string]: R,
 }
 
-export type RouterType<R = Route> = {
+export type RouterType<R = Route, Args extends any[] = any[]> = {
   __proto__: RouterType<R>,
   routes: RouteEntry[],
-  handle: (request: RequestLike, ...extra: any) => Promise<any>
+  handle: (request: RequestLike, ...extra: Args) => Promise<any>
   all: R,
   delete: R,
   get: R,

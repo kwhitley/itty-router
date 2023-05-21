@@ -12,13 +12,10 @@ type FooRequest = {
   foo: string
 } & IRequest
 
+// extends IRequestStrict, meaning no undefined attributes off Request
 type BarRequest = {
   bar: number
 } & IRequestStrict
-
-// type MyRouter = {
-//   puppy: Route
-// } & RouterType
 
 type Env = {
   KV: string
@@ -29,16 +26,6 @@ type CF = [
   ctx: ExecutionContext
 ]
 
-type CustomRoute<RequestType = FooRequest, Args extends any[] = CF> = (
-  path: string,
-  ...handlers: RouteHandler<RequestType, Args>[]
-) => CustomRouterType
-
-type CustomRouterType<I = IRequest> = {
-  [key: string]: CustomRoute<I>
-} & RouterType
-
-
 // this router defines a global signature of <BarRequest, CF>
 const custom = Router<BarRequest, CF>()
 
@@ -48,13 +35,15 @@ custom
   })
 
   // should not be able to access request.foo
-  .get('/foo/:bar', (request, env) => {
+  .get('/foo/:bar', (request, env, ctx) => {
     request.bar
     request.foo
     env.KV
+    ctx.waitUntil
   })
 
-custom.handle()
+  .handle()
+
 
 
 const router = Router({ base: '/' })
