@@ -73,20 +73,17 @@ npm install itty-router@next
 ## Example
 ```js
 import { 
-  error,                  // create an error response
-  respondWithError,       // downstream handler for thrown errors
-  respondWithJSON,        // downstream handler to send data as JSON
-  Router,                 // the ~470 byte router itself
-  withParams,             // middleware to auto-embed route params
-  notFound,               // create a 404
+  error,                  // creates error responses
+  json,                   // creates json responses
+  Router,                 // the ~440 byte router itself
+  withParams,             // middleware: puts params directly on the Request
 } from 'itty-router'
 
 const router = Router()   // create a new Router
 const todos = []          // and some fake todos
 
 router
-  // add some global middleware
-  // withParams auto-parses route params into the request
+  // middleware: withParams auto-parses route params into the request
   .all('*', withParams) 
 
   // GET list of todos
@@ -95,18 +92,18 @@ router
   // GET single todo, by ID
   .get('/todos/:id', 
     ({ id }) => todos.find(todo => todo.id === id) 
-                || notFound('That todo was not found')
+                || error(404, 'That todo was not found')
   )
 
   // 404 for everything else
-  .all('*', notFound)
+  .all('*', () => error(404))
 
-// Example: Cloudflare ESM Worker syntax
+// Example: Cloudflare Worker module syntax
 export default {
-  fetch: (request, env, context) => router
-                                      .handle(request, env, context)
-                                      .then(respondWithJSON)    // automatically send as JSON
-                                      .catch(respondWithError)  // and send error Responses for thrown errors
+  fetch: (request, ...args) => router
+                                 .handle(request, ...args)
+                                 .then(json)    // automatically send as JSON
+                                 .catch(error)  // and send error Responses for thrown errors
 }
 ```
 
