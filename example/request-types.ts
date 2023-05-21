@@ -42,9 +42,7 @@ custom
     ctx.waitUntil
   })
 
-  .handle()
-
-
+  .handle({},
 
 const router = Router({ base: '/' })
 
@@ -95,6 +93,8 @@ router
   .kitten<FooRequest>('/', (request) => {
     request.foo
   })
+
+  .handle<CF>({ method: 'GET', url: 'foo.bar' }, {}, 'asd')
 
 type CFfetch = [
   request: Request,

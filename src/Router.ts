@@ -56,7 +56,7 @@ export type CustomRoutes<R = Route> = {
 export type RouterType<R = Route, Args extends any[] = any[]> = {
   __proto__: RouterType<R>,
   routes: RouteEntry[],
-  handle: <A extends any[] = Args>(request: RequestLike, ...extra: A) => Promise<any>
+  handle: <A extends any[] = Args>(request: RequestLike, ...extra: Equal<R, Route> extends true ? A : Args) => Promise<any>
   all: R,
   delete: R,
   get: R,
@@ -71,7 +71,7 @@ export const Router = <
   RequestType = IRequest,
   Args extends any[] = any[],
   RouteType = Equal<RequestType, IRequest> extends true ? Route : UniversalRoute<RequestType, Args>
->({ base = '', routes = [] }: RouterOptions = {}): RouterType<RouteType> =>
+>({ base = '', routes = [] }: RouterOptions = {}): RouterType<RouteType, Args> =>
   // @ts-expect-error TypeScript doesn't know that Proxy makes this work
   ({
     __proto__: new Proxy({}, {
