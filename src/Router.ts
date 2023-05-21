@@ -56,7 +56,7 @@ export type CustomRoutes<R = Route> = {
 export type RouterType<R = Route, Args extends any[] = any[]> = {
   __proto__: RouterType<R>,
   routes: RouteEntry[],
-  handle: <A extends any[] = Args>(request: RequestLike, ...extra: Equal<R, Route> extends true ? A : Args) => Promise<any>
+  handle: <A extends any[] = Args>(request: RequestLike, ...extra: Equal<R, Args> extends true ? A : Args) => Promise<any>
   all: R,
   delete: R,
   get: R,

@@ -1,8 +1,9 @@
 import {
   IRequest,
   IRequestStrict,
-  Router
-} from '../src/Router'
+  Router,
+  createCors,
+} from '../src'
 
 type FooRequest = {
   foo: string
@@ -25,10 +26,10 @@ type CF = [
 // this router defines a global signature of <BarRequest, CF>
 const custom = Router<BarRequest, CF>()
 
+const { preflight, corsify } = createCors()
+
 custom
-  .get('/',({ bar, json }) => {
-    console.log('bar', bar)
-  })
+  .all('*', preflight)
 
   // should not be able to access request.foo
   .get('/foo/:bar', (request, env, ctx) => {
@@ -38,11 +39,11 @@ custom
     ctx.waitUntil
   })
 
-  .handle({},
-
 const router = Router({ base: '/' })
 
 router
+  .all('*', preflight)
+
   // call custom HTTP method
   .puppy('/cat', (request) => {
     // supports standard Request by default
