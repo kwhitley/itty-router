@@ -5,7 +5,7 @@ import {
   RouterType,           // generic Router type
   RouteHandler,         // generic Router type
   Route,                // generic Route type
-  Strict,               // Strict mode router
+  UniversalRoute,       // universal router
 } from '../src/Router'
 
 type FooRequest = {
@@ -39,14 +39,22 @@ type CustomRouterType<I = IRequest> = {
 } & RouterType
 
 
-const custom = Router<Strict<IRequest, CF>>()
+// this router defines a global signature of <BarRequest, CF>
+const custom = Router<BarRequest, CF>()
 
 custom
-  .get('/', ({ bar, json }) => {
+  .get('/',({ bar, json }) => {
     console.log('bar', bar)
   })
 
-  .get('/foo/:bar', ({ }))
+  // should not be able to access request.foo
+  .get('/foo/:bar', (request, env) => {
+    request.bar
+    request.foo
+    env.KV
+  })
+
+custom.handle()
 
 
 const router = Router({ base: '/' })

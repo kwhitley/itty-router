@@ -1,14 +1,3 @@
-/*
-TYPE REQUIREMENTS
-
-- ability to define custom methods on the router
-  - these should chain
-
-- ability to define custom request types on a route
-  - NICE TO HAVE: define request type for entire router
-
-*/
-
 export type GenericTraps = {
   [key: string]: any
 }
@@ -38,32 +27,39 @@ export type RouterOptions = {
   routes?: RouteEntry[]
 }
 
-// export type RouteHandler<I = IRequest> = {
-//   (request: I, ...args: any): any
-// }
-
 export type RouteHandler<I = IRequest, A extends any[] = any[]> = {
   (request: I, ...args: A): any
 }
 
 export type RouteEntry = [string, RegExp, RouteHandler[], string]
 
+// this is the generic "Route", which allows per-route overrides
 export type Route = <RequestType = IRequest, Args extends any[] = any[], RT = RouterType>(
   path: string,
   ...handlers: RouteHandler<RequestType, Args>[]
 ) => RT
 
-export type Strict<RequestType = IRequest, Args extends any[] = any[]> = (
+// this is an alternative UniveralRoute, accepting generics (from upstream), but without
+// per-route overrides
+export type UniversalRoute<RequestType = IRequest, Args extends any[] = any[]> = (
   path: string,
-  custom: Equal<RequestType, IRequest> extends true ? false : true,
   ...handlers: RouteHandler<RequestType, Args>[]
-) => CustomRouterType
+) => RouterType<UniversalRoute<RequestType, Args>>
 
-export type CustomRouterType<I = IRequest> = {
-  [key: string]: Strict<I>
-} & RouterType
+// export type CustomRouterType<I = IRequest> = {
+//   routes: RouteEntry[],
+//   handle: (request: RequestLike, ...extra: any) => Promise<any>,
+// } & CustomRouterMethods<I>
+
+// export type CustomRouterMethods<I = IRequest> = {
+//   [key: string]: UniversalRoute<I>
+// }
 
 type Equal<X, Y> = (<T>() => T extends X ? 1 : 2) extends (<T>() => T extends Y ? 1 : 2) ? true : false;
+type IsCustom<RequestType = IRequest, Args extends any[] = any[]> =
+    Equal<RequestType, IRequest> extends true ?
+    (Equal<Args, any[]> extends true ? false : true)
+    : true
 
 
 export type CustomRoutes<R = Route> = {
@@ -84,7 +80,11 @@ export type RouterType<R = Route> = {
   put: R,
 } & CustomRoutes<R>
 
-export const Router = <RouteType = Route>({ base = '', routes = [] }: RouterOptions = {}): RouterType<RouteType> =>
+export const Router = <
+  RequestType = IRequest,
+  Args extends any[] = any[],
+  RouteType = Equal<RequestType, IRequest> extends true ? Route : UniversalRoute<RequestType, Args>
+>({ base = '', routes = [] }: RouterOptions = {}): RouterType<RouteType> =>
   // @ts-expect-error TypeScript doesn't know that Proxy makes this work
   ({
     __proto__: new Proxy({}, {
