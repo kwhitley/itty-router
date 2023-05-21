@@ -43,6 +43,7 @@ export type RouterHints = {
   patch: Route,
   post: Route,
   put: Route,
+  head: Route,
 }
 
 export type RouterType = {
