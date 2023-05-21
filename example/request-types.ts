@@ -95,3 +95,13 @@ router
   .kitten<FooRequest>('/', (request) => {
     request.foo
   })
+
+type CFfetch = [
+  request: Request,
+  env: Env,
+  ctx: ExecutionContext
+]
+
+export default {
+  fetch: (...args: CFfetch) => router.handle(...args)
+}

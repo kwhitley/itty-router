@@ -46,12 +46,8 @@ export type UniversalRoute<RequestType = IRequest, Args extends any[] = any[]> =
   ...handlers: RouteHandler<RequestType, Args>[]
 ) => RouterType<UniversalRoute<RequestType, Args>, Args>
 
+// helper function to detect equality in types (used to detect custom Request on router)
 type Equal<X, Y> = (<T>() => T extends X ? 1 : 2) extends (<T>() => T extends Y ? 1 : 2) ? true : false;
-type IsCustom<RequestType = IRequest, Args extends any[] = any[]> =
-    Equal<RequestType, IRequest> extends true ?
-    (Equal<Args, any[]> extends true ? false : true)
-    : true
-
 
 export type CustomRoutes<R = Route> = {
   [key: string]: R,
@@ -60,7 +56,7 @@ export type CustomRoutes<R = Route> = {
 export type RouterType<R = Route, Args extends any[] = any[]> = {
   __proto__: RouterType<R>,
   routes: RouteEntry[],
-  handle: (request: RequestLike, ...extra: Args) => Promise<any>
+  handle: <A extends any[] = Args>(request: RequestLike, ...extra: A) => Promise<any>
   all: R,
   delete: R,
   get: R,
