@@ -3,20 +3,19 @@ import {
   IRequest,             // lightweight/generic Request type
   IRequestStrict,       // stricter Request type
   RouterType,           // generic Router type
+  RouteHandler,         // generic Router type
   Route,                // generic Route type
+  UniversalRoute,       // universal router
 } from '../src/Router'
 
 type FooRequest = {
   foo: string
 } & IRequest
 
+// extends IRequestStrict, meaning no undefined attributes off Request
 type BarRequest = {
   bar: number
 } & IRequestStrict
-
-// type MyRouter = {
-//   puppy: Route
-// } & RouterType
 
 type Env = {
   KV: string
@@ -26,6 +25,26 @@ type CF = [
   env: Env,
   ctx: ExecutionContext
 ]
+
+// this router defines a global signature of <BarRequest, CF>
+const custom = Router<BarRequest, CF>()
+
+custom
+  .get('/',({ bar, json }) => {
+    console.log('bar', bar)
+  })
+
+  // should not be able to access request.foo
+  .get('/foo/:bar', (request, env, ctx) => {
+    request.bar
+    request.foo
+    env.KV
+    ctx.waitUntil
+  })
+
+  .handle()
+
+
 
 const router = Router({ base: '/' })
 
@@ -59,7 +78,7 @@ router
   })
 
   // custom request from Route
-  .get<BarRequest, CF>('*', ({ bar }, env, ctx) => {
+  .get<BarRequest, CF>('*', ({ bar, foo }, env, ctx) => {
     env.KV
     ctx.waitUntil
   })
@@ -76,3 +95,13 @@ router
   .kitten<FooRequest>('/', (request) => {
     request.foo
   })
+
+type CFfetch = [
+  request: Request,
+  env: Env,
+  ctx: ExecutionContext
+]
+
+export default {
+  fetch: (...args: CFfetch) => router.handle(...args)
+}

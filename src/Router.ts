@@ -1,16 +1,5 @@
-/*
-TYPE REQUIREMENTS
-
-- ability to define custom methods on the router
-  - these should chain
-
-- ability to define custom request types on a route
-  - NICE TO HAVE: define request type for entire router
-
-*/
-
 export type GenericTraps = {
-  // [key: string]: any
+  [key: string]: any
 }
 
 export type RequestLike = {
@@ -38,52 +27,54 @@ export type RouterOptions = {
   routes?: RouteEntry[]
 }
 
-// export type RouteHandler<I = IRequest> = {
-//   (request: I, ...args: any): any
-// }
-
 export type RouteHandler<I = IRequest, A extends any[] = any[]> = {
   (request: I, ...args: A): any
 }
 
 export type RouteEntry = [string, RegExp, RouteHandler[], string]
 
+// this is the generic "Route", which allows per-route overrides
 export type Route = <RequestType = IRequest, Args extends any[] = any[], RT = RouterType>(
   path: string,
   ...handlers: RouteHandler<RequestType, Args>[]
 ) => RT
 
-export type GenericRoute<RequestType = IRequest, Args extends any[] = any[], RT = RouterType> = (
+// this is an alternative UniveralRoute, accepting generics (from upstream), but without
+// per-route overrides
+export type UniversalRoute<RequestType = IRequest, Args extends any[] = any[]> = (
   path: string,
   ...handlers: RouteHandler<RequestType, Args>[]
-) => RT
+) => RouterType<UniversalRoute<RequestType, Args>, Args>
 
-export type RouterHints = {
-  all: Route,
-  delete: Route,
-  get: Route,
-  head: Route,
-  options: Route,
-  patch: Route,
-  post: Route,
-  put: Route,
-  [key: string]: Route,
+// helper function to detect equality in types (used to detect custom Request on router)
+type Equal<X, Y> = (<T>() => T extends X ? 1 : 2) extends (<T>() => T extends Y ? 1 : 2) ? true : false;
+
+export type CustomRoutes<R = Route> = {
+  [key: string]: R,
 }
 
-export type RouterType = {
-  __proto__: RouterType,
+export type RouterType<R = Route, Args extends any[] = any[]> = {
+  __proto__: RouterType<R>,
   routes: RouteEntry[],
-  handle: (request: RequestLike, ...extra: any) => Promise<any>
-} & RouterHints
+  handle: <A extends any[] = Args>(request: RequestLike, ...extra: A) => Promise<any>
+  all: R,
+  delete: R,
+  get: R,
+  head: R,
+  options: R,
+  patch: R,
+  post: R,
+  put: R,
+} & CustomRoutes<R>
 
 export const Router = <
-  I = IRequest,
+  RequestType = IRequest,
   Args extends any[] = any[],
-  RT = RouterType,
->({ base = '', routes = [] }: RouterOptions = {}): RT =>
+  RouteType = Equal<RequestType, IRequest> extends true ? Route : UniversalRoute<RequestType, Args>
+>({ base = '', routes = [] }: RouterOptions = {}): RouterType<RouteType> =>
   // @ts-expect-error TypeScript doesn't know that Proxy makes this work
   ({
-    __proto__: new Proxy({} as RT, {
+    __proto__: new Proxy({}, {
       // @ts-expect-error (we're adding an expected prop "path" to the get)
       get: (target: any, prop: string, receiver: object, path: string) => (route: string, ...handlers: RouteHandler<I>[]) =>
         routes.push(
