@@ -7,7 +7,7 @@
 <p>
 
 ---
-<h3 align="center"><a href="https://itty.dev/itty-router">4.x Documentation @ itty.dev</a></h3>
+<h3 align="center"><a href="https://itty.dev/itty-router">v4.x Documentation @ itty.dev</a></h3>
 
 <p align="center">
   <a href="https://npmjs.com/package/itty-router" target="_blank">
