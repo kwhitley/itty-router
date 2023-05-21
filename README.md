@@ -74,16 +74,17 @@ npm install itty-router@next
 ```js
 import { 
   error,                  // creates error responses
-  json,                   // creates json responses
+  json,                   // creates JSON responses
   Router,                 // the ~440 byte router itself
   withParams,             // middleware: puts params directly on the Request
 } from 'itty-router'
+import { todos } from './external/todos'
 
-const router = Router()   // create a new Router
-const todos = []          // and some fake todos
+// create a new Router
+const router = Router()   
 
 router
-  // middleware: withParams auto-parses route params into the request
+  // add some middleware upstream on all routes
   .all('*', withParams) 
 
   // GET list of todos
@@ -91,8 +92,7 @@ router
 
   // GET single todo, by ID
   .get('/todos/:id', 
-    ({ id }) => todos.find(todo => todo.id === id) 
-                || error(404, 'That todo was not found')
+    ({ id }) => todos.getById(id) || error(404, 'That todo was not found')
   )
 
   // 404 for everything else
@@ -102,8 +102,8 @@ router
 export default {
   fetch: (request, ...args) => router
                                  .handle(request, ...args)
-                                 .then(json)    // automatically send as JSON
-                                 .catch(error)  // and send error Responses for thrown errors
+                                 .then(json)    // send as JSON
+                                 .catch(error)  // catch errors
 }
 ```
 
