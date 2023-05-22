@@ -8,13 +8,8 @@ export class StatusError extends Error {
   [key: string]: any
 
   constructor(status: number = 500, body?: StatusErrorObject | string) {
-    if (typeof body === 'object') {
-      super(body.error)
-      Object.assign(this, body)
-    } else {
-      super(body)
-    }
-
+    super(typeof body === 'object' ? body.error : body)
+    typeof body === 'object' && Object.assign(this, body)
     this.status = status
   }
 }
