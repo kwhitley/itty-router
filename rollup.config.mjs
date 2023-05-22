@@ -20,16 +20,16 @@ export default async () => {
               {
                 format: 'esm',
                 file: path.replace('/src/', '/dist/').replace('.ts', '.js'),
-                // exports: 'named',
+                // sourcemap: true,
               },
               {
                 format: 'cjs',
                 file: path.replace('/src/', '/dist/cjs/').replace('.ts', '.js'),
-                // exports: 'named',
+                // sourcemap: true,
               },
             ],
             plugins: [
-              typescript(),
+              typescript({ sourceMap: false }),
               terser(),
               bundleSize(),
             ],
