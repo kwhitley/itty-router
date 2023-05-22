@@ -1,17 +1,22 @@
 import 'isomorphic-fetch'
 import { describe, expect, it } from 'vitest'
 import { status } from './status'
-import {setCookie} from "./setCookie";
+import {setCookies} from "./setCookies";
 
-describe('setCookie("name", "value"): Response', () => {
+describe('setCookies("name", "value"): Response', () => {
   it('creates a response with the set-cookie header', async () => {
     const response = status(200)
-    setCookie(response, "name", "value")
+    setCookies(response, {name: "name", value: "value"})
     expect(response.headers.get("set-cookie")).toBe("name=value")
+  })
+  it('creates a response with multiple set-cookie headers', async () => {
+    const response = status(200)
+    setCookies(response, {name: "name", value: "value"}, {name: "name2", value: "value2"})
+    expect(response.headers.get("set-cookie")).toBe("name=value, name2=value2")
   })
   it('creates a response with the set-cookie header using options', async () => {
     const response = status(200)
-    setCookie(response, "name", "value", {
+    setCookies(response, {name: "name", value: "value",
       httpOnly: true,
       secure: true,
     })
@@ -20,7 +25,7 @@ describe('setCookie("name", "value"): Response', () => {
   it('creates a response with the set-cookie header using all options', async () => {
     const response = status(200)
     const now = new Date();
-    setCookie(response, "name", "value", {
+    setCookies(response, {name: "name", value: "value",
       httpOnly: true,
       secure: true,
       expires: now,
