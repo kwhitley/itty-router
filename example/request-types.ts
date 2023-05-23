@@ -32,21 +32,26 @@ custom
 
   // should not be able to access request.foo
   .get('/foo/:bar', (request, env, ctx) => {
+    request.params
     request.bar
     request.foo
     env.KV
     ctx.waitUntil
   })
 
-  .handle({},
-
 const router = Router({ base: '/' })
 
 router
   // call custom HTTP method
-  .puppy('/cat', (request) => {
+  .puppy('/cat/:id', (request) => {
     // supports standard Request by default
-    request.arrayBuffer()
+    request.headers   // valid
+    request.foo       // valid (generic traps)
+  })
+  .puppy<IRequestStrict>('/cat/:id', (request) => {
+    // supports standard Request by default
+    request.headers   // valid
+    request.foo       // invalid
   })
 
   // standard request

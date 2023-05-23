@@ -1,7 +1,7 @@
 {
   "name": "itty-router",
-  "version": "4.0.0-next.52",
-  "description": "Tiny, zero-dependency API router - built for Cloudflare Workers, but works everywhere!",
+  "version": "4.0.0-next.53",
+  "description": "A tiny, zero-dependency router, designed to make beautiful APIs in any environment.",
   "type": "module",
   "main": "./index.js",
   "keywords": [
@@ -41,7 +41,7 @@
   "bugs": {
     "url": "https://github.com/kwhitley/itty-router/issues"
   },
-  "homepage": "https://itty-router.dev",
+  "homepage": "https://itty.dev/itty-router",
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20221111.1",
     "@rollup/plugin-multi-entry": "^6.0.0",
