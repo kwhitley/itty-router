@@ -7,9 +7,10 @@ export type RequestLike = {
   url: string,
 } & GenericTraps
 
-export type IRequest = {
+export type IRequestStrict = {
   method: string,
   url: string,
+  route: string,
   params: {
     [key: string]: string,
   },
@@ -17,56 +18,78 @@ export type IRequest = {
     [key: string]: string | string[] | undefined,
   },
   proxy?: any,
-} & GenericTraps
+} & Request
 
-export interface RouterOptions {
+export type IRequest = IRequestStrict & GenericTraps
+
+export type RouterOptions = {
   base?: string
   routes?: RouteEntry[]
 }
 
-export interface RouteHandler {
-  (request: IRequest, ...args: any): any
+export type RouteHandler<I = IRequest, A extends any[] = any[]> = {
+  (request: I, ...args: A): any
 }
 
-export type RouteEntry = [string, RegExp, RouteHandler[]]
+export type RouteEntry = [string, RegExp, RouteHandler[], string]
 
-export type Route = <T extends RouterType>(
+// this is the generic "Route", which allows per-route overrides
+export type Route = <RequestType = IRequest, Args extends any[] = any[], RT = RouterType>(
   path: string,
-  ...handlers: RouteHandler[]
-) => T
+  ...handlers: RouteHandler<RequestType, Args>[]
+) => RT
 
-export type RouterHints = {
-  all: Route,
-  delete: Route,
-  get: Route,
-  options: Route,
-  patch: Route,
-  post: Route,
-  put: Route,
+// this is an alternative UniveralRoute, accepting generics (from upstream), but without
+// per-route overrides
+export type UniversalRoute<RequestType = IRequest, Args extends any[] = any[]> = (
+  path: string,
+  ...handlers: RouteHandler<RequestType, Args>[]
+) => RouterType<UniversalRoute<RequestType, Args>, Args>
+
+// helper function to detect equality in types (used to detect custom Request on router)
+type Equal<X, Y> = (<T>() => T extends X ? 1 : 2) extends (<T>() => T extends Y ? 1 : 2) ? true : false;
+
+export type CustomRoutes<R = Route> = {
+  [key: string]: R,
 }
 
-export type RouterType = {
-  __proto__: RouterType,
+export type RouterType<R = Route, Args extends any[] = any[]> = {
+  __proto__: RouterType<R>,
   routes: RouteEntry[],
-  handle: (request: RequestLike, ...extra: any) => Promise<any>
-} & RouterHints
+  handle: <A extends any[] = Args>(request: RequestLike, ...extra: Equal<R, Args> extends true ? A : Args) => Promise<any>
+  all: R,
+  delete: R,
+  get: R,
+  head: R,
+  options: R,
+  patch: R,
+  post: R,
+  put: R,
+} & CustomRoutes<R>
 
-export const Router = ({ base = '', routes = [] }: RouterOptions = {}): RouterType =>
+export const Router = <
+  RequestType = IRequest,
+  Args extends any[] = any[],
+  RouteType = Equal<RequestType, IRequest> extends true ? Route : UniversalRoute<RequestType, Args>
+>({ base = '', routes = [] }: RouterOptions = {}): RouterType<RouteType, Args> =>
   // @ts-expect-error TypeScript doesn't know that Proxy makes this work
   ({
-    __proto__: new Proxy({} as RouterType, {
-      get: (target, prop: string, receiver) => (route: string, ...handlers: RouteHandler[]) =>
-        routes.push([
-          prop.toUpperCase(),
-            RegExp(`^${(base + '/' + route)
-            .replace(/\/+(\/|$)/g, '$1')                       // remove multiple/trailing slash
-            .replace(/(\/?\.?):(\w+)\+/g, '($1(?<$2>*))')      // greedy params
-            .replace(/(\/?\.?):(\w+)/g, '($1(?<$2>[^$1/]+?))') // named params and image format
-            .replace(/\./g, '\\.')                             // dot in path
-            .replace(/(\/?)\*/g, '($1.*)?')                    // wildcard
-          }/*$`),
-          handlers,
-        ]) && receiver
+    __proto__: new Proxy({}, {
+      // @ts-expect-error (we're adding an expected prop "path" to the get)
+      get: (target: any, prop: string, receiver: object, path: string) => (route: string, ...handlers: RouteHandler<I>[]) =>
+        routes.push(
+          [
+            prop.toUpperCase(),
+            RegExp(`^${(path = (base + '/' + route).replace(/\/+(\/|$)/g, '$1'))  // strip double & trailing splash
+              .replace(/(\/?\.?):(\w+)\+/g, '($1(?<$2>*))')                       // greedy params
+              .replace(/(\/?\.?):(\w+)/g, '($1(?<$2>[^$1/]+?))')                  // named params and image format
+              .replace(/\./g, '\\.')                                              // dot in path
+              .replace(/(\/?)\*/g, '($1.*)?')                                     // wildcard
+            }/*$`),
+            handlers,                                                             // embed handlers
+            path,                                                                 // embed clean route path
+          ]
+        ) && receiver
     }),
     routes,
     async handle (request: RequestLike, ...args)  {
@@ -74,9 +97,10 @@ export const Router = ({ base = '', routes = [] }: RouterOptions = {}): RouterTy
       for (let [k, v] of url.searchParams) {
         query[k] = query[k] === undefined ? v : [query[k], v].flat()
       }
-      for (let [method, route, handlers] of routes) {
-        if ((method === request.method || method === 'ALL') && (match = url.pathname.match(route))) {
-          request.params = match.groups || {}
+      for (let [method, regex, handlers, path] of routes) {
+        if ((method === request.method || method === 'ALL') && (match = url.pathname.match(regex))) {
+          request.params = match.groups || {}                                     // embed params in request
+          request.route = path                                                    // embed route path in request
           for (let handler of handlers) {
             if ((response = await handler(request.proxy || request, ...args)) !== undefined) return response
           }
@@ -84,70 +108,3 @@ export const Router = ({ base = '', routes = [] }: RouterOptions = {}): RouterTy
       }
     }
   })
-
-// type CustomMethods = {
-//   foo?: Route,
-//   bar?: Route,
-// }
-
-// // const router = Router() as RouterType & CustomMethods
-
-// // router.foo()
-
-
-// type RequestWithAuthors = {
-//   authors?: string[]
-// } & IRequest
-
-// // middleware: adds authors to the request
-// const addAuthors = (request) => {
-//   request.authors = ['foo', 'bar']
-// }
-
-
-// const router = Router()
-
-// type BooksResponse = {
-//   books: string[]
-// }
-
-// // FAILING EXAMPLE
-// router.get('books', (request): BooksResponse => {
-//   request.foo = 'asd'
-
-//   return false // fails to return a Response with books
-// })
-
-// // PASSING EXAMPLE
-// router.get('books', (request): BooksResponse => {
-//   request.foo = 'asd'
-
-//   return {
-//     books: ['foo', 'bar'] // passes!
-//   }
-// })
-
-// const router = Router()
-// router.routes.push(['GET', /gsadfa/, []])
-
-// type MyTraps = {
-//   foo?: Route;
-// }
-
-// const router = Router() as RouterType & MyTraps;
-
-
-/*
-
-{
-  name: string,
-  age: number,
-  handler: (name: string) => any,
-
-  ?? => Route
-  ?? => Route
-  ?? => Route
-}
-
-
-*/

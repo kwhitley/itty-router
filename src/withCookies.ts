@@ -1,19 +1,13 @@
 import { IRequest } from './Router'
 
-type KVPair = [key: string, value: string]
+type KVPair = [string, string?]
 
-type CookieObject = {
-  [key: string]: string
-}
+type CookieObject = Record<string, string>
 
 // withCookies - embeds cookies object into the request
-export const withCookies = (request: IRequest): void => {
-  request.cookies = (request.headers.get('Cookie') || '')
+export const withCookies = (r: IRequest): void => {
+  r.cookies = (r.headers.get('Cookie') || '')
     .split(/;\s*/)
-    .map((pair: string): string[] => pair.split(/=(.+)/))
-    .reduce((acc: CookieObject, [key, value]: KVPair) => {
-      acc[key] = value
-
-      return acc
-    }, {})
+    .map((p: string): KVPair => p.split(/=(.+)/) as KVPair)
+    .reduce((a: CookieObject, [k, v]: KVPair) => (v ? (a[k] = v, a) : a), {});
 }
