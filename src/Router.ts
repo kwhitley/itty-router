@@ -93,7 +93,7 @@ export const Router = <
     }),
     routes,
     async handle (request: RequestLike, ...args)  {
-      let response, match, url = new URL(request.url), query: any = request.query = {}
+      let response, match, url = new URL(request.url), query: any = request.query = { __proto__: null }
       for (let [k, v] of url.searchParams) {
         query[k] = query[k] === undefined ? v : [query[k], v].flat()
       }

@@ -133,9 +133,19 @@ describe('Router', () => {
       const route = routes.find(r => r.path === '/foo/:id')
       await router.handle(buildRequest({ path: '/foo/13?foo=bar&cat=dog' }))
 
-      expect(route.callback).toHaveReturnedWith({
+      expect(route?.callback).toHaveReturnedWith({
         params: { id: '13' },
         query: { foo: 'bar', cat: 'dog' },
+      })
+    })
+
+    it('BUG: avoids toString prototype bug', async () => {
+      const route = routes.find(r => r.path === '/foo/:id')
+      await router.handle(buildRequest({ path: '/foo/13?toString=value' }))
+
+      expect(route?.callback).toHaveReturnedWith({
+        params: { id: '13' },
+        query: { toString: 'value' },
       })
     })
 
