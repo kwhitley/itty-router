@@ -11,6 +11,8 @@
     "workers",
     "worker",
     "serverless",
+    "cors",
+    "middleware",
     "rest",
     "serviceworker",
     "nested"
