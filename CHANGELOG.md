@@ -1,8 +1,11 @@
 ## Changelog
-Until this library makes it to a production release of v1.x, **minor versions may contain breaking changes to the API**.  After v1.x, semantic versioning will be honored, and breaking changes will only occur under the umbrella of a major version bump.
 
-[@SupremeTechnopriest)(https://github.com/SupremeTechnopriest) - improved TypeScript support and documentation! :D\
-
+- **v4.0.00** - Partial changelog below
+  - BREAKING: heavy TS rewrite for core Router (thank you, ChatGPT)
+  - added: nearly all extras from itty-router-extras
+  - added: createCors from itty-cors 
+  - added: complete documentation at https://itty.dev
+  - feature: withParams may be used as upstream middleware (hooray!)  
 - **v3.0.11** - changed environment build to rollup (from tsup) and code golfed the toQuery logic. (credit [@DrLoopFall](https://github.com/DrLoopFall))
 - **v3.0.9** - fixes some TS issue, previously requiring you to define Router Methods to chain request definitions. (credit [@jahands](https://github.com/jahands))
 - **v3.0.0** - total TS conversion with improved types, adding greedy params (credit [@markusahlstrand](https://github.com/markusahlstrand))

@@ -122,14 +122,7 @@ Join us on [Discord](https://discord.com/channels/832353585802903572)!
 1. Submit PR with a detailed description of what you're doing
 1. I'll add you to the credits! :)
 
-## Special Thanks
-This repo goes out to my past and present colleagues at Arundo - who have brought me such inspiration, fun,
-and drive over the last couple years.  In particular, the absurd brevity of this code is thanks to a
-clever [abuse] of `Proxy`, courtesy of the brilliant [@mvasigh](https://github.com/mvasigh).
-This trick allows methods (e.g. "get", "post") to by defined dynamically by the router as they are requested,
-**drastically** reducing boilerplate.
-
-## Contributors
+## Special Thanks: Contributors
 These folks are the real heroes, making open source the powerhouse that it is!  Help out and get your name added to this list! <3
 
 #### Core Concepts
