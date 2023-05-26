@@ -1,11 +1,9 @@
-
-
 <p align="center">
   <a href="https://itty.dev/itty-router">
-     <img src="https://user-images.githubusercontent.com/865416/146679767-16be95b4-5dd7-4bcf-aed7-b8aa8c828f48.png" alt="Itty Router" />
+     <img src="https://github.com/kwhitley/itty-router/assets/865416/7751dac0-2dc8-4754-8b39-d08fc2144b4f" alt="Itty Router" />
   </a>
 <p>
-
+  
 ---
 <h3 align="center"><a href="https://itty.dev/itty-router">v4.x Documentation @ itty.dev</a></h3>
 
