@@ -1,6 +1,6 @@
 {
   "name": "itty-router",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "description": "A tiny, zero-dependency router, designed to make beautiful APIs in any environment.",
   "type": "module",
   "main": "./index.js",
@@ -30,7 +30,7 @@
     "build:core": "rollup -c",
     "build:extras": "rollup --config rollup.config.extras.mjs",
     "build": "rollup -c",
-    "release": "release --tag --push --src=dist",
+    "release": "release --tag --push --patch --src=dist",
     "runtime:bun": "bun example/bun.ts",
     "runtime:node": "node example/node.js"
   },
