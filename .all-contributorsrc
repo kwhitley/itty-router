@@ -1,0 +1,15 @@
+{
+  "projectName": "itty-router",
+  "projectOwner": "kwhitley",
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 75,
+  "commit": true,
+  "commitConvention": "eslint",
+  "contributors": [],
+  "contributorsPerLine": 7,
+  "linkToUsage": false
+}
