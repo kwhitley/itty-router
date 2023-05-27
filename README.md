@@ -67,7 +67,7 @@ Complete docs/API are available at [itty.dev](https://itty.dev/itty-router), or 
 
 ## Installation
 ```
-npm install itty-router@next
+npm install itty-router
 ```
 
 ## Example
