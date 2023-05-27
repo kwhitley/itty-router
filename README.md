@@ -1,7 +1,4 @@
 <p align="center">
-<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-0-orange.svg?style=flat-square)](#contributors-)
-<!-- ALL-CONTRIBUTORS-BADGE:END -->
   <a href="https://itty.dev/itty-router">
      <img src="https://github.com/kwhitley/itty-router/assets/865416/7751dac0-2dc8-4754-8b39-d08fc2144b4f" alt="Itty Router" />
   </a>
@@ -146,17 +143,3 @@ These folks are the real heroes, making open source the powerhouse that it is!  
   [@ddarkr](https://github.com/ddarkr),
   [@kclauson](https://github.com/kclauson),
   [@jcapogna](https://github.com/jcapogna)
-
-## Contributors ✨
-
-Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
-
-<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
-<!-- prettier-ignore-start -->
-<!-- markdownlint-disable -->
-<!-- markdownlint-restore -->
-<!-- prettier-ignore-end -->
-
-<!-- ALL-CONTRIBUTORS-LIST:END -->
-
-This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
