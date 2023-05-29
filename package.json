@@ -1,6 +1,6 @@
 {
   "name": "itty-router",
-  "version": "4.0.5",
+  "version": "4.0.6",
   "description": "A tiny, zero-dependency router, designed to make beautiful APIs in any environment.",
   "type": "module",
   "main": "./index.js",
@@ -69,6 +69,7 @@
     "rimraf": "^5.0.1",
     "rollup": "^3.23.0",
     "rollup-plugin-bundle-size": "^1.0.3",
+    "rollup-plugin-copy": "^3.4.0",
     "rollup-plugin-multi-input": "^1.4.1",
     "ts-node": "^10.9.1",
     "typescript": "^5.0.4",
