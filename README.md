@@ -13,8 +13,8 @@
   <a href="https://npmjs.com/package/itty-router" target="_blank">
     <img src="https://img.shields.io/npm/v/itty-router.svg?style=flat-square" alt="npm version" />
   </a>
-  <a href="https://bundlephobia.com/result?p=itty-router" target="_blank">
-    <img src="https://img.shields.io/bundlephobia/minzip/itty-router?style=flat-square" alt="bundle size" />
+  <a href="https://deno.bundlejs.com/?q=itty-router/Router" target="_blank">
+    <img src="https://deno.bundlejs.com/?q=itty-router/Router&badge&badge-style=flat-square" alt="bundle size" />
   </a>
   <a href="https://github.com/kwhitley/itty-router/actions/workflows/verify.yml" target="_blank">
     <img src="https://img.shields.io/github/actions/workflow/status/kwhitley/itty-router/verify.yml?branch=v4.x&style=flat-square" alt="build status" />
