@@ -10,6 +10,7 @@ Please explain the changes you made here.
 
 Select only one.
 
+- [ ] Maintenance or repo-level work (e.g. linting, build, tests, refactoring, etc.)
 - [ ] Bug fix (non-breaking change which fixes an issue)
 - [ ] New feature (non-breaking change which adds functionality)
 - [ ] Breaking change (fix or feature that would cause existing functionality to not work as expected)
