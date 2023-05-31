@@ -1,27 +1,12 @@
 import 'isomorphic-fetch'
 import { describe, expect, it, vi } from 'vitest'
 import { buildRequest, createTestRunner, extract } from '../test-utils'
-import { Router, Route, RouterType, RequestLike } from './Router'
+import { Route, Router, RouterType } from './Router'
 
 const ERROR_MESSAGE = 'Error Message'
 
 const testRoutes = createTestRunner(Router)
 
-type ALL = {
-  all: Route,
-}
-
-type GET = {
-  get: Route,
-}
-
-type PATCH = {
-  patch: Route,
-}
-
-type POST = {
-  post: Route,
-}
 describe('Router', () => {
   const router = Router()
 
@@ -348,7 +333,6 @@ describe('Router', () => {
 
     it('can throw method not allowed error', async () => {
       const router = Router()
-      const errorText = 'Not Allowed'
       const okText = 'OK'
       const errorResponse = new Response(JSON.stringify({ foo: 'bar' }), {
         headers: { 'content-type': 'application/json;charset=UTF-8' },
@@ -390,7 +374,6 @@ describe('Router', () => {
 
     it('can easily create a ThrowableRouter', async () => {
       const error = (status, message) => new Response(message, { status })
-      const errorResponse = err => error(err.status || 500, err.message)
 
       const ThrowableRouter = options => new Proxy(Router(options), {
         get: (obj, prop) => (...args) =>

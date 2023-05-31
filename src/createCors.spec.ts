@@ -14,7 +14,7 @@ describe('createCors(options)', () => {
 
   describe('options', () => {
     it('maxAge', async () => {
-      const { preflight, corsify } = createCors({
+      const { preflight } = createCors({
         maxAge: 60
       })
       const router = Router().all('*', preflight)
@@ -27,7 +27,6 @@ describe('createCors(options)', () => {
         }
       })
       const response = await router.handle(request)
-      const headers = Object.fromEntries(response.headers)
 
       expect(response.headers.get('Access-Control-Max-Age')).toBe('60')
     })
@@ -35,7 +34,7 @@ describe('createCors(options)', () => {
 
   describe('preflight (middleware)', () => {
     it('should handle options requests', async () => {
-      const { preflight, corsify } = createCors()
+      const { preflight } = createCors()
       const router = Router().all('*', preflight)
       const request = new Request('https://foo.bar', {
         method: 'OPTIONS',
@@ -51,7 +50,7 @@ describe('createCors(options)', () => {
     })
 
     it('should handle OPTIONS requests without standard headers via Allow (methods) header', async () => {
-      const { preflight, corsify } = createCors()
+      const { preflight } = createCors()
       const router = Router().all('*', preflight)
       const request = new Request('https://foo.bar', { method: 'OPTIONS' })
       const response = await router.handle(request)
@@ -68,10 +67,10 @@ describe('createCors(options)', () => {
                       .all('*', preflight)
                       .get('/foo', () => json(13))
       const request = new Request('https://foo.bar/miss')
-      const response = await router
-                                .handle(request)
-                                .then(corsify)
-                                .catch(catchError)
+      await router
+              .handle(request)
+              .then(corsify)
+              .catch(catchError)
 
       expect(catchError).toHaveBeenCalled()
     })
@@ -133,7 +132,7 @@ describe('createCors(options)', () => {
     })
 
     describe('repeated use', () => {
-      const { preflight, corsify } = createCors()
+      const { preflight } = createCors()
       const router = Router().all('*', preflight)
       const origin = 'http://localhost:3000'
 
