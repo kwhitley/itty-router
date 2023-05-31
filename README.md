@@ -53,17 +53,33 @@
 Itty aims to be the world's smallest (~440 bytes), feature-rich JavaScript router, enabling beautiful API code with a near-zero bundlesize.  Designed originally for [Cloudflare Workers](https://itty.dev/itty-router/runtimes#Cloudflare%20Workers), itty can be used in browsers, Service Workers, edge functions, or standalone runtimes like [Node](https://itty.dev/itty-router/runtimes#Node), [Bun](https://itty.dev/itty-router/runtimes#Bun), etc.!
 
 ## Features:
-- [fully typed/TypeScript support](https://itty.dev/itty-router/typescript)
-- [route params](https://itty.dev/itty-router/route-patterns#params) (including [optional params](https://itty.dev/itty-router/route-patterns#optional))
-- [wildcards](https://itty.dev/itty-router/route-patterns#wildcards) and [greedy params](https://itty.dev/itty-router/route-patterns#greedy)
-- [query parsing](https://itty.dev/itty-router/route-patterns#query)
-- [middleware](https://itty.dev/itty-router/middleware)
-- [router nesting](https://itty.dev/itty-router/nesting)
-- lightweight, easy-to-understand route code
-- works in virtually [*any* runtime/environment](https://itty.dev/itty-router/runtimes) (including the browser)
+- Absurdly tiny.  The Router itself is ~440 bytes gzipped, and the **entire** library is under 1.5k!
+- Absurdly easy to use.  We believe route code should be self-evident, obvious, and read more like poetry than code.
+- Absurdly agnostic. We leave **you** with full control over response types, matching order, upstream/downstream effects, etc.
+- Works [anywhere, in any environment](https://itty.dev/itty-router/runtimes).
+- [Fully typed/TypeScript support](https://itty.dev/itty-router/typescript), including hinting.
+- Parses [route params](https://itty.dev/itty-router/route-patterns#params), 
+  [optional params](https://itty.dev/itty-router/route-patterns#optional),
+  [wildcards](https://itty.dev/itty-router/route-patterns#wildcards), 
+  [greedy params](https://itty.dev/itty-router/route-patterns#greedy),
+  and [file formats](https://itty.dev/itty-router/route-patterns#file-formats).
+- Automatic [query parsing](https://itty.dev/itty-router/route-patterns#query).
+- Easy [error handling](https://itty.dev/itty-router/errors), including throwing errors with HTTP status codes!
+- Easy [Response](https://itty.dev/itty-router/responses) creation, with helpers for major formats (e.g. 
+  [json](https://itty.dev/itty-router/api#json), 
+  [html](https://itty.dev/itty-router/api#html), 
+  [png](https://itty.dev/itty-router/api#png), 
+  [jpeg](https://itty.dev/itty-router/api#jpeg), etc.)
+- Deep APIs via [router nesting](https://itty.dev/itty-router/nesting).
+- Full [middleware](https://itty.dev/itty-router/middleware) support.  Includes the following by default:
+  - [withParams](https://itty.dev/itty-router/api#withParams) - access the params directly off the `Request` (instead of `request.params`).
+  - [withCookies](https://itty.dev/itty-router/api#withCookies) - access cookies in a convenient Object format.
+  - [withContent](https://itty.dev/itty-router/api#withContent) - auto-parse Request bodies as `request.content`.
+  - [CORS](https://itty.dev/itty-router/cors) - because we love you.
+- Fully readable regex... yeah right! 😆
 
 ## [Full Documentation](https://itty.dev/itty-router)
-Complete docs/API are available at [itty.dev](https://itty.dev/itty-router), or join our [Discord](https://discord.com/channels/832353585802903572) channel to chat!
+Complete documentation/API is available at [itty.dev](https://itty.dev/itty-router), or join our [Discord](https://discord.com/channels/832353585802903572) channel to chat with community members for quick help!
 
 ## Installation
 ```
