@@ -1,4 +1,3 @@
-import { IRequest } from 'Router'
 import { json } from './json'
 
 interface ErrorLike extends Error {

@@ -10,7 +10,7 @@ type ResponseFormatterOptions = {
   headers?: object
 } & ResponseInit
 
-export const createResponse = (format: string = 'text/plain; charset=utf-8', transform?: BodyTransformer): ResponseFormatter =>
+export const createResponse = (format = 'text/plain; charset=utf-8', transform?: BodyTransformer): ResponseFormatter =>
   (body, options: ResponseFormatterOptions = {}) => {
     const { headers = {}, ...rest } = options
 

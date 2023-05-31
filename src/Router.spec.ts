@@ -1,27 +1,12 @@
 import 'isomorphic-fetch'
 import { describe, expect, it, vi } from 'vitest'
 import { buildRequest, createTestRunner, extract } from '../test-utils'
-import { Router, Route, RouterType, RequestLike } from './Router'
+import { Router } from './Router'
 
 const ERROR_MESSAGE = 'Error Message'
 
 const testRoutes = createTestRunner(Router)
 
-type ALL = {
-  all: Route,
-}
-
-type GET = {
-  get: Route,
-}
-
-type PATCH = {
-  patch: Route,
-}
-
-type POST = {
-  post: Route,
-}
 describe('Router', () => {
   const router = Router()
 
@@ -314,9 +299,9 @@ describe('Router', () => {
 
     it('stops at a handler that throws', async () => {
       const router = Router()
-      const handler1 = vi.fn(() => {})
+      const handler1 = vi.fn()
       const handler2 = vi.fn(() => { throw new Error() })
-      const handler3 = vi.fn(() => {})
+      const handler3 = vi.fn()
       router.get('/foo', handler1, handler2, handler3)
 
       const escape = err => err
@@ -348,7 +333,6 @@ describe('Router', () => {
 
     it('can throw method not allowed error', async () => {
       const router = Router()
-      const errorText = 'Not Allowed'
       const okText = 'OK'
       const errorResponse = new Response(JSON.stringify({ foo: 'bar' }), {
         headers: { 'content-type': 'application/json;charset=UTF-8' },
@@ -390,7 +374,6 @@ describe('Router', () => {
 
     it('can easily create a ThrowableRouter', async () => {
       const error = (status, message) => new Response(message, { status })
-      const errorResponse = err => error(err.status || 500, err.message)
 
       const ThrowableRouter = options => new Proxy(Router(options), {
         get: (obj, prop) => (...args) =>
@@ -425,11 +408,7 @@ describe('Router', () => {
 
   describe('.handle({ method = \'GET\', url }, ...args)', () => {
     it('passes extra args to each handler', async () => {
-      type GET = {
-        get: Route,
-      }
-
-      const r = Router() as RouterType & GET
+      const r = Router()
       const h = (req, a, b) => { req.a = a; req.b = b }
       const originalA = 'A'
       const originalB = {}
@@ -576,7 +555,7 @@ describe('ROUTE MATCHING', () => {
       { route: '/foo?', path: '/foo' },
       { route: '/foo?', path: '/fo' },
       { route: '/foo?', path: '/fooo', returns: false },
-      { route: '/\.', path: '/', returns: false },
+      { route: '/.', path: '/', returns: false },
       { route: '/x|y', path: '/y', returns: true },
       { route: '/x|y', path: '/x', returns: true },
       { route: '/x/y|z', path: '/z', returns: true }, // should require second path as y or z
