@@ -124,7 +124,7 @@ export default {
 ```
 
 ## Join the Discussion!
-Have a question? Suggestion? Complaint? Want to send me a gift basket?
+Have a question? Suggestion? Complaint? Want to send a gift basket?
 
 Join us on [Discord](https://discord.com/channels/832353585802903572)!
 
@@ -133,9 +133,8 @@ Join us on [Discord](https://discord.com/channels/832353585802903572)!
 1. Install dev dependencies via `yarn`
 1. Start test runner/dev mode `yarn dev`
 1. Add your code and tests if needed - do NOT remove/alter existing tests
-1. Verify that tests pass once minified `yarn verify`
 1. Commit files
-1. Submit PR with a detailed description of what you're doing
+1. Submit PR (and fill out the template)
 1. I'll add you to the credits! :)
 
 ## Special Thanks: Contributors
