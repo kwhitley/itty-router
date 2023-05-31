@@ -7,8 +7,7 @@
     "eslint:recommended",
     "plugin:@typescript-eslint/recommended"
   ],
-  "overrides": [
-  ],
+  "overrides": [],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
     "ecmaVersion": "latest",
@@ -18,9 +17,11 @@
     "@typescript-eslint"
   ],
   "rules": {
+    "@typescript-eslint/no-empty-function": "off",
+    "@typescript-eslint/no-explicit-any": "off",
     "linebreak-style": ["error", "unix"],
+    "prefer-const": "off",
     "quotes": ["error", "single", { "allowTemplateLiterals": true }],
-    "semi": ["error", "never"],
-    "@typescript-eslint/no-explicit-any": "off"
+    "semi": ["error", "never"]
   }
 }

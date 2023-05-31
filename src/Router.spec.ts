@@ -1,7 +1,7 @@
 import 'isomorphic-fetch'
 import { describe, expect, it, vi } from 'vitest'
 import { buildRequest, createTestRunner, extract } from '../test-utils'
-import { Route, Router, RouterType } from './Router'
+import { Router } from './Router'
 
 const ERROR_MESSAGE = 'Error Message'
 
@@ -299,9 +299,9 @@ describe('Router', () => {
 
     it('stops at a handler that throws', async () => {
       const router = Router()
-      const handler1 = vi.fn(() => {})
+      const handler1 = vi.fn()
       const handler2 = vi.fn(() => { throw new Error() })
-      const handler3 = vi.fn(() => {})
+      const handler3 = vi.fn()
       router.get('/foo', handler1, handler2, handler3)
 
       const escape = err => err
@@ -408,11 +408,7 @@ describe('Router', () => {
 
   describe('.handle({ method = \'GET\', url }, ...args)', () => {
     it('passes extra args to each handler', async () => {
-      type GET = {
-        get: Route,
-      }
-
-      const r = Router() as RouterType & GET
+      const r = Router()
       const h = (req, a, b) => { req.a = a; req.b = b }
       const originalA = 'A'
       const originalB = {}
@@ -559,7 +555,7 @@ describe('ROUTE MATCHING', () => {
       { route: '/foo?', path: '/foo' },
       { route: '/foo?', path: '/fo' },
       { route: '/foo?', path: '/fooo', returns: false },
-      { route: '/\.', path: '/', returns: false },
+      { route: '/.', path: '/', returns: false },
       { route: '/x|y', path: '/y', returns: true },
       { route: '/x|y', path: '/x', returns: true },
       { route: '/x/y|z', path: '/z', returns: true }, // should require second path as y or z
