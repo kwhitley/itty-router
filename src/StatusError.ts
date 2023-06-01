@@ -1,10 +1,10 @@
 type StatusErrorObject = {
-  error?: string,
+  error?: string
   [key: string]: any
 }
 
 export class StatusError extends Error {
-  status: number
+  status: number;
   [key: string]: any
 
   constructor(status = 500, body?: StatusErrorObject | string) {

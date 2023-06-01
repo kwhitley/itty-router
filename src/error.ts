@@ -1,8 +1,8 @@
 import { json } from './json'
 
 interface ErrorLike extends Error {
-  status?: number,
-  [any: string]: any,
+  status?: number
+  [any: string]: any
 }
 
 export type ErrorBody = string | object
@@ -13,13 +13,15 @@ export interface ErrorFormatter {
 }
 
 const getMessage = (code: number): string => {
-  return {
-    400: 'Bad Request',
-    401: 'Unauthorized',
-    403: 'Forbidden',
-    404: 'Not Found',
-    500: 'Internal Server Error'
-  }[code] || 'Unknown Error'
+  return (
+    {
+      400: 'Bad Request',
+      401: 'Unauthorized',
+      403: 'Forbidden',
+      404: 'Not Found',
+      500: 'Internal Server Error',
+    }[code] || 'Unknown Error'
+  )
 }
 
 export const error: ErrorFormatter = (a = 500, b?: ErrorBody) => {
@@ -29,13 +31,13 @@ export const error: ErrorFormatter = (a = 500, b?: ErrorBody) => {
     a = a.status || 500
     b = {
       error: message || getMessage(a),
-      ...err
+      ...err,
     }
   }
 
   b = {
     status: a,
-    ...(typeof b === 'object' ? b : { error: b || getMessage(a) })
+    ...(typeof b === 'object' ? b : { error: b || getMessage(a) }),
   }
 
   return json(b, { status: a })

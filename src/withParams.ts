@@ -7,6 +7,6 @@ export const withParams = (request: IRequest): void => {
       if ((p = obj[prop]) !== undefined) return p.bind?.(request) || p
 
       return obj?.params?.[prop]
-    }
+    },
   })
 }

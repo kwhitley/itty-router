@@ -1,25 +1,23 @@
-on: ["push", "pull_request"]
+on: ['push', 'pull_request']
 
 name: Coveralls
 
 jobs:
-
   build:
     name: Build
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v1
 
-    - uses: actions/checkout@v1
+      - name: Use Node.js 16.x
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16.x
 
-    - name: Use Node.js 16.x
-      uses: actions/setup-node@v3
-      with:
-        node-version: 16.x
+      - name: npm install, npm run coverage
+        run: |
+          npm install
+          npm run coverage
 
-    - name: npm install, npm run coverage
-      run: |
-        npm install
-        npm run coverage
-
-    - name: Coveralls
-      uses: coverallsapp/github-action@v2
+      - name: Coveralls
+        uses: coverallsapp/github-action@v2

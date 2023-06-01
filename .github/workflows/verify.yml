@@ -2,13 +2,12 @@ name: build
 
 on:
   push:
-    branches: [ v4.x ]
+    branches: [v4.x]
   pull_request:
-    branches: [ v4.x ]
+    branches: [v4.x]
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
