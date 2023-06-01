@@ -53,7 +53,7 @@ Itty aims to be the world's smallest (~440 bytes), feature-rich JavaScript route
 
 ## Features:
 
-- Absurdly tiny. The Router itself is ~440 bytes gzipped, and the **entire** library is under 1.5k!
+- Absurdly tiny. The Router itself is ~440 bytes gzipped, and the **entire** library is under 1.6k!
 - Absurdly easy to use. We believe route code should be self-evident, obvious, and read more like poetry than code.
 - Absurdly agnostic. We leave **you** with full control over response types, matching order, upstream/downstream effects, etc.
 - Works [anywhere, in any environment](https://itty.dev/itty-router/runtimes).
