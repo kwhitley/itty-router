@@ -6,39 +6,37 @@ import copy from 'rollup-plugin-copy'
 
 export default async () => {
   const files = await globby('./src/*.ts', {
-    ignore: [
-      '**/*.spec.ts',
-      'example',
-    ]
+    ignore: ['**/*.spec.ts', 'example'],
   })
 
   console.log({ files })
 
-  return files
-          .map(path => ({
-            input: path,
-            output: [
-              {
-                format: 'esm',
-                file: path.replace('/src/', '/dist/').replace('.ts', '.js'),
-                // sourcemap: true,
-              },
-              {
-                format: 'cjs',
-                file: path.replace('/src/', '/dist/cjs/').replace('.ts', '.js'),
-                // sourcemap: true,
-              },
-            ],
-            plugins: [
-              typescript({ sourceMap: false }),
-              terser(),
-              bundleSize(),
-              copy({
-                targets: [
-                  { src: ['CONTRIBUTING.md', 'CODE-OF-CONDUCT.md', 'LICENSE'], dest: 'dist' },
-                ]
-              })
-            ],
-          })
-        )
+  return files.map((path) => ({
+    input: path,
+    output: [
+      {
+        format: 'esm',
+        file: path.replace('/src/', '/dist/').replace('.ts', '.js'),
+        // sourcemap: true,
+      },
+      {
+        format: 'cjs',
+        file: path.replace('/src/', '/dist/cjs/').replace('.ts', '.js'),
+        // sourcemap: true,
+      },
+    ],
+    plugins: [
+      typescript({ sourceMap: false }),
+      terser(),
+      bundleSize(),
+      copy({
+        targets: [
+          {
+            src: ['CONTRIBUTING.md', 'CODE-OF-CONDUCT.md', 'LICENSE'],
+            dest: 'dist',
+          },
+        ],
+      }),
+    ],
+  }))
 }

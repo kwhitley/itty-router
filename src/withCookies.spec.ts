@@ -9,13 +9,11 @@ describe('withCookies (middleware)', () => {
     const handler = vi.fn(({ cookies }) => cookies)
     const request = new Request('https://foo.bar', {
       headers: {
-        'cookie': 'empty=; foo=bar'
-      }
+        cookie: 'empty=; foo=bar',
+      },
     })
 
-    await router
-            .get('/', withCookies, handler)
-            .handle(request)
+    await router.get('/', withCookies, handler).handle(request)
 
     expect(handler).toHaveReturnedWith({ foo: 'bar' })
   })
@@ -26,9 +24,7 @@ describe('withCookies (middleware)', () => {
     const request = new Request('https://foo.bar')
 
     expect(async () => {
-      await router
-              .get('/', withCookies, handler)
-              .handle(request)
+      await router.get('/', withCookies, handler).handle(request)
     }).not.toThrow()
   })
 })

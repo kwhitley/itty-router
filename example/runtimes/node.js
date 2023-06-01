@@ -1,23 +1,17 @@
 import { createServerAdapter } from '@whatwg-node/server'
 import { createServer } from 'http'
 import 'isomorphic-fetch'
-import {
-  Router,
-  error,
-  json
-} from '../dist/index.js'
+import { Router, error, json } from '../dist/index.js'
 
 const router = Router()
 
-router
-  .get('/', () => 'Success!')
-  .all('*', () => error(404))
+router.get('/', () => 'Success!').all('*', () => error(404))
 
-const ittyServer = createServerAdapter(
-  (...args) => router
-                .handle(...args)
-                .then(json)
-                .catch(error)
+const ittyServer = createServerAdapter((...args) =>
+  router
+    .handle(...args)
+    .then(json)
+    .catch(error)
 )
 
 // Then use it in any environment

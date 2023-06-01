@@ -52,15 +52,15 @@ describe('Router', () => {
   })
 
   it('allows preloading advanced routes', async () => {
-    const basicHandler = vi.fn(req => req.params)
-    const customHandler = vi.fn(req => req.params)
+    const basicHandler = vi.fn((req) => req.params)
+    const customHandler = vi.fn((req) => req.params)
 
     const router = Router({
-                    routes: [
-                      [ 'GET', /^\/test\.(?<x>[^/]+)\/*$/, [basicHandler] ],
-                      [ 'GET', /^\/custom-(?<custom>\d{2,4})$/, [customHandler] ],
-                    ]
-                  })
+      routes: [
+        ['GET', /^\/test\.(?<x>[^/]+)\/*$/, [basicHandler]],
+        ['GET', /^\/custom-(?<custom>\d{2,4})$/, [customHandler]],
+      ],
+    })
 
     await router.handle(buildRequest({ path: '/test.a.b' }))
     expect(basicHandler).toHaveReturnedWith({ x: 'a.b' })
@@ -73,12 +73,12 @@ describe('Router', () => {
   })
 
   it('allows loading advanced routes after config', async () => {
-    const handler = vi.fn(req => req.params)
+    const handler = vi.fn((req) => req.params)
 
     const router = Router()
 
     // allows manual loading (after config)
-    router.routes.push([ 'GET', /^\/custom2-(?<custom>\w\d{3})$/, [handler] ])
+    router.routes.push(['GET', /^\/custom2-(?<custom>\w\d{3})$/, [handler]])
 
     await router.handle(buildRequest({ path: '/custom2-a456' }))
     expect(handler).toHaveReturnedWith({ custom: 'a456' }) // custom route hit
@@ -87,13 +87,15 @@ describe('Router', () => {
   describe('.{method}(route: string, handler1: function, ..., handlerN: function)', () => {
     it('can accept multiple handlers (each mutates request)', async () => {
       const r = Router()
-      const handler1 = vi.fn(req => { req.a = 1 })
-      const handler2 = vi.fn(req => {
+      const handler1 = vi.fn((req) => {
+        req.a = 1
+      })
+      const handler2 = vi.fn((req) => {
         req.b = 2
 
         return req
       })
-      const handler3 = vi.fn(req => ({ c: 3, ...req }))
+      const handler3 = vi.fn((req) => ({ c: 3, ...req }))
       r.get('/multi/:id', handler1, handler2, handler3)
 
       await r.handle(buildRequest({ path: '/multi/foo' }))
@@ -103,7 +105,7 @@ describe('Router', () => {
     })
   })
 
-  describe('.handle({ method = \'GET\', url })', () => {
+  describe(".handle({ method = 'GET', url })", () => {
     it('always returns a Promise', () => {
       const syncRouter = Router()
       syncRouter.get('/foo', () => 3)
@@ -115,7 +117,7 @@ describe('Router', () => {
     })
 
     it('returns { path, query } from match', async () => {
-      const route = routes.find(r => r.path === '/foo/:id')
+      const route = routes.find((r) => r.path === '/foo/:id')
       await router.handle(buildRequest({ path: '/foo/13?foo=bar&cat=dog' }))
 
       expect(route?.callback).toHaveReturnedWith({
@@ -125,7 +127,7 @@ describe('Router', () => {
     })
 
     it('BUG: avoids toString prototype bug', async () => {
-      const route = routes.find(r => r.path === '/foo/:id')
+      const route = routes.find((r) => r.path === '/foo/:id')
       await router.handle(buildRequest({ path: '/foo/13?toString=value' }))
 
       expect(route?.callback).toHaveReturnedWith({
@@ -135,7 +137,7 @@ describe('Router', () => {
     })
 
     it('requires exact route match', async () => {
-      const route = routes.find(r => r.path === '/')
+      const route = routes.find((r) => r.path === '/')
 
       await router.handle(buildRequest({ path: '/foo' }))
 
@@ -148,9 +150,7 @@ describe('Router', () => {
       const handler = vi.fn(({ method, route }) => ({ method, route }))
 
       const router = Router()
-      router
-        .get(route1, handler)
-        .post(route2, handler)
+      router.get(route1, handler).post(route2, handler)
 
       await router.handle(buildRequest({ path: route1, method: 'GET' }))
       expect(handler).toHaveReturnedWith({ method: 'GET', route: route1 })
@@ -176,15 +176,17 @@ describe('Router', () => {
     })
 
     it('honors correct method (e.g. GET, POST, etc)', async () => {
-      const route = routes.find(r => r.path === '/foo' && r.method === 'post')
+      const route = routes.find((r) => r.path === '/foo' && r.method === 'post')
       await router.handle(buildRequest({ method: 'POST', path: '/foo' }))
 
       expect(route.callback).toHaveBeenCalled()
     })
 
     it('passes the entire original request through to the handler', async () => {
-      const route = routes.find(r => r.path === '/passthrough')
-      await router.handle(buildRequest({ path: '/passthrough', name: 'miffles' }))
+      const route = routes.find((r) => r.path === '/passthrough')
+      await router.handle(
+        buildRequest({ path: '/passthrough', name: 'miffles' })
+      )
 
       expect(route.callback).toHaveReturnedWith({
         path: '/passthrough',
@@ -200,9 +202,7 @@ describe('Router', () => {
       const router2 = Router({ base: '/nested' })
 
       router2.get('/foo', matchHandler)
-      router1
-        .all('/nested/*', router2.handle)
-        .all('*', missingHandler)
+      router1.all('/nested/*', router2.handle).all('*', missingHandler)
 
       await router1.handle(buildRequest({ path: '/foo' }))
       expect(missingHandler).toHaveBeenCalled()
@@ -211,18 +211,20 @@ describe('Router', () => {
       expect(matchHandler).toHaveBeenCalled()
     })
 
-    it('won\'t throw on unknown method', () => {
-      expect(() => router.handle({ method: 'CUSTOM', url: 'https://example.com/foo' })).not.toThrow()
+    it("won't throw on unknown method", () => {
+      expect(() =>
+        router.handle({ method: 'CUSTOM', url: 'https://example.com/foo' })
+      ).not.toThrow()
     })
 
     it('can match multiple routes if earlier handlers do not return (as middleware)', async () => {
       const r = Router()
 
-      const middleware = req => {
+      const middleware = (req) => {
         req.user = { id: 13 }
       }
 
-      const handler = vi.fn(req => req.user.id)
+      const handler = vi.fn((req) => req.user.id)
 
       r.get('/middleware/*', middleware)
       r.get('/middleware/:id', handler)
@@ -256,7 +258,7 @@ describe('Router', () => {
 
     it('can pull route params from the basepath as well', async () => {
       const router = Router({ base: '/:collection' })
-      const handler = vi.fn(req => req.params)
+      const handler = vi.fn((req) => req.params)
       router.get('/:id', handler)
 
       await router.handle(buildRequest({ path: '/todos/13' }))
@@ -300,15 +302,15 @@ describe('Router', () => {
     it('stops at a handler that throws', async () => {
       const router = Router()
       const handler1 = vi.fn()
-      const handler2 = vi.fn(() => { throw new Error() })
+      const handler2 = vi.fn(() => {
+        throw new Error()
+      })
       const handler3 = vi.fn()
       router.get('/foo', handler1, handler2, handler3)
 
-      const escape = err => err
+      const escape = (err) => err
 
-      await router
-        .handle(buildRequest({ path: '/foo' }))
-        .catch(escape)
+      await router.handle(buildRequest({ path: '/foo' })).catch(escape)
 
       expect(handler1).toHaveBeenCalled()
       expect(handler2).toHaveBeenCalled()
@@ -317,14 +319,14 @@ describe('Router', () => {
 
     it('can throw an error and still handle if using catch', async () => {
       const router = Router()
-      const handlerWithError = vi.fn(() => { throw new Error(ERROR_MESSAGE) })
-      const errorHandler = vi.fn(err => err.message)
+      const handlerWithError = vi.fn(() => {
+        throw new Error(ERROR_MESSAGE)
+      })
+      const errorHandler = vi.fn((err) => err.message)
 
       router.get('/foo', handlerWithError)
 
-      await router
-        .handle(buildRequest({ path: '/foo' }))
-        .catch(errorHandler)
+      await router.handle(buildRequest({ path: '/foo' })).catch(errorHandler)
 
       expect(handlerWithError).toHaveBeenCalled()
       expect(errorHandler).toHaveBeenCalled()
@@ -343,18 +345,17 @@ describe('Router', () => {
       const middleware = vi.fn()
       const errorHandler = vi.fn(() => errorResponse)
 
-      router
-        .post('*', middleware, handler)
-        .all('*', errorHandler)
+      router.post('*', middleware, handler).all('*', errorHandler)
 
       // creates a request (with passed method) with JSON body
-      const createRequest = method => new Request('https://foo.com/foo', {
-        method,
-        headers: {
-          'content-type': 'application/json'
-        },
-        body: JSON.stringify({ foo: 'bar' })
-      })
+      const createRequest = (method) =>
+        new Request('https://foo.com/foo', {
+          method,
+          headers: {
+            'content-type': 'application/json',
+          },
+          body: JSON.stringify({ foo: 'bar' }),
+        })
 
       // test POST with JSON body (catch by post handler)
       let response = await router.handle(createRequest('post'))
@@ -375,15 +376,22 @@ describe('Router', () => {
     it('can easily create a ThrowableRouter', async () => {
       const error = (status, message) => new Response(message, { status })
 
-      const ThrowableRouter = options => new Proxy(Router(options), {
-        get: (obj, prop) => (...args) =>
-            prop === 'handle'
-            ? obj[prop](...args).catch(err => error(err.status || 500, err.message))
-            : obj[prop](...args)
-      })
+      const ThrowableRouter = (options) =>
+        new Proxy(Router(options), {
+          get:
+            (obj, prop) =>
+            (...args) =>
+              prop === 'handle'
+                ? obj[prop](...args).catch((err) =>
+                    error(err.status || 500, err.message)
+                  )
+                : obj[prop](...args),
+        })
 
       const router = ThrowableRouter()
-      const handlerWithError = vi.fn(() => { throw new Error(ERROR_MESSAGE) })
+      const handlerWithError = vi.fn(() => {
+        throw new Error(ERROR_MESSAGE)
+      })
 
       router.get('/foo', handlerWithError)
 
@@ -398,22 +406,22 @@ describe('Router', () => {
       const router = Router()
 
       expect(() => {
-        router
-          .get('/foo', vi.fn())
-          .get('/foo', vi.fn())
-
+        router.get('/foo', vi.fn()).get('/foo', vi.fn())
       }).not.toThrow()
     })
   })
 
-  describe('.handle({ method = \'GET\', url }, ...args)', () => {
+  describe(".handle({ method = 'GET', url }, ...args)", () => {
     it('passes extra args to each handler', async () => {
       const r = Router()
-      const h = (req, a, b) => { req.a = a; req.b = b }
+      const h = (req, a, b) => {
+        req.a = a
+        req.b = b
+      }
       const originalA = 'A'
       const originalB = {}
       r.get('*', h)
-      const req = buildRequest({ path: '/foo', })
+      const req = buildRequest({ path: '/foo' })
 
       await r.handle(req, originalA, originalB)
 
@@ -423,10 +431,10 @@ describe('Router', () => {
 
     it('will pass request.proxy instead of request if found', async () => {
       const router = Router()
-      const handler = vi.fn(req => req)
+      const handler = vi.fn((req) => req)
       let proxy
 
-      const withProxy = request => {
+      const withProxy = (request) => {
         request.proxy = proxy = new Proxy(request, {})
       }
 
@@ -439,20 +447,19 @@ describe('Router', () => {
 
     it('can handle POST body even if not used', async () => {
       const router = Router()
-      const handler = vi.fn(req => req.json())
+      const handler = vi.fn((req) => req.json())
       const errorHandler = vi.fn()
 
-      router
-        .post('/foo', handler)
-        .all('*', errorHandler)
+      router.post('/foo', handler).all('*', errorHandler)
 
-      const createRequest = method => new Request('https://foo.com/foo', {
-        method,
-        headers: {
-          'content-type': 'application/json'
-        },
-        body: JSON.stringify({ foo: 'bar' })
-      })
+      const createRequest = (method) =>
+        new Request('https://foo.com/foo', {
+          method,
+          headers: {
+            'content-type': 'application/json',
+          },
+          body: JSON.stringify({ foo: 'bar' }),
+        })
 
       await router.handle(createRequest('put'))
       expect(errorHandler).toHaveBeenCalled()
@@ -465,28 +472,34 @@ describe('Router', () => {
 
   it('can get query params', async () => {
     const router = Router()
-    const handler = vi.fn(req => req.query)
+    const handler = vi.fn((req) => req.query)
 
     router.get('/foo', handler)
 
-    const request = new Request('https://foo.com/foo?cat=dog&foo=bar&foo=baz&missing=')
+    const request = new Request(
+      'https://foo.com/foo?cat=dog&foo=bar&foo=baz&missing='
+    )
 
     await router.handle(request)
-    expect(handler).toHaveReturnedWith({ cat: 'dog', foo: ['bar', 'baz'], missing: '' })
+    expect(handler).toHaveReturnedWith({
+      cat: 'dog',
+      foo: ['bar', 'baz'],
+      missing: '',
+    })
   })
 
   it('can still get query params with POST or non-GET HTTP methods', async () => {
     const router = Router()
-    const handler = vi.fn(req => req.query)
+    const handler = vi.fn((req) => req.query)
 
     router.post('/foo', handler)
 
     const request = new Request('https://foo.com/foo?cat=dog&foo=bar&foo=baz', {
       method: 'POST',
       headers: {
-        'content-type': 'application/json'
+        'content-type': 'application/json',
       },
-      body: JSON.stringify({ success: true })
+      body: JSON.stringify({ success: true }),
     })
 
     await router.handle(request)
@@ -496,10 +509,8 @@ describe('Router', () => {
 
 describe('ROUTE MATCHING', () => {
   describe('allowed characters', () => {
-    const chars = '/foo/-.abc!@%&_=:;\',~|/bar'
-    testRoutes([
-      { route: chars, path: chars },
-    ])
+    const chars = "/foo/-.abc!@%&_=:;',~|/bar"
+    testRoutes([{ route: chars, path: chars }])
   })
 
   describe('dots', () => {
@@ -513,23 +524,55 @@ describe('ROUTE MATCHING', () => {
     testRoutes([
       { route: '/foo/:id+', path: '/foo/14', returns: { id: '14' } },
       { route: '/foo/:id+', path: '/foo/bar/baz', returns: { id: 'bar/baz' } },
-      { route: '/foo/:id+', path: '/foo/https://foo.bar', returns: { id: 'https://foo.bar' } },
+      {
+        route: '/foo/:id+',
+        path: '/foo/https://foo.bar',
+        returns: { id: 'https://foo.bar' },
+      },
     ])
   })
 
   describe('formats/extensions', () => {
     testRoutes([
       { route: '/:id.:format', path: '/foo', returns: false },
-      { route: '/:id.:format', path: '/foo.jpg', returns: { id: 'foo', format: 'jpg' } },
-      { route: '/:id.:format', path: '/foo.bar.jpg', returns: { id: 'foo.bar', format: 'jpg' } },
+      {
+        route: '/:id.:format',
+        path: '/foo.jpg',
+        returns: { id: 'foo', format: 'jpg' },
+      },
+      {
+        route: '/:id.:format',
+        path: '/foo.bar.jpg',
+        returns: { id: 'foo.bar', format: 'jpg' },
+      },
       { route: '/:id.:format?', path: '/foo', returns: { id: 'foo' } },
-      { route: '/:id.:format?', path: '/foo.bar.jpg', returns: { id: 'foo.bar', format: 'jpg' } },
-      { route: '/:id.:format?', path: '/foo.jpg', returns: { id: 'foo', format: 'jpg' } },
+      {
+        route: '/:id.:format?',
+        path: '/foo.bar.jpg',
+        returns: { id: 'foo.bar', format: 'jpg' },
+      },
+      {
+        route: '/:id.:format?',
+        path: '/foo.jpg',
+        returns: { id: 'foo', format: 'jpg' },
+      },
       { route: '/:id.:format?', path: '/foo', returns: { id: 'foo' } },
       { route: '/:id.:format.:compress', path: '/foo.gz', returns: false },
-      { route: '/:id.:format.:compress', path: '/foo.txt.gz', returns: { id: 'foo', format: 'txt', compress: 'gz' } },
-      { route: '/:id.:format.:compress?', path: '/foo.txt', returns: { id: 'foo', format: 'txt' } },
-      { route: '/:id.:format?.:compress', path: '/foo.gz', returns: { id: 'foo', compress: 'gz' } },
+      {
+        route: '/:id.:format.:compress',
+        path: '/foo.txt.gz',
+        returns: { id: 'foo', format: 'txt', compress: 'gz' },
+      },
+      {
+        route: '/:id.:format.:compress?',
+        path: '/foo.txt',
+        returns: { id: 'foo', format: 'txt' },
+      },
+      {
+        route: '/:id.:format?.:compress',
+        path: '/foo.gz',
+        returns: { id: 'foo', compress: 'gz' },
+      },
     ])
   })
 

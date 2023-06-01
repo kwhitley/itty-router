@@ -10,14 +10,12 @@ describe('withContent (middleware)', () => {
     const request = new Request('https://foo.bar', {
       method: 'POST',
       headers: {
-        'content-type': 'application/json'
+        'content-type': 'application/json',
       },
-      body: JSON.stringify({ foo: 'bar' })
+      body: JSON.stringify({ foo: 'bar' }),
     })
 
-    await router
-            .post('/', withContent, handler)
-            .handle(request)
+    await router.post('/', withContent, handler).handle(request)
 
     expect(handler).toHaveReturnedWith({ foo: 'bar' })
   })

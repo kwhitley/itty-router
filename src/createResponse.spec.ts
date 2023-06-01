@@ -36,7 +36,7 @@ describe('createResponse(mimeType: string, transform?: Function)', () => {
   })
 
   it('can pass in custom body transform function', async () => {
-    const stars = createResponse('text/plain', s => s.replace(/./g, '*'))
+    const stars = createResponse('text/plain', (s) => s.replace(/./g, '*'))
 
     const response = stars('foo')
     const body = await response.text()

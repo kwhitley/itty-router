@@ -1,8 +1,4 @@
-import {
-  IRequest,
-  IRequestStrict,
-  Router
-} from '../src/Router'
+import { IRequest, IRequestStrict, Router } from '../src/Router'
 
 type FooRequest = {
   foo: string
@@ -17,16 +13,13 @@ type Env = {
   KV: string
 }
 
-type CF = [
-  env: Env,
-  ctx: ExecutionContext
-]
+type CF = [env: Env, ctx: ExecutionContext]
 
 // this router defines a global signature of <BarRequest, CF>
 const custom = Router<BarRequest, CF>()
 
 custom
-  .get('/',({ bar, json }) => {
+  .get('/', ({ bar, json }) => {
     console.log('bar', bar)
   })
 
@@ -45,13 +38,13 @@ router
   // call custom HTTP method
   .puppy('/cat/:id', (request) => {
     // supports standard Request by default
-    request.headers   // valid
-    request.foo       // valid (generic traps)
+    request.headers // valid
+    request.foo // valid (generic traps)
   })
   .puppy<IRequestStrict>('/cat/:id', (request) => {
     // supports standard Request by default
-    request.headers   // valid
-    request.foo       // invalid
+    request.headers // valid
+    request.foo // invalid
   })
 
   // standard request
@@ -97,12 +90,8 @@ router
 
   .handle<CF>({ method: 'GET', url: 'foo.bar' }, {}, 'asd')
 
-type CFfetch = [
-  request: Request,
-  env: Env,
-  ctx: ExecutionContext
-]
+type CFfetch = [request: Request, env: Env, ctx: ExecutionContext]
 
 export default {
-  fetch: (...args: CFfetch) => router.handle(...args)
+  fetch: (...args: CFfetch) => router.handle(...args),
 }

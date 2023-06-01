@@ -1,9 +1,4 @@
-import {
-  Router,
-  error,
-  json,
-  withParams
-} from 'itty-router'
+import { Router, error, json, withParams } from 'itty-router'
 
 const router = Router()
 
@@ -15,8 +10,6 @@ router
 
 export default {
   port: 3001,
-  fetch: (request, env, ctx) => router
-                                  .handle(request, env, ctx)
-                                  .then(json)
-                                  .catch(error)
+  fetch: (request, env, ctx) =>
+    router.handle(request, env, ctx).then(json).catch(error),
 }
