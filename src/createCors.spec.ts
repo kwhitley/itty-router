@@ -32,7 +32,7 @@ describe('createCors(options)', () => {
     })
 
     it('origins should be array of string', async () => {
-      const { preflight, corsify } = createCors({
+      const { preflight } = createCors({
         origins: ['http://localhost:3000', 'http://localhost:4000']
       })
       const router = Router().all('*', preflight)
@@ -55,7 +55,7 @@ describe('createCors(options)', () => {
     })
 
     it('origins should be function returns boolean', async () => {
-      const { preflight, corsify } = createCors({
+      const { preflight } = createCors({
         origins: (origin) => origin.startsWith("https://") && origin.endsWith('.example.com')
       })
       const router = Router().all('*', preflight)
