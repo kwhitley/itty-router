@@ -1,6 +1,6 @@
 import 'isomorphic-fetch'
 import { describe, expect, it, vi } from 'vitest'
-import { buildRequest, createTestRunner, extract } from '../test-utils'
+import { buildRequest, createTestRunner, extract } from '../test'
 import { Router } from './Router'
 
 const ERROR_MESSAGE = 'Error Message'
