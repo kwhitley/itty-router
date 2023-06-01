@@ -51,11 +51,11 @@
 
 Itty aims to be the world's smallest (~440 bytes), feature-rich JavaScript router, enabling beautiful API code with a near-zero bundlesize. Designed originally for [Cloudflare Workers](https://itty.dev/itty-router/runtimes#Cloudflare%20Workers), itty can be used in browsers, Service Workers, edge functions, or standalone runtimes like [Node](https://itty.dev/itty-router/runtimes#Node), [Bun](https://itty.dev/itty-router/runtimes#Bun), etc.!
 
-## Features:
+## Features
 
-- Absurdly tiny. The Router itself is ~440 bytes gzipped, and the **entire** library is under 1.6k!
-- Absurdly easy to use. We believe route code should be self-evident, obvious, and read more like poetry than code.
-- Absurdly agnostic. We leave **you** with full control over response types, matching order, upstream/downstream effects, etc.
+- Tiny. The Router itself is ~440 bytes gzipped, and the **entire** library is under 1.6k!
+- Easy to use. We believe route code should be self-evident, obvious, and read more like poetry than code.
+- Agnostic. We leave **you** with full control over response types, matching order, upstream/downstream effects, etc.
 - Works [anywhere, in any environment](https://itty.dev/itty-router/runtimes).
 - [Fully typed/TypeScript support](https://itty.dev/itty-router/typescript), including hinting.
 - Parses [route params](https://itty.dev/itty-router/route-patterns#params),
