@@ -92,9 +92,9 @@ npm install itty-router
 
 ```js
 import {
-  error, // creates error responses
-  json, // creates JSON responses
-  Router, // the ~440 byte router itself
+  error,      // creates error responses
+  json,       // creates JSON responses
+  Router,     // the ~440 byte router itself
   withParams, // middleware: puts params directly on the Request
 } from 'itty-router'
 import { todos } from './external/todos'
@@ -123,8 +123,8 @@ export default {
   fetch: (request, ...args) =>
     router
       .handle(request, ...args)
-      .then(json) // send as JSON
-      .catch(error), // catch errors
+      .then(json)     // send as JSON
+      .catch(error),  // catch errors
 }
 ```
 
