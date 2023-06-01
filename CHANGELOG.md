@@ -1,8 +1,11 @@
 ## Changelog
-Until this library makes it to a production release of v1.x, **minor versions may contain breaking changes to the API**.  After v1.x, semantic versioning will be honored, and breaking changes will only occur under the umbrella of a major version bump.
 
-[@SupremeTechnopriest)(https://github.com/SupremeTechnopriest) - improved TypeScript support and documentation! :D\
-
+- **v4.0.00** - Partial changelog below
+  - BREAKING: heavy TS rewrite for core Router (thank you, ChatGPT)
+  - added: nearly all extras from itty-router-extras
+  - added: createCors from itty-cors
+  - added: complete documentation at https://itty.dev
+  - feature: withParams may be used as upstream middleware (hooray!)
 - **v3.0.11** - changed environment build to rollup (from tsup) and code golfed the toQuery logic. (credit [@DrLoopFall](https://github.com/DrLoopFall))
 - **v3.0.9** - fixes some TS issue, previously requiring you to define Router Methods to chain request definitions. (credit [@jahands](https://github.com/jahands))
 - **v3.0.0** - total TS conversion with improved types, adding greedy params (credit [@markusahlstrand](https://github.com/markusahlstrand))
@@ -17,7 +20,7 @@ Until this library makes it to a production release of v1.x, **minor versions ma
 - **v2.4.9** - fixed the cursed "optional" file format capturing bug - RIP all the bytes lost
 - **v2.4.6** - fixed README issues
 - **v2.4.1** - fixed type errors introduced with 2.4.0
-- **v2.4.0** - HUGE internal code-golfing refactor thanks to [@taralx](https://github.com/taralx)!  Super cool work on this!!!
+- **v2.4.0** - HUGE internal code-golfing refactor thanks to [@taralx](https://github.com/taralx)! Super cool work on this!!!
 - **v2.3.10** - fix: dots now properly escaped (e.g. /image.jpg should not match /imageXjpg)
 - **v2.3.9** - dev fixes: [@taralx](https://github.com/taralx) improved QOL issues for test writers and dev installers
 - **v2.3.7** - fix: :id.:format not resolving (only conditional format would match)
@@ -40,6 +43,6 @@ Until this library makes it to a production release of v1.x, **minor versions ma
 - **v1.0.0** - production release, stamped into gold from x0.9.7
 - **v0.9.0** - added support for multiple handlers (middleware)
 - **v0.8.0** - deep minification pass and build steps for final module
-- **v0.7.0** - removed { path } from  request handler context, travis build fixed, added coveralls, improved README docs
+- **v0.7.0** - removed { path } from request handler context, travis build fixed, added coveralls, improved README docs
 - **v0.6.0** - added types to project for vscode intellisense (thanks [@mvasigh](https://github.com/mvasigh))
 - **v0.5.4** - fix: wildcard routes properly supported

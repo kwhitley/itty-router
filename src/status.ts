@@ -1,2 +1,1 @@
-export const status = (status: number) =>
-  new Response(null, { status })
+export const status = (status: number) => new Response(null, { status })

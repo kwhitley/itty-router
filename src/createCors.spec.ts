@@ -14,8 +14,8 @@ describe('createCors(options)', () => {
 
   describe('options', () => {
     it('maxAge', async () => {
-      const { preflight, corsify } = createCors({
-        maxAge: 60
+      const { preflight } = createCors({
+        maxAge: 60,
       })
       const router = Router().all('*', preflight)
       const request = new Request('https://foo.bar', {
@@ -23,11 +23,10 @@ describe('createCors(options)', () => {
         headers: {
           'Access-Control-Request-Method': 'GET',
           'Access-Control-Request-Headers': 'content-type',
-          'origin': 'http://localhost:3000',
-        }
+          origin: 'http://localhost:3000',
+        },
       })
       const response = await router.handle(request)
-      const headers = Object.fromEntries(response.headers)
 
       expect(response.headers.get('Access-Control-Max-Age')).toBe('60')
     })
@@ -83,23 +82,25 @@ describe('createCors(options)', () => {
 
   describe('preflight (middleware)', () => {
     it('should handle options requests', async () => {
-      const { preflight, corsify } = createCors()
+      const { preflight } = createCors()
       const router = Router().all('*', preflight)
       const request = new Request('https://foo.bar', {
         method: 'OPTIONS',
         headers: {
           'Access-Control-Request-Method': 'GET',
           'Access-Control-Request-Headers': 'content-type',
-          'origin': 'http://localhost:3000',
-        }
+          origin: 'http://localhost:3000',
+        },
       })
       const response = await router.handle(request)
 
-      expect(response.headers.get('Access-Control-Allow-Origin')).toBe('http://localhost:3000')
+      expect(response.headers.get('Access-Control-Allow-Origin')).toBe(
+        'http://localhost:3000'
+      )
     })
 
     it('should handle OPTIONS requests without standard headers via Allow (methods) header', async () => {
-      const { preflight, corsify } = createCors()
+      const { preflight } = createCors()
       const router = Router().all('*', preflight)
       const request = new Request('https://foo.bar', { method: 'OPTIONS' })
       const response = await router.handle(request)
@@ -113,13 +114,10 @@ describe('createCors(options)', () => {
       const { preflight, corsify } = createCors()
       const catchError = vi.fn()
       const router = Router()
-                      .all('*', preflight)
-                      .get('/foo', () => json(13))
+        .all('*', preflight)
+        .get('/foo', () => json(13))
       const request = new Request('https://foo.bar/miss')
-      const response = await router
-                                .handle(request)
-                                .then(corsify)
-                                .catch(catchError)
+      await router.handle(request).then(corsify).catch(catchError)
 
       expect(catchError).toHaveBeenCalled()
     })
@@ -127,38 +125,44 @@ describe('createCors(options)', () => {
     it('should handle options requests', async () => {
       const { preflight, corsify } = createCors()
       const router = Router()
-                      .all('*', preflight)
-                      .get('/foo', () => json(13))
+        .all('*', preflight)
+        .get('/foo', () => json(13))
       const request = new Request('https://foo.bar/foo', {
-                        headers: {
-                          'origin': 'http://localhost:3000',
-                        }
-                      })
-      const response = await router
-                              .handle(request)
-                              .then(corsify)
+        headers: {
+          origin: 'http://localhost:3000',
+        },
+      })
+      const response = await router.handle(request).then(corsify)
 
-      expect(response.headers.get('Access-Control-Allow-Origin')).toBe('http://localhost:3000')
-      expect((response.headers.get('Access-Control-Allow-Methods') || '').includes('GET')).toBe(true)
+      expect(response.headers.get('Access-Control-Allow-Origin')).toBe(
+        'http://localhost:3000'
+      )
+      expect(
+        (response.headers.get('Access-Control-Allow-Methods') || '').includes(
+          'GET'
+        )
+      ).toBe(true)
     })
 
     it('will not modify responses with existing CORS headers', async () => {
       const { preflight, corsify } = createCors()
       const router = Router()
-                      .all('*', preflight)
-                      .get('/foo', () => new Response(null, {
-                        headers: {
-                          'access-control-allow-origin': '*'
-                        }
-                      }))
+        .all('*', preflight)
+        .get(
+          '/foo',
+          () =>
+            new Response(null, {
+              headers: {
+                'access-control-allow-origin': '*',
+              },
+            })
+        )
       const request = new Request('https://foo.bar/foo', {
-                        headers: {
-                          'origin': 'http://localhost:3000',
-                        }
-                      })
-      const response = await router
-                              .handle(request)
-                              .then(corsify)
+        headers: {
+          origin: 'http://localhost:3000',
+        },
+      })
+      const response = await router.handle(request).then(corsify)
 
       expect(response.headers.get('Access-Control-Allow-Origin')).toBe('*')
     })
@@ -166,42 +170,45 @@ describe('createCors(options)', () => {
     it('will not modify redirects or 101 status responses', async () => {
       const { preflight, corsify } = createCors()
       const router = Router()
-                      .all('*', preflight)
-                      .get('/foo', () => new Response(null, { status: 101 }))
+        .all('*', preflight)
+        .get('/foo', () => new Response(null, { status: 101 }))
       const request = new Request('https://foo.bar/foo', {
-                        headers: {
-                          'origin': 'http://localhost:3000',
-                        }
-                      })
-      const response = await router
-                              .handle(request)
-                              .then(corsify)
+        headers: {
+          origin: 'http://localhost:3000',
+        },
+      })
+      const response = await router.handle(request).then(corsify)
 
       expect(response.headers.get('Access-Control-Allow-Origin')).toBe(null)
     })
 
     describe('repeated use', () => {
-      const { preflight, corsify } = createCors()
+      const { preflight } = createCors()
       const router = Router().all('*', preflight)
       const origin = 'http://localhost:3000'
 
-      const generateRequest = () => new Request('https://foo.bar', {
-        method: 'OPTIONS',
-        headers: {
-          'Access-Control-Request-Method': 'GET',
-          'Access-Control-Request-Headers': 'content-type',
-          origin,
-        }
-      })
+      const generateRequest = () =>
+        new Request('https://foo.bar', {
+          method: 'OPTIONS',
+          headers: {
+            'Access-Control-Request-Method': 'GET',
+            'Access-Control-Request-Headers': 'content-type',
+            origin,
+          },
+        })
 
       it('will work multiple times in a row', async () => {
         const response1 = await router.handle(generateRequest())
         expect(response1.status).toBe(200)
-        expect(response1.headers.get('Access-Control-Allow-Origin')).toBe(origin)
+        expect(response1.headers.get('Access-Control-Allow-Origin')).toBe(
+          origin
+        )
 
         const response2 = await router.handle(generateRequest())
         expect(response2.status).toBe(200)
-        expect(response2.headers.get('Access-Control-Allow-Origin')).toBe(origin)
+        expect(response2.headers.get('Access-Control-Allow-Origin')).toBe(
+          origin
+        )
       })
     })
   })

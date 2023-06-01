@@ -1,4 +1,4 @@
-import { Router, error, json, withParams } from '../dist/index.js'
+import { Router, error, json, withParams } from 'itty-router'
 
 const router = Router()
 

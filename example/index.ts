@@ -1,8 +1,8 @@
 import {
-  Router,               // the router itself
-  IRequest,             // lightweight/generic Request type
-  RouterType,           // generic Router type
-  Route,                // generic Route type
+  Router, // the router itself
+  IRequest, // lightweight/generic Request type
+  RouterType, // generic Router type
+  Route, // generic Route type
   createCors,
   json,
   error,
@@ -10,7 +10,7 @@ import {
 
 // declare a custom Router type with used methods
 interface CustomRouter extends RouterType {
-  puppy: Route,
+  puppy: Route
 }
 
 // declare a custom Request type to allow request injection from middleware
@@ -41,11 +41,7 @@ router
 // CF ES6 module syntax
 export default {
   fetch: (request: IRequest, env: object, context: object) =>
-            router
-              .handle(request, env, context)
-              .then(json)
-              .catch(error)
-              .then(corsify)
+    router.handle(request, env, context).then(json).catch(error).then(corsify),
 }
 
 // test traditional eventListener Worker syntax

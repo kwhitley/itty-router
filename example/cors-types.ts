@@ -1,9 +1,4 @@
-import {
-  IRequest,
-  IRequestStrict,
-  Router,
-  createCors,
-} from '../src'
+import { IRequest, IRequestStrict, Router, createCors } from '../src'
 
 type FooRequest = {
   foo: string
@@ -18,10 +13,7 @@ type Env = {
   KV: string
 }
 
-type CF = [
-  env: Env,
-  ctx: ExecutionContext
-]
+type CF = [env: Env, ctx: ExecutionContext]
 
 // this router defines a global signature of <BarRequest, CF>
 const custom = Router<BarRequest, CF>()
@@ -93,12 +85,8 @@ router
 
   .handle<CF>({ method: 'GET', url: 'foo.bar' }, {}, 'asd')
 
-type CFfetch = [
-  request: Request,
-  env: Env,
-  ctx: ExecutionContext
-]
+type CFfetch = [request: Request, env: Env, ctx: ExecutionContext]
 
 export default {
-  fetch: (...args: CFfetch) => router.handle(...args)
+  fetch: (...args: CFfetch) => router.handle(...args),
 }
