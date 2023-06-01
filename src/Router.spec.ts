@@ -105,7 +105,7 @@ describe('Router', () => {
     })
   })
 
-  describe(".handle({ method = 'GET', url })", () => {
+  describe(`.handle({ method = 'GET', url })`, () => {
     it('always returns a Promise', () => {
       const syncRouter = Router()
       syncRouter.get('/foo', () => 3)
@@ -211,7 +211,7 @@ describe('Router', () => {
       expect(matchHandler).toHaveBeenCalled()
     })
 
-    it("won't throw on unknown method", () => {
+    it(`won't throw on unknown method`, () => {
       expect(() =>
         router.handle({ method: 'CUSTOM', url: 'https://example.com/foo' })
       ).not.toThrow()
@@ -411,7 +411,7 @@ describe('Router', () => {
     })
   })
 
-  describe(".handle({ method = 'GET', url }, ...args)", () => {
+  describe(`.handle({ method = 'GET', url }, ...args)`, () => {
     it('passes extra args to each handler', async () => {
       const r = Router()
       const h = (req, a, b) => {
@@ -509,7 +509,7 @@ describe('Router', () => {
 
 describe('ROUTE MATCHING', () => {
   describe('allowed characters', () => {
-    const chars = "/foo/-.abc!@%&_=:;',~|/bar"
+    const chars = `/foo/-.abc!@%&_=:;',~|/bar`
     testRoutes([{ route: chars, path: chars }])
   })
 

@@ -20,7 +20,7 @@
   "scripts": {
     "dev": "yarn test",
     "lint": "yarn run eslint src",
-    "prettier": "prettier --write src test-utils example",
+    "prettier": "prettier --write src test example",
     "format": "yarn lint && yarn prettier",
     "test": "vitest --coverage --reporter verbose",
     "test:once": "vitest run",

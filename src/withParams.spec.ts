@@ -15,13 +15,22 @@ describe('withParams (middleware)', () => {
 
   it('will not interfere with existing props', async () => {
     const router = Router()
-    const handler = vi.fn(({ id, method, foo, testParam }) => ({ id, method, foo, testParam }))
+    const handler = vi.fn(({ id, method, foo, testParam }) => ({
+      id,
+      method,
+      foo,
+      testParam,
+    }))
     const request = { method: 'GET', url: 'https://foo.bar/baz', foo: 'bar' }
 
     await router.get('/:foo', withParams, handler).handle(request)
 
     // foo should be bar (from the original request), not baz (from the params)
-    expect(handler).toHaveReturnedWith({ method: 'GET', foo: 'bar', testParam: undefined })
+    expect(handler).toHaveReturnedWith({
+      method: 'GET',
+      foo: 'bar',
+      testParam: undefined,
+    })
   })
 
   it('can be used as global upstream middleware', async () => {
@@ -37,7 +46,7 @@ describe('withParams (middleware)', () => {
   it('binds a function property of request to the request object', async () => {
     const router = Router()
 
-    const myFunction = function() {
+    const myFunction = function () {
       return this.testParam
     }
 
@@ -49,11 +58,15 @@ describe('withParams (middleware)', () => {
       method: 'GET',
       url: 'https://foo.bar/baz',
       myFunction,
-      testParam: 'testValue'
+      testParam: 'testValue',
     }
 
     await router.get('/:id', withParams, handler).handle(request)
 
-    expect(handler).toHaveReturnedWith({ id: 'baz', method: 'GET', testParam: 'testValue' })
+    expect(handler).toHaveReturnedWith({
+      id: 'baz',
+      method: 'GET',
+      testParam: 'testValue',
+    })
   })
 })
