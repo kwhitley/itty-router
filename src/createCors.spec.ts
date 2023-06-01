@@ -56,7 +56,7 @@ describe('createCors(options)', () => {
 
     it('origins should be function returns boolean', async () => {
       const { preflight } = createCors({
-        origins: (origin) => origin.startsWith("https://") && origin.endsWith('.example.com')
+        origins: (origin) => origin.startsWith('https://') && origin.endsWith('.example.com')
       })
       const router = Router().all('*', preflight)
 
