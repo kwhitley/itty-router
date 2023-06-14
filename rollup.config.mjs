@@ -11,7 +11,7 @@ export default async () => {
     path,
     shortPath: path.replace(/(\/src)|(\.ts)/g, '').replace('./index', '.'),
     esm: path.replace('/src/', '/dist/').replace('.ts', '.js'),
-    cjs: path.replace('/src/', '/dist/').replace('.ts', '.cjs.js'),
+    cjs: path.replace('/src/', '/dist/cjs/').replace('.ts', '.js'),
     types: path.replace('/src/', '/dist/').replace('.ts', '.d.ts'),
   }))
 

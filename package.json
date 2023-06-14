@@ -1,153 +1,88 @@
 {
   "name": "itty-router",
-  "version": "4.0.10-next.2",
+  "version": "4.0.10-next.3",
   "description": "A tiny, zero-dependency router, designed to make beautiful APIs in any environment.",
   "type": "module",
-  "main": "dist/index.cjs.js",
-  "module": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "index.js",
+  "module": "index.js",
+  "types": "index.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/index.js",
-      "require": "./dist/index.cjs.js",
-      "types": "./dist/index.d.ts"
+      "import": "./index.js",
+      "require": "./cjs/index.js",
+      "types": "./index.d.ts"
     },
     "./createCors": {
-      "import": "./dist/createCors.js",
-      "require": "./dist/createCors.cjs.js",
-      "types": "./dist/createCors.d.ts"
+      "import": "./createCors.js",
+      "require": "./cjs/createCors.js",
+      "types": "./createCors.d.ts"
     },
     "./createResponse": {
-      "import": "./dist/createResponse.js",
-      "require": "./dist/createResponse.cjs.js",
-      "types": "./dist/createResponse.d.ts"
+      "import": "./createResponse.js",
+      "require": "./cjs/createResponse.js",
+      "types": "./createResponse.d.ts"
     },
     "./error": {
-      "import": "./dist/error.js",
-      "require": "./dist/error.cjs.js",
-      "types": "./dist/error.d.ts"
+      "import": "./error.js",
+      "require": "./cjs/error.js",
+      "types": "./error.d.ts"
     },
     "./html": {
-      "import": "./dist/html.js",
-      "require": "./dist/html.cjs.js",
-      "types": "./dist/html.d.ts"
+      "import": "./html.js",
+      "require": "./cjs/html.js",
+      "types": "./html.d.ts"
     },
     "./jpeg": {
-      "import": "./dist/jpeg.js",
-      "require": "./dist/jpeg.cjs.js",
-      "types": "./dist/jpeg.d.ts"
+      "import": "./jpeg.js",
+      "require": "./cjs/jpeg.js",
+      "types": "./jpeg.d.ts"
     },
     "./png": {
-      "import": "./dist/png.js",
-      "require": "./dist/png.cjs.js",
-      "types": "./dist/png.d.ts"
+      "import": "./png.js",
+      "require": "./cjs/png.js",
+      "types": "./png.d.ts"
     },
     "./Router": {
-      "import": "./dist/Router.js",
-      "require": "./dist/Router.cjs.js",
-      "types": "./dist/Router.d.ts"
+      "import": "./Router.js",
+      "require": "./cjs/Router.js",
+      "types": "./Router.d.ts"
     },
     "./status": {
-      "import": "./dist/status.js",
-      "require": "./dist/status.cjs.js",
-      "types": "./dist/status.d.ts"
+      "import": "./status.js",
+      "require": "./cjs/status.js",
+      "types": "./status.d.ts"
     },
     "./text": {
-      "import": "./dist/text.js",
-      "require": "./dist/text.cjs.js",
-      "types": "./dist/text.d.ts"
+      "import": "./text.js",
+      "require": "./cjs/text.js",
+      "types": "./text.d.ts"
     },
     "./webp": {
-      "import": "./dist/webp.js",
-      "require": "./dist/webp.cjs.js",
-      "types": "./dist/webp.d.ts"
+      "import": "./webp.js",
+      "require": "./cjs/webp.js",
+      "types": "./webp.d.ts"
     },
     "./websocket": {
-      "import": "./dist/websocket.js",
-      "require": "./dist/websocket.cjs.js",
-      "types": "./dist/websocket.d.ts"
+      "import": "./websocket.js",
+      "require": "./cjs/websocket.js",
+      "types": "./websocket.d.ts"
     },
     "./withContent": {
-      "import": "./dist/withContent.js",
-      "require": "./dist/withContent.cjs.js",
-      "types": "./dist/withContent.d.ts"
+      "import": "./withContent.js",
+      "require": "./cjs/withContent.js",
+      "types": "./withContent.d.ts"
     },
     "./withCookies": {
-      "import": "./dist/withCookies.js",
-      "require": "./dist/withCookies.cjs.js",
-      "types": "./dist/withCookies.d.ts"
+      "import": "./withCookies.js",
+      "require": "./cjs/withCookies.js",
+      "types": "./withCookies.d.ts"
     },
     "./withParams": {
-      "import": "./dist/withParams.js",
-      "require": "./dist/withParams.cjs.js",
-      "types": "./dist/withParams.d.ts"
-    },
-    "./cjs": {
-      "require": "./dist/index.cjs.js",
-      "types": "./dist/index.d.ts"
-    },
-    "./cjs/createCors": {
-      "require": "./dist/createCors.cjs.js",
-      "types": "./dist/createCors.d.ts"
-    },
-    "./cjs/createResponse": {
-      "require": "./dist/createResponse.cjs.js",
-      "types": "./dist/createResponse.d.ts"
-    },
-    "./cjs/error": {
-      "require": "./dist/error.cjs.js",
-      "types": "./dist/error.d.ts"
-    },
-    "./cjs/html": {
-      "require": "./dist/html.cjs.js",
-      "types": "./dist/html.d.ts"
-    },
-    "./cjs/jpeg": {
-      "require": "./dist/jpeg.cjs.js",
-      "types": "./dist/jpeg.d.ts"
-    },
-    "./cjs/png": {
-      "require": "./dist/png.cjs.js",
-      "types": "./dist/png.d.ts"
-    },
-    "./cjs/Router": {
-      "require": "./dist/Router.cjs.js",
-      "types": "./dist/Router.d.ts"
-    },
-    "./cjs/status": {
-      "require": "./dist/status.cjs.js",
-      "types": "./dist/status.d.ts"
-    },
-    "./cjs/text": {
-      "require": "./dist/text.cjs.js",
-      "types": "./dist/text.d.ts"
-    },
-    "./cjs/webp": {
-      "require": "./dist/webp.cjs.js",
-      "types": "./dist/webp.d.ts"
-    },
-    "./cjs/websocket": {
-      "require": "./dist/websocket.cjs.js",
-      "types": "./dist/websocket.d.ts"
-    },
-    "./cjs/withContent": {
-      "require": "./dist/withContent.cjs.js",
-      "types": "./dist/withContent.d.ts"
-    },
-    "./cjs/withCookies": {
-      "require": "./dist/withCookies.cjs.js",
-      "types": "./dist/withCookies.d.ts"
-    },
-    "./cjs/withParams": {
-      "require": "./dist/withParams.cjs.js",
-      "types": "./dist/withParams.d.ts"
+      "import": "./withParams.js",
+      "require": "./cjs/withParams.js",
+      "types": "./withParams.d.ts"
     }
   },
-  "files": [
-    "dist",
-    "README.md",
-    "LICENSE"
-  ],
   "keywords": [
     "api",
     "router",
@@ -174,7 +109,7 @@
     "prerelease": "yarn verify",
     "prebuild": "rimraf dist && mkdir dist && yarn coverage && yarn format",
     "build": "rollup -c",
-    "release": "release --tag --push --type=next",
+    "release": "release --tag --push --type=next --src=dist",
     "runtime:bun": "bun example/bun.ts",
     "runtime:node": "node example/node.js"
   },
