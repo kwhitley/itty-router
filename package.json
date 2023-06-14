@@ -1,9 +1,88 @@
 {
   "name": "itty-router",
-  "version": "4.0.9",
+  "version": "4.0.10-next.3",
   "description": "A tiny, zero-dependency router, designed to make beautiful APIs in any environment.",
   "type": "module",
-  "main": "./index.js",
+  "main": "index.js",
+  "module": "index.js",
+  "types": "index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./index.js",
+      "require": "./cjs/index.js",
+      "types": "./index.d.ts"
+    },
+    "./createCors": {
+      "import": "./createCors.js",
+      "require": "./cjs/createCors.js",
+      "types": "./createCors.d.ts"
+    },
+    "./createResponse": {
+      "import": "./createResponse.js",
+      "require": "./cjs/createResponse.js",
+      "types": "./createResponse.d.ts"
+    },
+    "./error": {
+      "import": "./error.js",
+      "require": "./cjs/error.js",
+      "types": "./error.d.ts"
+    },
+    "./html": {
+      "import": "./html.js",
+      "require": "./cjs/html.js",
+      "types": "./html.d.ts"
+    },
+    "./jpeg": {
+      "import": "./jpeg.js",
+      "require": "./cjs/jpeg.js",
+      "types": "./jpeg.d.ts"
+    },
+    "./png": {
+      "import": "./png.js",
+      "require": "./cjs/png.js",
+      "types": "./png.d.ts"
+    },
+    "./Router": {
+      "import": "./Router.js",
+      "require": "./cjs/Router.js",
+      "types": "./Router.d.ts"
+    },
+    "./status": {
+      "import": "./status.js",
+      "require": "./cjs/status.js",
+      "types": "./status.d.ts"
+    },
+    "./text": {
+      "import": "./text.js",
+      "require": "./cjs/text.js",
+      "types": "./text.d.ts"
+    },
+    "./webp": {
+      "import": "./webp.js",
+      "require": "./cjs/webp.js",
+      "types": "./webp.d.ts"
+    },
+    "./websocket": {
+      "import": "./websocket.js",
+      "require": "./cjs/websocket.js",
+      "types": "./websocket.d.ts"
+    },
+    "./withContent": {
+      "import": "./withContent.js",
+      "require": "./cjs/withContent.js",
+      "types": "./withContent.d.ts"
+    },
+    "./withCookies": {
+      "import": "./withCookies.js",
+      "require": "./cjs/withCookies.js",
+      "types": "./withCookies.d.ts"
+    },
+    "./withParams": {
+      "import": "./withParams.js",
+      "require": "./cjs/withParams.js",
+      "types": "./withParams.d.ts"
+    }
+  },
   "keywords": [
     "api",
     "router",
@@ -30,7 +109,7 @@
     "prerelease": "yarn verify",
     "prebuild": "rimraf dist && mkdir dist && yarn coverage && yarn format",
     "build": "rollup -c",
-    "release": "release --tag --push --patch --src=dist",
+    "release": "release --tag --push --type=next --src=dist",
     "runtime:bun": "bun example/bun.ts",
     "runtime:node": "node example/node.js"
   },

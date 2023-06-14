@@ -5,34 +5,40 @@ import bundleSize from 'rollup-plugin-bundle-size'
 import copy from 'rollup-plugin-copy'
 
 export default async () => {
-  const files = await globby('./src/*.ts', {
+  const files = (await globby('./src/*.ts', {
     ignore: ['**/*.spec.ts', 'example'],
-  })
+  })).map(path => ({
+    path,
+    shortPath: path.replace(/(\/src)|(\.ts)/g, '').replace('./index', '.'),
+    esm: path.replace('/src/', '/dist/').replace('.ts', '.js'),
+    cjs: path.replace('/src/', '/dist/cjs/').replace('.ts', '.js'),
+    types: path.replace('/src/', '/dist/').replace('.ts', '.d.ts'),
+  }))
 
-  console.log({ files })
+  console.log(files.map(f => f.path))
 
-  return files.map((path) => ({
-    input: path,
+  return files.map(file => ({
+    input: file.path,
     output: [
       {
         format: 'esm',
-        file: path.replace('/src/', '/dist/').replace('.ts', '.js'),
-        // sourcemap: true,
+        file: file.esm,
+        sourcemap: false,
       },
       {
         format: 'cjs',
-        file: path.replace('/src/', '/dist/cjs/').replace('.ts', '.js'),
-        // sourcemap: true,
+        file: file.cjs,
+        sourcemap: false,
       },
     ],
     plugins: [
-      typescript({ sourceMap: false }),
+      typescript({ sourceMap: true }),
       terser(),
       bundleSize(),
       copy({
         targets: [
           {
-            src: ['CONTRIBUTING.md', 'CODE-OF-CONDUCT.md', 'LICENSE'],
+            src: ['LICENSE'],
             dest: 'dist',
           },
         ],
