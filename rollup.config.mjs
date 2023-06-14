@@ -17,29 +17,22 @@ export default async () => {
 
   console.log(files.map(f => f.path))
 
-  // const exportInjection = files.map(({ shortPath, esm, cjs, types }) => `
-  //   "${shortPath}": {
-  //     "import": "${esm}",
-  //     "require": "${cjs}",
-  //     "types": "${types}",
-  //   }`).join(',\n')
-
   return files.map(file => ({
     input: file.path,
     output: [
       {
         format: 'esm',
         file: file.esm,
-        // sourcemap: true,
+        sourcemap: false,
       },
       {
         format: 'cjs',
         file: file.cjs,
-        // sourcemap: true,
+        sourcemap: false,
       },
     ],
     plugins: [
-      typescript({ sourceMap: false }),
+      typescript({ sourceMap: true }),
       terser(),
       bundleSize(),
       copy({
