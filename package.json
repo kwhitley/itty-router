@@ -1,9 +1,72 @@
 {
   "name": "itty-router",
-  "version": "4.0.9",
+  "version": "4.0.10",
   "description": "A tiny, zero-dependency router, designed to make beautiful APIs in any environment.",
   "type": "module",
-  "main": "./index.js",
+  "main": "./dist/index.cjs.js",
+  "module": "./dist/index.js",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs.js"
+    },
+    "./createCors": {
+      "import": "./dist/createCors.js",
+      "require": "./dist/createCors.cjs.js"
+    },
+    "./createResponse": {
+      "import": "./dist/createResponse.js",
+      "require": "./dist/createResponse.cjs.js"
+    },
+    "./error": {
+      "import": "./dist/error.js",
+      "require": "./dist/error.cjs.js"
+    },
+    "./html": {
+      "import": "./dist/html.js",
+      "require": "./dist/html.cjs.js"
+    },
+    "./jpeg": {
+      "import": "./dist/jpeg.js",
+      "require": "./dist/jpeg.cjs.js"
+    },
+    "./png": {
+      "import": "./dist/png.js",
+      "require": "./dist/png.cjs.js"
+    },
+    "./Router": {
+      "import": "./dist/Router.js",
+      "require": "./dist/Router.cjs.js"
+    },
+    "./status": {
+      "import": "./dist/status.js",
+      "require": "./dist/status.cjs.js"
+    },
+    "./text": {
+      "import": "./dist/text.js",
+      "require": "./dist/text.cjs.js"
+    },
+    "./webp": {
+      "import": "./dist/webp.js",
+      "require": "./dist/webp.cjs.js"
+    },
+    "./websocket": {
+      "import": "./dist/websocket.js",
+      "require": "./dist/websocket.cjs.js"
+    },
+    "./withContent": {
+      "import": "./dist/withContent.js",
+      "require": "./dist/withContent.cjs.js"
+    },
+    "./withCookies": {
+      "import": "./dist/withCookies.js",
+      "require": "./dist/withCookies.cjs.js"
+    },
+    "./withParams": {
+      "import": "./dist/withParams.js",
+      "require": "./dist/withParams.cjs.js"
+    }
+  },
   "keywords": [
     "api",
     "router",
@@ -30,7 +93,7 @@
     "prerelease": "yarn verify",
     "prebuild": "rimraf dist && mkdir dist && yarn coverage && yarn format",
     "build": "rollup -c",
-    "release": "release --tag --push --patch --src=dist",
+    "release": "release --tag --push --type=next",
     "runtime:bun": "bun example/bun.ts",
     "runtime:node": "node example/node.js"
   },
