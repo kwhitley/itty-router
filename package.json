@@ -1,6 +1,6 @@
 {
   "name": "itty-router",
-  "version": "4.0.10-next.1",
+  "version": "4.0.10-next.2",
   "description": "A tiny, zero-dependency router, designed to make beautiful APIs in any environment.",
   "type": "module",
   "main": "dist/index.cjs.js",
@@ -79,6 +79,66 @@
     },
     "./withParams": {
       "import": "./dist/withParams.js",
+      "require": "./dist/withParams.cjs.js",
+      "types": "./dist/withParams.d.ts"
+    },
+    "./cjs": {
+      "require": "./dist/index.cjs.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./cjs/createCors": {
+      "require": "./dist/createCors.cjs.js",
+      "types": "./dist/createCors.d.ts"
+    },
+    "./cjs/createResponse": {
+      "require": "./dist/createResponse.cjs.js",
+      "types": "./dist/createResponse.d.ts"
+    },
+    "./cjs/error": {
+      "require": "./dist/error.cjs.js",
+      "types": "./dist/error.d.ts"
+    },
+    "./cjs/html": {
+      "require": "./dist/html.cjs.js",
+      "types": "./dist/html.d.ts"
+    },
+    "./cjs/jpeg": {
+      "require": "./dist/jpeg.cjs.js",
+      "types": "./dist/jpeg.d.ts"
+    },
+    "./cjs/png": {
+      "require": "./dist/png.cjs.js",
+      "types": "./dist/png.d.ts"
+    },
+    "./cjs/Router": {
+      "require": "./dist/Router.cjs.js",
+      "types": "./dist/Router.d.ts"
+    },
+    "./cjs/status": {
+      "require": "./dist/status.cjs.js",
+      "types": "./dist/status.d.ts"
+    },
+    "./cjs/text": {
+      "require": "./dist/text.cjs.js",
+      "types": "./dist/text.d.ts"
+    },
+    "./cjs/webp": {
+      "require": "./dist/webp.cjs.js",
+      "types": "./dist/webp.d.ts"
+    },
+    "./cjs/websocket": {
+      "require": "./dist/websocket.cjs.js",
+      "types": "./dist/websocket.d.ts"
+    },
+    "./cjs/withContent": {
+      "require": "./dist/withContent.cjs.js",
+      "types": "./dist/withContent.d.ts"
+    },
+    "./cjs/withCookies": {
+      "require": "./dist/withCookies.cjs.js",
+      "types": "./dist/withCookies.d.ts"
+    },
+    "./cjs/withParams": {
       "require": "./dist/withParams.cjs.js",
       "types": "./dist/withParams.d.ts"
     }
