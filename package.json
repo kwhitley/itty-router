@@ -1,72 +1,93 @@
 {
   "name": "itty-router",
-  "version": "4.0.10-next.0",
+  "version": "4.0.10-next.1",
   "description": "A tiny, zero-dependency router, designed to make beautiful APIs in any environment.",
   "type": "module",
-  "main": "./dist/index.cjs.js",
-  "module": "./dist/index.js",
+  "main": "dist/index.cjs.js",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
   "exports": {
     ".": {
       "import": "./dist/index.js",
-      "require": "./dist/index.cjs.js"
+      "require": "./dist/index.cjs.js",
+      "types": "./dist/index.d.ts"
     },
     "./createCors": {
       "import": "./dist/createCors.js",
-      "require": "./dist/createCors.cjs.js"
+      "require": "./dist/createCors.cjs.js",
+      "types": "./dist/createCors.d.ts"
     },
     "./createResponse": {
       "import": "./dist/createResponse.js",
-      "require": "./dist/createResponse.cjs.js"
+      "require": "./dist/createResponse.cjs.js",
+      "types": "./dist/createResponse.d.ts"
     },
     "./error": {
       "import": "./dist/error.js",
-      "require": "./dist/error.cjs.js"
+      "require": "./dist/error.cjs.js",
+      "types": "./dist/error.d.ts"
     },
     "./html": {
       "import": "./dist/html.js",
-      "require": "./dist/html.cjs.js"
+      "require": "./dist/html.cjs.js",
+      "types": "./dist/html.d.ts"
     },
     "./jpeg": {
       "import": "./dist/jpeg.js",
-      "require": "./dist/jpeg.cjs.js"
+      "require": "./dist/jpeg.cjs.js",
+      "types": "./dist/jpeg.d.ts"
     },
     "./png": {
       "import": "./dist/png.js",
-      "require": "./dist/png.cjs.js"
+      "require": "./dist/png.cjs.js",
+      "types": "./dist/png.d.ts"
     },
     "./Router": {
       "import": "./dist/Router.js",
-      "require": "./dist/Router.cjs.js"
+      "require": "./dist/Router.cjs.js",
+      "types": "./dist/Router.d.ts"
     },
     "./status": {
       "import": "./dist/status.js",
-      "require": "./dist/status.cjs.js"
+      "require": "./dist/status.cjs.js",
+      "types": "./dist/status.d.ts"
     },
     "./text": {
       "import": "./dist/text.js",
-      "require": "./dist/text.cjs.js"
+      "require": "./dist/text.cjs.js",
+      "types": "./dist/text.d.ts"
     },
     "./webp": {
       "import": "./dist/webp.js",
-      "require": "./dist/webp.cjs.js"
+      "require": "./dist/webp.cjs.js",
+      "types": "./dist/webp.d.ts"
     },
     "./websocket": {
       "import": "./dist/websocket.js",
-      "require": "./dist/websocket.cjs.js"
+      "require": "./dist/websocket.cjs.js",
+      "types": "./dist/websocket.d.ts"
     },
     "./withContent": {
       "import": "./dist/withContent.js",
-      "require": "./dist/withContent.cjs.js"
+      "require": "./dist/withContent.cjs.js",
+      "types": "./dist/withContent.d.ts"
     },
     "./withCookies": {
       "import": "./dist/withCookies.js",
-      "require": "./dist/withCookies.cjs.js"
+      "require": "./dist/withCookies.cjs.js",
+      "types": "./dist/withCookies.d.ts"
     },
     "./withParams": {
       "import": "./dist/withParams.js",
-      "require": "./dist/withParams.cjs.js"
+      "require": "./dist/withParams.cjs.js",
+      "types": "./dist/withParams.d.ts"
     }
   },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
   "keywords": [
     "api",
     "router",
