@@ -2455,10 +2455,10 @@ istanbul-reports@^3.1.4:
     html-escaper "^2.0.0"
     istanbul-lib-report "^3.0.0"
 
-itty-router@^4.0.6:
-  version "4.0.6"
-  resolved "https://registry.yarnpkg.com/itty-router/-/itty-router-4.0.6.tgz#6481246d6326c5ad188ef4838c26170151058493"
-  integrity sha512-bzfBY19gJS/GQK7Wvw/Wj03t6KFRo/JOvtzmlNtEv0UJqqWWbBT/0PIf6j9YbpIUwwA3OpeZHjJN05+YWaAVvQ==
+itty-router@^4.0.10:
+  version "4.0.10"
+  resolved "https://registry.yarnpkg.com/itty-router/-/itty-router-4.0.10.tgz#d2f6bdd74880539975552a0db5c81bfaa3655e2e"
+  integrity sha512-2B8nfXlHpzRiCEp1uSULRoy1lyzzOmLvLYEcX+Jg2Io9Q7e6F+Lv/qwYv+qzR2z256PmCzaq6yrA+2dnXysy9g==
 
 jackspeak@^2.0.3:
   version "2.2.1"
