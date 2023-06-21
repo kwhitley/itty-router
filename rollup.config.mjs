@@ -10,8 +10,8 @@ export default async () => {
   })).map(path => ({
     path,
     shortPath: path.replace(/(\/src)|(\.ts)/g, '').replace('./index', '.'),
-    esm: path.replace('/src/', '/dist/').replace('.ts', '.js'),
-    cjs: path.replace('/src/', '/dist/cjs/').replace('.ts', '.js'),
+    esm: path.replace('/src/', '/dist/').replace('.ts', '.mjs'),
+    cjs: path.replace('/src/', '/dist/').replace('.ts', '.js'),
     types: path.replace('/src/', '/dist/').replace('.ts', '.d.ts'),
   }))
 
@@ -21,7 +21,7 @@ export default async () => {
     input: file.path,
     output: [
       {
-        format: 'esm',
+        format: 'es',
         file: file.esm,
         sourcemap: false,
       },
