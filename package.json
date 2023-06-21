@@ -1,6 +1,6 @@
 {
   "name": "itty-router",
-  "version": "4.0.11-next.0",
+  "version": "4.0.11-next.1",
   "description": "A tiny, zero-dependency router, designed to make beautiful APIs in any environment.",
   "main": "./index.js",
   "module": "./index.mjs",
@@ -29,6 +29,7 @@
     "coveralls": "yarn coverage && cat ./coverage/lcov.info | coveralls",
     "verify": "echo 'verifying module...' && yarn build && yarn test:once",
     "prerelease": "yarn verify",
+    "prerelease:next": "yarn verify",
     "prebuild": "rimraf dist && mkdir dist",
     "build": "rollup -c",
     "release": "release --tag --push --patch --src=dist",
