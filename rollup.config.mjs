@@ -23,9 +23,9 @@ const pkg = await fs.readJSON('./package.json')
 // create updated exports list from build files
 pkg.exports = files.reduce((acc, file) => {
   acc[file.shortPath] = {
-    import: file.esm,
-    require: file.cjs,
-    types: file.types,
+    import: file.esm.replace('/dist', ''),
+    require: file.cjs.replace('/dist', ''),
+    types: file.types.replace('/dist', ''),
   }
 
   return acc
