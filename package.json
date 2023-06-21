@@ -1,15 +1,100 @@
 {
   "name": "itty-router",
-  "version": "4.0.11-next.3",
+  "version": "4.0.11-next.4",
   "description": "A tiny, zero-dependency router, designed to make beautiful APIs in any environment.",
   "main": "./index.js",
   "module": "./index.mjs",
   "types": "./index.d.ts",
+  "files": [
+    "dist",
+    "LICENSE",
+    "README.md"
+  ],
   "exports": {
     ".": {
-      "import": "./index.mjs",
-      "require": "./index.js",
-      "types": "./index.d.ts"
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./createCors": {
+      "import": "./dist/createCors.mjs",
+      "require": "./dist/createCors.js",
+      "types": "./dist/createCors.d.ts"
+    },
+    "./createResponse": {
+      "import": "./dist/createResponse.mjs",
+      "require": "./dist/createResponse.js",
+      "types": "./dist/createResponse.d.ts"
+    },
+    "./error": {
+      "import": "./dist/error.mjs",
+      "require": "./dist/error.js",
+      "types": "./dist/error.d.ts"
+    },
+    "./html": {
+      "import": "./dist/html.mjs",
+      "require": "./dist/html.js",
+      "types": "./dist/html.d.ts"
+    },
+    "./jpeg": {
+      "import": "./dist/jpeg.mjs",
+      "require": "./dist/jpeg.js",
+      "types": "./dist/jpeg.d.ts"
+    },
+    "./json": {
+      "import": "./dist/json.mjs",
+      "require": "./dist/json.js",
+      "types": "./dist/json.d.ts"
+    },
+    "./png": {
+      "import": "./dist/png.mjs",
+      "require": "./dist/png.js",
+      "types": "./dist/png.d.ts"
+    },
+    "./Router": {
+      "import": "./dist/Router.mjs",
+      "require": "./dist/Router.js",
+      "types": "./dist/Router.d.ts"
+    },
+    "./status": {
+      "import": "./dist/status.mjs",
+      "require": "./dist/status.js",
+      "types": "./dist/status.d.ts"
+    },
+    "./StatusError": {
+      "import": "./dist/StatusError.mjs",
+      "require": "./dist/StatusError.js",
+      "types": "./dist/StatusError.d.ts"
+    },
+    "./text": {
+      "import": "./dist/text.mjs",
+      "require": "./dist/text.js",
+      "types": "./dist/text.d.ts"
+    },
+    "./webp": {
+      "import": "./dist/webp.mjs",
+      "require": "./dist/webp.js",
+      "types": "./dist/webp.d.ts"
+    },
+    "./websocket": {
+      "import": "./dist/websocket.mjs",
+      "require": "./dist/websocket.js",
+      "types": "./dist/websocket.d.ts"
+    },
+    "./withContent": {
+      "import": "./dist/withContent.mjs",
+      "require": "./dist/withContent.js",
+      "types": "./dist/withContent.d.ts"
+    },
+    "./withCookies": {
+      "import": "./dist/withCookies.mjs",
+      "require": "./dist/withCookies.js",
+      "types": "./dist/withCookies.d.ts"
+    },
+    "./withParams": {
+      "import": "./dist/withParams.mjs",
+      "require": "./dist/withParams.js",
+      "types": "./dist/withParams.d.ts"
     }
   },
   "keywords": [
@@ -39,8 +124,8 @@
     "prerelease:next": "yarn verify",
     "prebuild": "rimraf dist && mkdir dist",
     "build": "rollup -c",
-    "release": "release --tag --push --patch --src=dist",
-    "release:next": "release --tag --push --type=next --src=dist",
+    "release": "release --tag --push --patch",
+    "release:next": "release --tag --push --type=next",
     "runtime:bun": "bun example/bun.ts",
     "runtime:node": "node example/node.js"
   },
