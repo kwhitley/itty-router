@@ -21,7 +21,7 @@ export default async () => {
     input: file.path,
     output: [
       {
-        format: 'es',
+        format: 'esm',
         file: file.esm,
         sourcemap: false,
       },
