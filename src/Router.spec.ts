@@ -507,6 +507,23 @@ describe('Router', () => {
   })
 })
 
+describe('MIDDLEWARE', () => {
+  it('calls any handler until a return', async () => {
+    const router = Router()
+    const h1 = vi.fn()
+    const h2 = vi.fn()
+    const h3 = vi.fn(() => true)
+
+    router.get('*', h1, h2, h3)
+
+    const results = await router.handle(buildRequest({ path: '/' }))
+    expect(h1).toHaveBeenCalled()
+    expect(h2).toHaveBeenCalled()
+    expect(h3).toHaveBeenCalled()
+    expect(results).toBe(true)
+  })
+})
+
 describe('ROUTE MATCHING', () => {
   describe('allowed characters', () => {
     const chars = `/foo/-.abc!@%&_=:;',~|/bar`
