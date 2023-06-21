@@ -8,11 +8,10 @@ Please explain the changes you made here.
 
 ### Type of Change (select one and follow subtasks)
 
+- [ ] Documentation (README.md)
 - [ ] Maintenance or repo-level work (e.g. linting, build, tests, refactoring, etc.)
 - [ ] Bug fix (non-breaking change which fixes an issue)
 - [ ] New feature (non-breaking change which adds functionality)
-  - [ ] Is this a mainstream benefit or an edge case?
-  - [ ] Is it worth the bytes?
 - [ ] Breaking change (fix or feature that would cause existing functionality/userland code to not work as expected)
   - [ ] Explain why a breaking change is necessary:
 - [ ] This change requires (or is) a documentation update
