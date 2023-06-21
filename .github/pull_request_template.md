@@ -2,7 +2,7 @@
 
 Please explain the changes you made here.
 
-### Issue Related
+### Related Issue
 
 - Link to the related issue:
 
