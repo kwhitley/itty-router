@@ -1,13 +1,10 @@
 ### Description
-
 Please explain the changes you made here.
 
 ### Related Issue
-
-- Link to the related issue:
+Link to the related issue:
 
 ### Type of Change (select one and follow subtasks)
-
 - [ ] Documentation (README.md)
 - [ ] Maintenance or repo-level work (e.g. linting, build, tests, refactoring, etc.)
 - [ ] Bug fix (non-breaking change which fixes an issue)
