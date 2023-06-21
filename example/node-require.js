@@ -1,7 +1,7 @@
 const { createServerAdapter } = require('@whatwg-node/server')
 const { createServer } = require('http')
 require('isomorphic-fetch')
-const { Router, error, json } = require('itty-router')
+const { Router, error, json } = require('../dist/index.js')
 
 const router = Router()
 
