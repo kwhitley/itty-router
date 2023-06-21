@@ -1,6 +1,6 @@
 export interface ResponseFormatter {
   (body?: any, options?: ResponseInit): Response
-}
+};
 
 export interface BodyTransformer {
   (body: any): string
