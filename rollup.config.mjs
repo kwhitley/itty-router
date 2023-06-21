@@ -30,10 +30,15 @@ export default async () => {
         file: file.cjs,
         sourcemap: false,
       },
+      {
+        format: 'cjs',
+        file: file.cjs.replace('dist', 'dist/cjs'),
+        sourcemap: false,
+      },
     ],
     plugins: [
       typescript({ sourceMap: true }),
-      // terser(),
+      terser(),
       bundleSize(),
       copy({
         targets: [
