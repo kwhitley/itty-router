@@ -631,6 +631,10 @@ describe('ROUTE MATCHING', () => {
       { route: '/test.:x', path: '/test.a.b', returns: false }, // extensions only capture a single dot
       { route: '/test.:x', path: '/test.a', returns: { x: 'a' } },
       { route: '/:x?.y', path: '/test.y', returns: { x: 'test' } },
+      { route: '/api(/v1)?/foo', path: '/api/v1/foo' }, // switching support preserved
+      { route: '/api(/v1)?/foo', path: '/api/foo' },    // switching support preserved
+      { route: '(/api)?/v1/:x', path: '/api/v1/foo', returns: { x: 'foo' } },    // switching support preserved
+      { route: '(/api)?/v1/:x', path: '/v1/foo', returns: { x: 'foo' } },    // switching support preserved
     ])
   })
 
