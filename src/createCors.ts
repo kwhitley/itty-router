@@ -1,6 +1,6 @@
 import { IRequest } from './Router'
 
-interface CorsOptions {
+export interface CorsOptions {
   origins?: string[]
   maxAge?: number
   methods?: string[]
