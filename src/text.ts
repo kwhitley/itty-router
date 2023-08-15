@@ -1,2 +1,2 @@
-export const text = (message: string, options?: ResponseInit): Response =>
-  new Response(message, options)
+export const text = (message: any, options?: ResponseInit): Response =>
+  new Response(String(message), options)
