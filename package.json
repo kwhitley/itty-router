@@ -1,6 +1,6 @@
 {
   "name": "itty-router",
-  "version": "4.0.15",
+  "version": "4.1.0-next.0",
   "description": "A tiny, zero-dependency router, designed to make beautiful APIs in any environment.",
   "main": "./index.js",
   "module": "./index.mjs",
@@ -25,6 +25,11 @@
       "import": "./error.mjs",
       "require": "./error.js",
       "types": "./error.d.ts"
+    },
+    "./flow": {
+      "import": "./flow.mjs",
+      "require": "./flow.js",
+      "types": "./flow.d.ts"
     },
     "./html": {
       "import": "./html.mjs",
@@ -119,8 +124,8 @@
     "prerelease:next": "yarn verify",
     "prebuild": "rimraf dist && mkdir dist",
     "build": "rollup -c",
-    "release": "release --tag --push --patch --src=dist",
-    "release:next": "release --tag --push --type=next --src=dist",
+    "release:main": "release --tag --push --patch --src=dist",
+    "release": "release --tag --push --type=next --src=dist",
     "runtime:bun": "bun example/bun.ts",
     "runtime:node": "node example/node.js"
   },
