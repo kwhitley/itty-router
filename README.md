@@ -187,7 +187,9 @@ router
 ```
 
 ### 4. Only one required argument.  The rest is up to you.
-We only require one argument in itty - a Request-like object with the following shape: `{ url, method }` (usually a native [Request](https://developer.mozilla.org/en-US/docs/Web/API/Request)).  Because itty is not opinionated about [Response](https://developer.mozilla.org/en-US/docs/Web/API/Response) creation, there is not "response" argument built in.  Every other argument you pass to `route.handle` is given to each handler, in the same order.  
+We only require one argument in itty - a Request-like object with **url** and **method** properties (usually a native [Request](https://developer.mozilla.org/en-US/docs/Web/API/Request)). Because itty is not opinionated about [Response](https://developer.mozilla.org/en-US/docs/Web/API/Response) creation, there is no "response" argument requirement.  
+
+**Superpower**: Every argument you pass to `route.handle` is given to each handler, in the same order.
 
 > ### This makes itty one of the most platform-agnostic routers, *period*, as it's able to match up to any platform's signature.
 
