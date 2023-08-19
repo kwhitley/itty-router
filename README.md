@@ -55,7 +55,7 @@ Designed originally for [Cloudflare Workers](https://itty.dev/itty-router/runtim
 
 ## Features
 
-- Tiny, tree-shakeable. [~450](https://deno.bundlejs.com/?q=itty-router/Router) bytes for the Router itself, or [~1.6k](https://bundlephobia.com/package/itty-router) for the entire library (>100x smaller than [express.js](https://www.npmjs.com/package/express)).
+- Tiny. [~450](https://deno.bundlejs.com/?q=itty-router/Router) bytes for the Router itself, or [~1.6k](https://bundlephobia.com/package/itty-router) for the entire library (>100x smaller than [express.js](https://www.npmjs.com/package/express)).
 - [Fully-Typed](https://itty.dev/itty-router/typescript).
 - Shorter, simpler route code than most modern routers.
 - Dead-simple [middleware](https://itty.dev/itty-router/middleware) - use ours or write your own.
