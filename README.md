@@ -34,7 +34,7 @@
 
 <p align="center">
   <a href="https://discord.gg/53vyrZAu9u" target="_blank">
-    <img src="https://img.shields.io/discord/832353585802903572?style=flat-square" alt="join us on discord" />
+    <img src="https://img.shields.io/discord/832353585802903572?label=Discord&logo=Discord&style=flat-square" alt="join us on discord" />
   </a>
   <a href="https://github.com/kwhitley/itty-router" target="_blank">
     <img src="https://img.shields.io/github/stars/kwhitley/itty-router?style=social" alt="repo stars" />
