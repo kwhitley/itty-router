@@ -33,7 +33,7 @@
 </p>
 
 <p align="center">
-  <a href="https://discord.com/channels/832353585802903572" target="_blank">
+  <a href="https://discord.gg/53vyrZAu9u" target="_blank">
     <img src="https://img.shields.io/discord/832353585802903572?style=flat-square" alt="join us on discord" />
   </a>
   <a href="https://github.com/kwhitley/itty-router" target="_blank">
@@ -71,7 +71,7 @@ Designed originally for [Cloudflare Workers](https://itty.dev/itty-router/runtim
 
 ## [Full Documentation](https://itty.dev/itty-router)
 
-Complete API documentation is available at [itty.dev/itty-router](https://itty.dev/itty-router), or join our [Discord](https://discord.com/channels/832353585802903572) channel to chat with community members for quick help!
+Complete API documentation is available at [itty.dev/itty-router](https://itty.dev/itty-router), or join our [Discord](https://discord.gg/53vyrZAu9u) channel to chat with community members for quick help!
 
 ## Installation
 
@@ -187,9 +187,7 @@ router
 ```
 
 ### 4. Only one required argument.  The rest is up to you.
-We only require one argument in itty - a Request-like object with **url** and **method** properties (usually a native [Request](https://developer.mozilla.org/en-US/docs/Web/API/Request)). Because itty is not opinionated about [Response](https://developer.mozilla.org/en-US/docs/Web/API/Response) creation, there is no "response" argument requirement.  
-
-**Superpower**: Every argument you pass to `route.handle` is given to each handler, in the same order.
+We only require one argument in itty - a Request-like object with the following shape: `{ url, method }` (usually a native [Request](https://developer.mozilla.org/en-US/docs/Web/API/Request)).  Because itty is not opinionated about [Response](https://developer.mozilla.org/en-US/docs/Web/API/Response) creation, there is not "response" argument built in.  Every other argument you pass to `route.handle` is given to each handler, in the same order.  
 
 > ### This makes itty one of the most platform-agnostic routers, *period*, as it's able to match up to any platform's signature.
 
@@ -214,7 +212,7 @@ export default {
 
 Have a question? Suggestion? Complaint? Want to send a gift basket?
 
-Join us on [Discord](https://discord.com/channels/832353585802903572)!
+Join us on [Discord](https://discord.gg/53vyrZAu9u)!
 
 ## Testing and Contributing
 
