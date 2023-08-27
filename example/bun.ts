@@ -1,4 +1,5 @@
-import { Router, error, json, withParams } from '../dist/index.js'
+// WITHOUT FLOW
+import { IRequest, Router, error, json, withParams } from 'itty-router'
 
 const router = Router()
 
@@ -10,6 +11,8 @@ router
 
 export default {
   port: 3001,
-  fetch: (request, env, ctx) =>
-    router.handle(request, env, ctx).then(json).catch(error),
+  fetch: (request: IRequest) => router
+                                  .handle(request)
+                                  .then(json)
+                                  .catch(error),
 }

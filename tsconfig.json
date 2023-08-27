@@ -4,7 +4,7 @@
     "allowSyntheticDefaultImports": true,
     "baseUrl": "src",
     "declaration": true,
-    "sourceMap": true,
+    "sourceMap": false,
     "esModuleInterop": true,
     "inlineSourceMap": false,
     "lib": ["esnext", "dom", "dom.iterable"],

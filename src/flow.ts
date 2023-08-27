@@ -1,7 +1,8 @@
-import { RouterType, RouteHandler } from './Router'
+import { RouteHandler, RouterType } from './Router'
+import { CorsOptions, createCors } from './createCors'
 import { error } from './error'
 import { json } from './json'
-import { CorsOptions, createCors } from './createCors'
+import { withParams } from './withParams'
 
 export type FlowOptions = {
   format?: Function | false
@@ -27,20 +28,20 @@ export const flow = (router: RouterType, options: FlowOptions = {}) => {
   // Initialize CORS handlers if cors options are provided
   if (cors) {
     corsHandlers = createCors(cors === true ? undefined : cors)
-    router.routes.unshift(['ALL', /^(.*)?\/*$/, [corsHandlers.preflight], '*'])
+    router.routes.unshift(['ALL', /^(.*)?\/*$/, [corsHandlers.preflight, withParams], '*'])
   }
 
   return async (...args: any[]) => {
     // @ts-expect-error
     let response = router.handle(...args)
 
-    // add formatting, if provided
     if (format) {
+      // @ts-expect-error - add formatting, if provided
       response = response.then(format)
     }
 
-    // add error handling, if provided
     if (errorHandler) {
+      // @ts-expect-error - add error handling, if provided
       response = response.catch(errorHandler)
     }
 

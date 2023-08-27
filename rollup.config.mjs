@@ -52,7 +52,7 @@ export default async () => {
       },
     ],
     plugins: [
-      typescript({ sourceMap: true }),
+      typescript({ sourceMap: false }),
       terser(),
       bundleSize(),
       copy({
