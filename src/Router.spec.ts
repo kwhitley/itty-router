@@ -409,6 +409,15 @@ describe('Router', () => {
         router.get('/foo', vi.fn()).get('/foo', vi.fn())
       }).not.toThrow()
     })
+
+    it('allows special characters in params', async () => {
+      const specialRouter = Router()
+      specialRouter.get('/foo/:id', (request) => new Response(`id: ${request.params.id}`))
+
+      const response = await specialRouter.handle(buildRequest({ path: '/foo/user%3A1234' }))
+
+      expect(await response.text()).toBe('id: user:1234')
+    })
   })
 
   describe(`.handle({ method = 'GET', url }, ...args)`, () => {
