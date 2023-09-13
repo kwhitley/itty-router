@@ -6,23 +6,23 @@ import { withParams } from './withParams'
 
 export type FlowOptions = {
   format?: Function | false
-  error?: Function | false
-  notFound?: RouteHandler | false
+  handleErrors?: Function | false
+  handleNotFound?: RouteHandler | false
   cors?: CorsOptions | true
 }
 
 export const flow = (router: RouterType, options: FlowOptions = {}) => {
   const {
     format = json,
-    error: errorHandler = error,
     cors,
-    notFound = () => error(404),
+    handleErrors = error,
+    handleNotFound = () => error(404),
   } = options
   let corsHandlers: any
 
   // register a notFound route, if given
-  if (typeof notFound === 'function') {
-    router.all('*', notFound)
+  if (typeof handleNotFound === 'function') {
+    router.all('*', handleNotFound)
   }
 
   // Initialize CORS handlers if cors options are provided
@@ -40,9 +40,9 @@ export const flow = (router: RouterType, options: FlowOptions = {}) => {
       response = response.then(format)
     }
 
-    if (errorHandler) {
+    if (handleErrors) {
       // @ts-expect-error - add error handling, if provided
-      response = response.catch(errorHandler)
+      response = response.catch(handleErrors)
     }
 
     // add final CORS pass, if enabled
