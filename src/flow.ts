@@ -34,23 +34,12 @@ export const flow = (router: RouterType, options: FlowOptions = {}) => {
   return async (...args: any[]) => {
     // @ts-expect-error
     let response = router.handle(...args)
+    // @ts-expect-error - add optional formatting
+    response = format ? response.then(format) : response
+    // @ts-expect-error - add optional error handling
+    response = handleErrors ? response.catch(handleErrors) : response
 
-    if (format) {
-      // @ts-expect-error - add formatting, if provided
-      response = response.then(format)
-    }
-
-    if (handleErrors) {
-      // @ts-expect-error - add error handling, if provided
-      response = response.catch(handleErrors)
-    }
-
-    // add final CORS pass, if enabled
-    if (cors) {
-      response = response.then(corsHandlers?.corsify)
-    }
-
-    // finally, return the response
-    return response
+    // add optional cors and return response
+    return cors ? response.then(corsHandlers?.corsify) : response
   }
 }
