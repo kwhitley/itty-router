@@ -1,6 +1,6 @@
 {
   "name": "itty-router",
-  "version": "4.1.0-next.1",
+  "version": "4.1.0-next.2",
   "description": "A tiny, zero-dependency router, designed to make beautiful APIs in any environment.",
   "main": "./index.js",
   "module": "./index.mjs",
@@ -98,17 +98,19 @@
     }
   },
   "keywords": [
+    "itty",
     "api",
     "router",
     "cloudflare",
     "workers",
-    "worker",
+    "bun",
     "serverless",
     "cors",
     "middleware",
     "rest",
     "serviceworker",
-    "nested"
+    "http",
+    "nodejs"
   ],
   "scripts": {
     "dev": "yarn test",
@@ -124,8 +126,8 @@
     "prerelease:next": "yarn verify",
     "prebuild": "rimraf dist && mkdir dist",
     "build": "rollup -c",
-    "release:main": "release --tag --push --patch --src=dist",
-    "release": "release --tag --push --type=next --src=dist",
+    "release": "release --tag --push --patch --src=dist",
+    "release:next": "release --tag --push --type=next --src=dist",
     "runtime:bun": "bun example/bun.ts",
     "runtime:node": "node example/node.js"
   },
