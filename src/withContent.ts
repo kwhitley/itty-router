@@ -6,6 +6,18 @@ export type HasContent<ContentType> = {
 
 // withContent - embeds any request body as request.content
 export const withContent = async (request: IRequest): Promise<void> => {
-  if (request.headers.get('content-type')?.includes('json'))
-    request.content = await request.json()
+  const { headers } = request
+  const type = headers.get('content-type')
+
+  console.log(Object.getOwnPropertyNames(Object.getPrototypeOf(request)))
+
+  request.content = type?.includes('json')
+                  ? await request.json()
+                  : type?.includes('form-urlencoded')
+                    ? Object.fromEntries(new URLSearchParams(await request.text()))
+                    : type?.includes('form-data')
+                      ? await request.formData()
+                      : type?.includes('text')
+                        ? await request.text()
+                        : undefined
 }
