@@ -12,7 +12,7 @@ let router
 beforeEach(() => {
   router = Router()
             .get('/', () => 'index')
-            .get('/items', () => [])
+            .get('/items', () => [1,2,3])
             .get('/throw', (r) => r.a.b.c)
 })
 
@@ -30,7 +30,7 @@ describe('flow(router: RouterType, options: FlowOptions): RequestHandler', () =>
 
     it('formats as json', async () => {
       let response = await flow(router)(request('/items')).then(r => r.json())
-      expect(response).toEqual([])
+      expect(response).toEqual([1,2,3])
     })
 
     it('catches errors', async () => {
@@ -47,6 +47,49 @@ describe('flow(router: RouterType, options: FlowOptions): RequestHandler', () =>
   })
 
   describe('OPTIONS', () => {
+    describe('errors?: Function | false', () => {
+      it('should handle custom error function', async () => {
+        const customError = () => ({ status: 418, body: 'I\'m a teapot' })
+        let response = await flow(router, { errors: customError })(request('/throw'))
+        expect(response.status).toBe(418)
+        expect(response.body).toBe('I\'m a teapot')
+      })
+
+      it('should not handle errors if set to false', async () => {
+        const errorHandler = vi.fn()
+        let response = await flow(router, { errors: false })(request('/throw')).catch(errorHandler)
+        expect(errorHandler).toHaveBeenCalled()
+      })
+    })
+
+    describe('format?: Function | false', () => {
+      it('should handle custom format function', async () => {
+        const customFormat = (data) => ({ status: 200, body: `num items = ${data.length}` })
+        let response = await flow(router, { format: customFormat })(request('/items'))
+        expect(response.status).toBe(200)
+        expect(response.body).toBe('num items = 3')
+      })
+
+      it('should not format response if set to false', async () => {
+        let response = await flow(router, { format: false })(request('/items'))
+        expect(response.body).toBeUndefined()
+      })
+    })
+
+    describe('notFound?: RouteHandler | false', () => {
+      it('should handle custom notFound function', async () => {
+        const customNotFound = () => ({ status: 404, body: 'Custom Not Found' })
+        let response = await flow(router, { notFound: customNotFound })(request('/missing'))
+        expect(response.status).toBe(404)
+        expect(response.body).toBe('Custom Not Found')
+      })
+
+      it('should not handle notFound if set to false', async () => {
+        let response = await flow(router, { notFound: false })(request('/missing'))
+        expect(response.status).toBeUndefined()
+      })
+    })
+
     describe('cors?: CorsOptions | true', () => {
       it('will embed CORS headers if provided', async () => {
         let response = await flow(router, {
@@ -68,14 +111,14 @@ describe('flow(router: RouterType, options: FlowOptions): RequestHandler', () =>
     describe('error?: RouteHandler | false', () => {
       it('does not catch internally if set to false', async () => {
         let onError = vi.fn()
-        let response = await flow(router, { handleErrors: false })(request('/throw')).catch(onError)
+        let response = await flow(router, { errors: false })(request('/throw')).catch(onError)
 
         expect(onError).toHaveBeenCalled()
       })
 
       it('can reshape errors if provided', async () => {
         let response = await flow(router, {
-          handleErrors: () => error(418, 'CUSTOM'),
+          errors: () => error(418, 'CUSTOM'),
         })(request('/throw'))
 
         expect(response.status).toBe(418)
@@ -85,14 +128,14 @@ describe('flow(router: RouterType, options: FlowOptions): RequestHandler', () =>
     describe('format?: ResponseFormatter | false', () => {
       it('does not catch internally if set to false', async () => {
         let onError = vi.fn()
-        let response = await flow(router, { handleErrors: false })(request('/throw')).catch(onError)
+        let response = await flow(router, { errors: false })(request('/throw')).catch(onError)
 
         expect(onError).toHaveBeenCalled()
       })
 
       it('can reshape errors if provided', async () => {
         let response = await flow(router, {
-          handleErrors: () => error(418, 'CUSTOM'),
+          errors: () => error(418, 'CUSTOM'),
         })(request('/throw'))
 
         expect(response.status).toBe(418)
@@ -102,7 +145,7 @@ describe('flow(router: RouterType, options: FlowOptions): RequestHandler', () =>
     describe('notFound?: RouteHandler | false', () => {
       it('uses a custom 404 handler', async () => {
         let response = await flow(router, {
-          handleNotFound: () => error(418, 'CUSTOM'),
+          notFound: () => error(418, 'CUSTOM'),
         })(request('/missing')).then(r => r.json())
 
         expect(response.status).toBe(418)
@@ -111,7 +154,7 @@ describe('flow(router: RouterType, options: FlowOptions): RequestHandler', () =>
 
       it('if set to false, will not add notFound handler (allow undefined passthrough)', async () => {
         let response = await flow(router, {
-          handleNotFound: false,
+          notFound: false,
           format: false,
         })(request('/missing'))
 
