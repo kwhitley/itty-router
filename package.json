@@ -1,9 +1,97 @@
 {
   "name": "itty-router",
-  "version": "4.0.9",
+  "version": "4.0.23",
   "description": "A tiny, zero-dependency router, designed to make beautiful APIs in any environment.",
-  "type": "module",
   "main": "./index.js",
+  "module": "./index.mjs",
+  "types": "./index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./index.mjs",
+      "require": "./index.js",
+      "types": "./index.d.ts"
+    },
+    "./createCors": {
+      "import": "./createCors.mjs",
+      "require": "./createCors.js",
+      "types": "./createCors.d.ts"
+    },
+    "./createResponse": {
+      "import": "./createResponse.mjs",
+      "require": "./createResponse.js",
+      "types": "./createResponse.d.ts"
+    },
+    "./error": {
+      "import": "./error.mjs",
+      "require": "./error.js",
+      "types": "./error.d.ts"
+    },
+    "./html": {
+      "import": "./html.mjs",
+      "require": "./html.js",
+      "types": "./html.d.ts"
+    },
+    "./jpeg": {
+      "import": "./jpeg.mjs",
+      "require": "./jpeg.js",
+      "types": "./jpeg.d.ts"
+    },
+    "./json": {
+      "import": "./json.mjs",
+      "require": "./json.js",
+      "types": "./json.d.ts"
+    },
+    "./png": {
+      "import": "./png.mjs",
+      "require": "./png.js",
+      "types": "./png.d.ts"
+    },
+    "./Router": {
+      "import": "./Router.mjs",
+      "require": "./Router.js",
+      "types": "./Router.d.ts"
+    },
+    "./status": {
+      "import": "./status.mjs",
+      "require": "./status.js",
+      "types": "./status.d.ts"
+    },
+    "./StatusError": {
+      "import": "./StatusError.mjs",
+      "require": "./StatusError.js",
+      "types": "./StatusError.d.ts"
+    },
+    "./text": {
+      "import": "./text.mjs",
+      "require": "./text.js",
+      "types": "./text.d.ts"
+    },
+    "./webp": {
+      "import": "./webp.mjs",
+      "require": "./webp.js",
+      "types": "./webp.d.ts"
+    },
+    "./websocket": {
+      "import": "./websocket.mjs",
+      "require": "./websocket.js",
+      "types": "./websocket.d.ts"
+    },
+    "./withContent": {
+      "import": "./withContent.mjs",
+      "require": "./withContent.js",
+      "types": "./withContent.d.ts"
+    },
+    "./withCookies": {
+      "import": "./withCookies.mjs",
+      "require": "./withCookies.js",
+      "types": "./withCookies.d.ts"
+    },
+    "./withParams": {
+      "import": "./withParams.mjs",
+      "require": "./withParams.js",
+      "types": "./withParams.d.ts"
+    }
+  },
   "keywords": [
     "api",
     "router",
@@ -28,9 +116,11 @@
     "coveralls": "yarn coverage && cat ./coverage/lcov.info | coveralls",
     "verify": "echo 'verifying module...' && yarn build && yarn test:once",
     "prerelease": "yarn verify",
-    "prebuild": "rimraf dist && mkdir dist && yarn coverage && yarn format",
+    "prerelease:next": "yarn verify",
+    "prebuild": "rimraf dist && mkdir dist",
     "build": "rollup -c",
     "release": "release --tag --push --patch --src=dist",
+    "release:next": "release --tag --push --type=next --src=dist",
     "runtime:bun": "bun example/bun.ts",
     "runtime:node": "node example/node.js"
   },
@@ -50,35 +140,36 @@
     "@rollup/plugin-terser": "^0.4.3",
     "@rollup/plugin-typescript": "^11.1.1",
     "@skypack/package-check": "^0.2.2",
-    "@types/node": "^20.2.5",
-    "@typescript-eslint/eslint-plugin": "^5.59.8",
-    "@typescript-eslint/parser": "^5.59.8",
+    "@types/node": "^20.3.1",
+    "@typescript-eslint/eslint-plugin": "^5.60.0",
+    "@typescript-eslint/parser": "^5.60.0",
     "@vitejs/plugin-vue": "^4.2.3",
-    "@vitest/coverage-c8": "^0.31.3",
-    "@whatwg-node/server": "^0.8.1",
+    "@vitest/coverage-c8": "^0.32.2",
+    "@vitest/coverage-v8": "^0.32.2",
+    "@whatwg-node/server": "^0.8.12",
     "coveralls": "^3.1.1",
-    "eslint": "^8.41.0",
+    "eslint": "^8.43.0",
     "eslint-config-prettier": "^8.8.0",
     "fetch-mock": "^9.11.0",
     "fs-extra": "^11.1.1",
-    "globby": "^13.1.4",
+    "globby": "^13.2.0",
     "gzip-size": "^7.0.0",
     "http": "^0.0.1-security",
     "isomorphic-fetch": "^3.0.0",
-    "itty-router": "^4.0.6",
+    "itty-router": "^4.0.11",
     "jsdom": "^22.1.0",
     "npm-run-all": "^4.1.5",
     "prettier": "^2.8.8",
     "rimraf": "^5.0.1",
-    "rollup": "^3.23.0",
+    "rollup": "^3.25.1",
     "rollup-plugin-bundle-size": "^1.0.3",
     "rollup-plugin-copy": "^3.4.0",
     "rollup-plugin-multi-input": "^1.4.1",
     "ts-node": "^10.9.1",
-    "typescript": "^5.0.4",
+    "typescript": "^5.1.3",
     "vite": "^4.3.9",
-    "vitest": "^0.31.3",
+    "vitest": "^0.32.2",
     "yarn": "^1.22.19",
-    "yarn-release": "^1.10.5"
+    "yarn-release": "^1.10.6"
   }
 }

@@ -10,7 +10,7 @@
     "lib": ["esnext", "dom", "dom.iterable"],
     "listEmittedFiles": false,
     "listFiles": false,
-    "moduleResolution": "node",
+    "moduleResolution": "nodeNext",
     "noFallthroughCasesInSwitch": true,
     "pretty": true,
     "resolveJsonModule": true,

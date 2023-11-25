@@ -1,3 +1,4 @@
+import { withParams } from 'itty-router'
 import {
   Router, // the router itself
   IRequest, // lightweight/generic Request type
@@ -8,9 +9,10 @@ import {
   error,
 } from '../src'
 
-// declare a custom Router type with used methods
-interface CustomRouter extends RouterType {
-  puppy: Route
+const myCustomMiddleware = (request: IRequest) => {
+  if (true) {
+    return false
+  }
 }
 
 // declare a custom Request type to allow request injection from middleware
@@ -28,14 +30,19 @@ const { corsify, preflight } = createCors()
 const router = Router({ base: '/' })
 
 router
-  .all('*', preflight)
-  .get<CustomRouter>('/authors', withAuthors, (request: RequestWithAuthors) => {
+  .all('*', preflight, withParams)
+  .get('/authors', withAuthors, (request: RequestWithAuthors) => {
     return request.authors?.[0]
   })
   .puppy('/:name', (request) => {
     const name = request.params.name
     const foo = request.query.foo
   })
+  .get('/whatever/:foo/:bar',
+    myCustomMiddleware,
+    myCustomMiddleware,
+    ({ foo, bar }) => ({ foo, bar })
+  )
   .all('*', () => error(404))
 
 // CF ES6 module syntax

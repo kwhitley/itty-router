@@ -507,6 +507,23 @@ describe('Router', () => {
   })
 })
 
+describe('MIDDLEWARE', () => {
+  it('calls any handler until a return', async () => {
+    const router = Router()
+    const h1 = vi.fn()
+    const h2 = vi.fn()
+    const h3 = vi.fn(() => true)
+
+    router.get('*', h1, h2, h3)
+
+    const results = await router.handle(buildRequest({ path: '/' }))
+    expect(h1).toHaveBeenCalled()
+    expect(h2).toHaveBeenCalled()
+    expect(h3).toHaveBeenCalled()
+    expect(results).toBe(true)
+  })
+})
+
 describe('ROUTE MATCHING', () => {
   describe('allowed characters', () => {
     const chars = `/foo/-.abc!@%&_=:;',~|/bar`
@@ -614,6 +631,10 @@ describe('ROUTE MATCHING', () => {
       { route: '/test.:x', path: '/test.a.b', returns: false }, // extensions only capture a single dot
       { route: '/test.:x', path: '/test.a', returns: { x: 'a' } },
       { route: '/:x?.y', path: '/test.y', returns: { x: 'test' } },
+      { route: '/api(/v1)?/foo', path: '/api/v1/foo' }, // switching support preserved
+      { route: '/api(/v1)?/foo', path: '/api/foo' },    // switching support preserved
+      { route: '(/api)?/v1/:x', path: '/api/v1/foo', returns: { x: 'foo' } },    // switching support preserved
+      { route: '(/api)?/v1/:x', path: '/v1/foo', returns: { x: 'foo' } },    // switching support preserved
     ])
   })
 

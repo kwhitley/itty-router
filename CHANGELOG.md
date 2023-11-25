@@ -1,5 +1,8 @@
 ## Changelog
 
+- **v4.1.0**
+  - added: `HasContent<ContentType>` type to `withContent` (credit [@alexrosenfeld10](https://github.com/alexrosenfeld10))
+  - added: Adds basic text/formData support to supplement the native JSON support of `withContent`
 - **v4.0.00** - Partial changelog below
   - BREAKING: heavy TS rewrite for core Router (thank you, ChatGPT)
   - added: nearly all extras from itty-router-extras
