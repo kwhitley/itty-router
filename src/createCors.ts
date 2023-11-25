@@ -1,7 +1,7 @@
 import { IRequest } from './Router'
 
-export interface CorsOptions {
-  origins?: string[]
+export type CorsOptions = {
+  origins?: string[] | ((origin: string) => boolean)
   maxAge?: number
   methods?: string[]
   headers?: any
@@ -13,6 +13,9 @@ export const createCors = (options: CorsOptions = {}) => {
   const { origins = ['*'], maxAge, methods = ['GET'], headers = {} } = options
 
   let allowOrigin: any
+  const isAllowOrigin = typeof origins === 'function' 
+    ? origins
+    : (origin: string) => (origins.includes(origin) || origins.includes('*'))
 
   // Initial response headers.
   const rHeaders = {
@@ -30,10 +33,8 @@ export const createCors = (options: CorsOptions = {}) => {
     const useMethods = [...new Set(['OPTIONS', ...methods])]
     const origin = r.headers.get('origin') || ''
 
-    // Set allowOrigin globally.
-    allowOrigin = (origins.includes(origin) || origins.includes('*')) && {
-      'Access-Control-Allow-Origin': origin,
-    }
+    // set allowOrigin globally
+    allowOrigin = isAllowOrigin(origin) && { 'Access-Control-Allow-Origin': origin }
 
     // Check if method is OPTIONS.
     if (r.method === 'OPTIONS') {
