@@ -1,2 +1,6 @@
-export const text = (message: any, options?: ResponseInit): Response =>
-  new Response(String(message), options)
+import { createResponse } from './createResponse'
+
+export const text = createResponse(
+  'text/plain; charset=utf-8',
+  String
+)
