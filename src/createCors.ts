@@ -13,7 +13,7 @@ export const createCors = (options: CorsOptions = {}) => {
   const { origins = ['*'], maxAge, methods = ['GET'], headers = {} } = options
 
   let allowOrigin: any
-  const isAllowOrigin = typeof origins === 'function' 
+  const isAllowOrigin = typeof origins === 'function'
     ? origins
     : (origin: string) => (origins.includes(origin) || origins.includes('*'))
 

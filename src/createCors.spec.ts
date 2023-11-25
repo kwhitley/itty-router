@@ -6,7 +6,7 @@ import { Router } from './Router'
 
 // mock Response.Headers for the WebSocket test
 const Headers = vi.fn().mockImplementation(() => {
-  const map = new Map();
+  const map = new Map()
   return {
     append: vi.fn((key, value) => map.set(key, value)),
     get: vi.fn(key => map.get(key)),

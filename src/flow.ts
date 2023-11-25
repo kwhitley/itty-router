@@ -1,4 +1,4 @@
-import { RouteHandler, RouterType } from './Router'
+import { RouterType } from './Router'
 import { CorsOptions, createCors } from './createCors'
 import { error } from './error'
 import { json } from './json'
