@@ -4,7 +4,7 @@ import { Router } from './Router'
 import { error } from './error'
 import { flow } from './flow'
 
-const request = (path: string, method: string = 'GET') =>
+const request = (path: string, method = 'GET') =>
   ({ method, url: `https://itty.dev${path}` })
 
 let router
@@ -35,13 +35,11 @@ describe('flow(router: RouterType, options: FlowOptions): RequestHandler', () =>
 
     it('catches errors', async () => {
       let response = await flow(router)(request('/throw'))
-
       expect(response.status).toBe(500)
     })
 
     it('does not include CORS', async () => {
       let response = await flow(router)(request('/items'))
-
       expect(response.headers.get('access-control-allow-methods')).toBe(null)
     })
   })
@@ -57,7 +55,7 @@ describe('flow(router: RouterType, options: FlowOptions): RequestHandler', () =>
 
       it('should not handle errors if set to false', async () => {
         const errorHandler = vi.fn()
-        let response = await flow(router, { errors: false })(request('/throw')).catch(errorHandler)
+        await flow(router, { errors: false })(request('/throw')).catch(errorHandler)
         expect(errorHandler).toHaveBeenCalled()
       })
     })
@@ -83,13 +81,11 @@ describe('flow(router: RouterType, options: FlowOptions): RequestHandler', () =>
             methods: ['GET', 'POST'],
           },
         })(request('/items'))
-
         expect(response.headers.get('access-control-allow-methods')).toBe('GET, POST')
       })
 
       it('will embed default CORS headers if set to true', async () => {
         let response = await flow(router, { cors: true })(request('/items'))
-
         expect(response.headers.get('access-control-allow-methods')).toBe('GET')
       })
     })
@@ -97,8 +93,7 @@ describe('flow(router: RouterType, options: FlowOptions): RequestHandler', () =>
     describe('error?: RouteHandler | false', () => {
       it('does not catch internally if set to false', async () => {
         let onError = vi.fn()
-        let response = await flow(router, { errors: false })(request('/throw')).catch(onError)
-
+        await flow(router, { errors: false })(request('/throw')).catch(onError)
         expect(onError).toHaveBeenCalled()
       })
 
@@ -106,7 +101,6 @@ describe('flow(router: RouterType, options: FlowOptions): RequestHandler', () =>
         let response = await flow(router, {
           errors: () => error(418, 'CUSTOM'),
         })(request('/throw'))
-
         expect(response.status).toBe(418)
       })
     })
@@ -114,8 +108,7 @@ describe('flow(router: RouterType, options: FlowOptions): RequestHandler', () =>
     describe('format?: ResponseFormatter | false', () => {
       it('does not catch internally if set to false', async () => {
         let onError = vi.fn()
-        let response = await flow(router, { errors: false })(request('/throw')).catch(onError)
-
+        await flow(router, { errors: false })(request('/throw')).catch(onError)
         expect(onError).toHaveBeenCalled()
       })
 
@@ -123,7 +116,6 @@ describe('flow(router: RouterType, options: FlowOptions): RequestHandler', () =>
         let response = await flow(router, {
           errors: () => error(418, 'CUSTOM'),
         })(request('/throw'))
-
         expect(response.status).toBe(418)
       })
     })
@@ -133,14 +125,12 @@ describe('flow(router: RouterType, options: FlowOptions): RequestHandler', () =>
         let response = await flow(router, {
           notFound: () => error(418, 'CUSTOM'),
         })(request('/missing')).then(r => r.json())
-
         expect(response.status).toBe(418)
         expect(response.error).toBe('CUSTOM')
       })
 
       it('if set to false, will not add notFound handler (allow undefined passthrough)', async () => {
         let response = await flow(router, { notFound: false })(request('/missing'))
-
         expect(response).toBe(undefined)
       })
     })

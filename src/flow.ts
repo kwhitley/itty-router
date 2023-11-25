@@ -4,10 +4,12 @@ import { error } from './error'
 import { json } from './json'
 import { withParams } from './withParams'
 
+type ResponseGenerator = (...args: any) => Response
+
 export type FlowOptions = {
   cors?: CorsOptions | true
-  errors?: Function | false
-  format?: Function | false
+  errors?: ResponseGenerator | false
+  format?: ResponseGenerator | false
   notFound?: RouteHandler | false
 }
 
