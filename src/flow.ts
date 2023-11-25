@@ -34,8 +34,7 @@ export const flow = (router: RouterType, options: FlowOptions = {}) => {
   return async (...args: any[]) => {
     // @ts-expect-error
     let response = router.handle(...args)
-    // @ts-expect-error - add optional formatting
-    response = format ? response.then(format) : response
+    response = format ? response.then(v => v === undefined ? v : format(v)) : response
     // @ts-expect-error - add optional error handling
     response = errors ? response.catch(errors) : response
 

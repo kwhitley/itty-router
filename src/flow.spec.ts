@@ -64,29 +64,15 @@ describe('flow(router: RouterType, options: FlowOptions): RequestHandler', () =>
 
     describe('format?: Function | false', () => {
       it('should handle custom format function', async () => {
-        const customFormat = (data) => ({ status: 200, body: `num items = ${data.length}` })
+        const customFormat = (data) => ({ status: 201, body: `num items = ${data.length}` })
         let response = await flow(router, { format: customFormat })(request('/items'))
-        expect(response.status).toBe(200)
+        expect(response.status).toBe(201)
         expect(response.body).toBe('num items = 3')
       })
 
       it('should not format response if set to false', async () => {
         let response = await flow(router, { format: false })(request('/items'))
         expect(response.body).toBeUndefined()
-      })
-    })
-
-    describe('notFound?: RouteHandler | false', () => {
-      it('should handle custom notFound function', async () => {
-        const customNotFound = () => ({ status: 404, body: 'Custom Not Found' })
-        let response = await flow(router, { notFound: customNotFound })(request('/missing'))
-        expect(response.status).toBe(404)
-        expect(response.body).toBe('Custom Not Found')
-      })
-
-      it('should not handle notFound if set to false', async () => {
-        let response = await flow(router, { notFound: false })(request('/missing'))
-        expect(response.status).toBeUndefined()
       })
     })
 
@@ -155,7 +141,7 @@ describe('flow(router: RouterType, options: FlowOptions): RequestHandler', () =>
       it('if set to false, will not add notFound handler (allow undefined passthrough)', async () => {
         let response = await flow(router, {
           notFound: false,
-          format: false,
+          // format: false,
         })(request('/missing'))
 
         expect(response).toBe(undefined)
