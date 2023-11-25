@@ -30,6 +30,52 @@ describe('createCors(options)', () => {
 
       expect(response.headers.get('Access-Control-Max-Age')).toBe('60')
     })
+
+    it('origins should be array of string', async () => {
+      const { preflight } = createCors({
+        origins: ['http://localhost:3000', 'http://localhost:4000']
+      })
+      const router = Router().all('*', preflight)
+
+      const generateRequest = (origin: string) => new Request('https://foo.bar', {
+        method: 'OPTIONS',
+        headers: {
+          'Access-Control-Request-Method': 'GET',
+          'Access-Control-Request-Headers': 'content-type',
+          origin,
+        }
+      })
+
+      const response1 = await router.handle(generateRequest('http://localhost:3000'))
+      expect(response1.headers.get('Access-Control-Allow-Origin')).toBe('http://localhost:3000')
+      const response2 = await router.handle(generateRequest('http://localhost:4000'))
+      expect(response2.headers.get('Access-Control-Allow-Origin')).toBe('http://localhost:4000')
+      const response3 = await router.handle(generateRequest('http://localhost:5000'))
+      expect(response3.headers.get('Access-Control-Allow-Origin')).toBe(null)
+    })
+
+    it('origins should be function returns boolean', async () => {
+      const { preflight } = createCors({
+        origins: (origin) => origin.startsWith('https://') && origin.endsWith('.example.com')
+      })
+      const router = Router().all('*', preflight)
+
+      const generateRequest = (origin: string) => new Request('https://foo.bar', {
+        method: 'OPTIONS',
+        headers: {
+          'Access-Control-Request-Method': 'GET',
+          'Access-Control-Request-Headers': 'content-type',
+          origin,
+        }
+      })
+
+      const response1 = await router.handle(generateRequest('https://secure.example.com'))
+      expect(response1.headers.get('Access-Control-Allow-Origin')).toBe('https://secure.example.com')
+      const response2 = await router.handle(generateRequest('https://another-secure.example.com'))
+      expect(response2.headers.get('Access-Control-Allow-Origin')).toBe('https://another-secure.example.com')
+      const response3 = await router.handle(generateRequest('http://unsecure.example.com'))
+      expect(response3.headers.get('Access-Control-Allow-Origin')).toBe(null)
+    })
   })
 
   describe('preflight (middleware)', () => {
