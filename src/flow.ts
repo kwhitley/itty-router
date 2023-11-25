@@ -4,13 +4,13 @@ import { error } from './error'
 import { json } from './json'
 import { withParams } from './withParams'
 
-type ResponseGenerator = (...args: any) => Response
+type anyFunction = (...args: any) => any
 
 export type FlowOptions = {
   cors?: CorsOptions | true
-  errors?: ResponseGenerator | false
-  format?: ResponseGenerator | false
-  notFound?: RouteHandler | false
+  errors?: anyFunction | false
+  format?: anyFunction | false
+  notFound?: anyFunction | false
 }
 
 export const flow = (router: RouterType, options: FlowOptions = {}) => {
@@ -37,7 +37,6 @@ export const flow = (router: RouterType, options: FlowOptions = {}) => {
     // @ts-expect-error - nothing wrong with this
     let response = router.handle(...args)
     response = format ? response.then(v => v === undefined ? v : format(v)) : response
-    // @ts-expect-error - add optional error handling
     response = errors ? response.catch(errors) : response
 
     // add optional cors and return response

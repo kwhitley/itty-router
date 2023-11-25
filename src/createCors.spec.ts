@@ -4,6 +4,24 @@ import { createCors } from './createCors'
 import { json } from './json'
 import { Router } from './Router'
 
+// mock Response.Headers for the WebSocket test
+const Headers = vi.fn().mockImplementation(() => {
+  const map = new Map();
+  return {
+    append: vi.fn((key, value) => map.set(key, value)),
+    get: vi.fn(key => map.get(key)),
+  }
+})
+
+// Mock the Response class for WebSocket test
+const WebsocketResponse = vi.fn().mockImplementation((body, init) => {
+  return {
+    body,
+    status: init?.status,
+    headers: new Headers(init?.headers),
+  }
+})
+
 describe('createCors(options)', () => {
   it('returns { preflight, corsify }', async () => {
     const { preflight, corsify } = createCors()
@@ -169,7 +187,7 @@ describe('createCors(options)', () => {
       const { preflight, corsify } = createCors()
       const router = Router()
         .all('*', preflight)
-        .get('/foo', () => new Response(null, { status: 101 }))
+        .get('/foo', () => new WebsocketResponse(null, { status: 101 }))
       const request = new Request('https://foo.bar/foo', {
         headers: {
           origin: 'http://localhost:3000',
@@ -177,7 +195,7 @@ describe('createCors(options)', () => {
       })
       const response = await router.handle(request).then(corsify)
 
-      expect(response.headers.get('Access-Control-Allow-Origin')).toBe(null)
+      expect(response.headers.get('Access-Control-Allow-Origin')).toBe(undefined)
     })
 
     describe('repeated use', () => {
