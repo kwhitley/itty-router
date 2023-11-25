@@ -139,10 +139,7 @@ describe('flow(router: RouterType, options: FlowOptions): RequestHandler', () =>
       })
 
       it('if set to false, will not add notFound handler (allow undefined passthrough)', async () => {
-        let response = await flow(router, {
-          notFound: false,
-          // format: false,
-        })(request('/missing'))
+        let response = await flow(router, { notFound: false })(request('/missing'))
 
         expect(response).toBe(undefined)
       })

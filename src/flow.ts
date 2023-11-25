@@ -32,7 +32,7 @@ export const flow = (router: RouterType, options: FlowOptions = {}) => {
   }
 
   return async (...args: any[]) => {
-    // @ts-expect-error
+    // @ts-expect-error - nothing wrong with this
     let response = router.handle(...args)
     response = format ? response.then(v => v === undefined ? v : format(v)) : response
     // @ts-expect-error - add optional error handling
