@@ -1,10 +1,10 @@
 import { IRequest } from './Router'
 
-interface CorsOptions {
-  origins?: string[] | ((origin: string) => boolean),
-  maxAge?: number,
-  methods?: string[],
-  headers?: any,
+export type CorsOptions = {
+  origins?: string[] | ((origin: string) => boolean)
+  maxAge?: number
+  methods?: string[]
+  headers?: any
 }
 
 // Create CORS function with default options.
