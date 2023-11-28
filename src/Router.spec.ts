@@ -1,7 +1,8 @@
 import 'isomorphic-fetch'
-import { describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, vi, expectTypeOf } from 'vitest'
 import { buildRequest, createTestRunner, extract } from '../test'
 import { Router } from './Router'
+import { InferParams, Obj } from './RouteParamInferTypes'
 
 const ERROR_MESSAGE = 'Error Message'
 
@@ -507,6 +508,54 @@ describe('Router', () => {
   })
 })
 
+describe('Router param type inferrence', () => {
+  it('should be a freeform object by default', () => {
+    // this will resolve to the originally typed - freeform object
+    // to make this change less breaking
+    expectTypeOf<InferParams<'/foo/bar/baz'>>().toEqualTypeOf<Obj>()
+  })
+
+  it('should be able to infer normal params', () => {
+    expectTypeOf<InferParams<'/todos/:id/:action'>>().toEqualTypeOf<
+      { id: string } & { action: string }
+    >()
+  })
+
+  it('should be able to infer optional params', () => {
+    expectTypeOf<InferParams<'/todos/:id/:action?'>>().toEqualTypeOf<
+      { id: string } & { action?: string }
+    >()
+  })
+
+  it('should be able to infer extension params', () => {
+    expectTypeOf<
+      InferParams<'/files/:folder/:file.:extension'>
+    >().toEqualTypeOf<
+      { folder: string } & { file: string } & { extension: string }
+    >()
+
+    expectTypeOf<InferParams<'/files/manifest.:extension?'>>().toEqualTypeOf<{
+      extension?: string | undefined
+    }>()
+  })
+
+  it('should be able to infer a greedy param', () => {
+    expectTypeOf<InferParams<'/user/:id/:greedy+'>>().toEqualTypeOf<
+      { id: string } & { greedy: string }
+    >()
+  })
+
+  it('should be able to infer all possible options', () => {
+    expectTypeOf<
+      InferParams<'/user/:id/:folderId/:file.:extension?'>
+    >().toEqualTypeOf<
+      { id: string } & { folderId: string } & { file: string } & {
+        extension?: string
+      }
+    >()
+  })
+})
+
 describe('MIDDLEWARE', () => {
   it('calls any handler until a return', async () => {
     const router = Router()
@@ -632,9 +681,9 @@ describe('ROUTE MATCHING', () => {
       { route: '/test.:x', path: '/test.a', returns: { x: 'a' } },
       { route: '/:x?.y', path: '/test.y', returns: { x: 'test' } },
       { route: '/api(/v1)?/foo', path: '/api/v1/foo' }, // switching support preserved
-      { route: '/api(/v1)?/foo', path: '/api/foo' },    // switching support preserved
-      { route: '(/api)?/v1/:x', path: '/api/v1/foo', returns: { x: 'foo' } },    // switching support preserved
-      { route: '(/api)?/v1/:x', path: '/v1/foo', returns: { x: 'foo' } },    // switching support preserved
+      { route: '/api(/v1)?/foo', path: '/api/foo' }, // switching support preserved
+      { route: '(/api)?/v1/:x', path: '/api/v1/foo', returns: { x: 'foo' } }, // switching support preserved
+      { route: '(/api)?/v1/:x', path: '/v1/foo', returns: { x: 'foo' } }, // switching support preserved
     ])
   })
 

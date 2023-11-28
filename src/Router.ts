@@ -1,3 +1,5 @@
+import { InferParams } from './RouteParamInferTypes'
+
 export type GenericTraps = {
   [key: string]: any
 }
@@ -7,13 +9,11 @@ export type RequestLike = {
   url: string,
 } & GenericTraps
 
-export type IRequestStrict = {
+export type IRequestStrict<Params = Record<string, string>> = {
   method: string,
   url: string,
   route: string,
-  params: {
-    [key: string]: string,
-  },
+  params: Params,
   query: {
     [key: string]: string | string[] | undefined,
   },
@@ -34,17 +34,26 @@ export type RouteHandler<I = IRequest, A extends any[] = any[]> = {
 export type RouteEntry = [string, RegExp, RouteHandler[], string]
 
 // this is the generic "Route", which allows per-route overrides
-export type Route = <RequestType = IRequest, Args extends any[] = any[], RT = RouterType>(
-  path: string,
+export type Route = <
+Path extends string,
+RequestType = Omit<IRequest, 'params'> & {
+  params: InferParams<Path>
+},
+Args extends any[] = any[],
+RT = RouterType
+>(
+  path: Path,
   ...handlers: RouteHandler<RequestType, Args>[]
 ) => RT
 
 // this is an alternative UniveralRoute, accepting generics (from upstream), but without
 // per-route overrides
-export type UniversalRoute<RequestType = IRequest, Args extends any[] = any[]> = (
-  path: string,
+export type UniversalRoute<Path extends string, RequestType = Omit<IRequest, 'params'> & {
+  params: InferParams<Path>
+}, Args extends any[] = any[]> = (
+  path: Path,
   ...handlers: RouteHandler<RequestType, Args>[]
-) => RouterType<UniversalRoute<RequestType, Args>, Args>
+) => RouterType<UniversalRoute<Path, RequestType, Args>, Args>
 
 // helper function to detect equality in types (used to detect custom Request on router)
 type Equal<X, Y> = (<T>() => T extends X ? 1 : 2) extends (<T>() => T extends Y ? 1 : 2) ? true : false;
@@ -70,7 +79,7 @@ export type RouterType<R = Route, Args extends any[] = any[]> = {
 export const Router = <
   RequestType = IRequest,
   Args extends any[] = any[],
-  RouteType = Equal<RequestType, IRequest> extends true ? Route : UniversalRoute<RequestType, Args>
+  RouteType = Equal<RequestType, IRequest> extends true ? Route : UniversalRoute<string, RequestType, Args>
 >({ base = '', routes = [] }: RouterOptions = {}): RouterType<RouteType, Args> =>
   // @ts-expect-error TypeScript doesn't know that Proxy makes this work
   ({
