@@ -48,7 +48,7 @@ export const flow = (router: RouterType, options: FlowOptions = {}) => {
 
   // CONSIDER REMOVING THIS ONE TO LIMIT SUPPORT
   // @ts-ignore - we're bending rules here
-  router.fetch = flowed
+  // router.fetch = flowed
 
   return flowed
 }

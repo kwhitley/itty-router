@@ -46,17 +46,17 @@ describe('flow(router: RouterType, options: FlowOptions): RequestHandler', () =>
     })
   })
 
-  describe('SIGNATURES', () => {
+  describe('SIGNATURES (for easier environment compatability)', () => {
     it('flow(router) => { fetch: flow(router) }', async () => {
       const flowed = flow(router)
       expect(flowed.fetch).toBe(flowed)
     })
 
     // probably remove this one?
-    it('flow(router)... later: router => { fetch: flow(router) }', async () => {
-      const flowed = flow(router)
-      expect(router.fetch).toBe(flowed)
-    })
+    // it('flow(router)... later: router => { fetch: flow(router) }', async () => {
+    //   const flowed = flow(router)
+    //   expect(router.fetch).toBe(flowed)
+    // })
   })
 
   describe('OPTIONS', () => {
