@@ -14,7 +14,15 @@ export const createResponse =
   (body, options?: ResponseInit) => {
     const { headers = {}, ...rest } = options || {}
 
-    if (body?.constructor.name === 'Response') return body
+    if (body === undefined) {
+      console.log('attempting to transform undefined body')
+    }
+
+    if (body?.constructor.name === 'Response' || body === undefined) return body
+
+    if (body === undefined) {
+      console.log('succeeeded in transforming undefined body')
+    }
 
     return new Response(transform ? transform(body) : body, {
       headers: {
