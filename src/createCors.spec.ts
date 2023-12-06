@@ -4,6 +4,24 @@ import { createCors } from './createCors'
 import { json } from './json'
 import { Router } from './Router'
 
+// mock Response.Headers for the WebSocket test
+const Headers = vi.fn().mockImplementation(() => {
+  const map = new Map()
+  return {
+    append: vi.fn((key, value) => map.set(key, value)),
+    get: vi.fn(key => map.get(key)),
+  }
+})
+
+// Mock the Response class for WebSocket test
+const WebsocketResponse = vi.fn().mockImplementation((body, init) => {
+  return {
+    body,
+    status: init?.status,
+    headers: new Headers(init?.headers),
+  }
+})
+
 describe('createCors(options)', () => {
   it('returns { preflight, corsify }', async () => {
     const { preflight, corsify } = createCors()
@@ -29,6 +47,52 @@ describe('createCors(options)', () => {
       const response = await router.handle(request)
 
       expect(response.headers.get('Access-Control-Max-Age')).toBe('60')
+    })
+
+    it('origins should be array of string', async () => {
+      const { preflight } = createCors({
+        origins: ['http://localhost:3000', 'http://localhost:4000']
+      })
+      const router = Router().all('*', preflight)
+
+      const generateRequest = (origin: string) => new Request('https://foo.bar', {
+        method: 'OPTIONS',
+        headers: {
+          'Access-Control-Request-Method': 'GET',
+          'Access-Control-Request-Headers': 'content-type',
+          origin,
+        }
+      })
+
+      const response1 = await router.handle(generateRequest('http://localhost:3000'))
+      expect(response1.headers.get('Access-Control-Allow-Origin')).toBe('http://localhost:3000')
+      const response2 = await router.handle(generateRequest('http://localhost:4000'))
+      expect(response2.headers.get('Access-Control-Allow-Origin')).toBe('http://localhost:4000')
+      const response3 = await router.handle(generateRequest('http://localhost:5000'))
+      expect(response3.headers.get('Access-Control-Allow-Origin')).toBe(null)
+    })
+
+    it('origins should be function returns boolean', async () => {
+      const { preflight } = createCors({
+        origins: (origin) => origin.startsWith('https://') && origin.endsWith('.example.com')
+      })
+      const router = Router().all('*', preflight)
+
+      const generateRequest = (origin: string) => new Request('https://foo.bar', {
+        method: 'OPTIONS',
+        headers: {
+          'Access-Control-Request-Method': 'GET',
+          'Access-Control-Request-Headers': 'content-type',
+          origin,
+        }
+      })
+
+      const response1 = await router.handle(generateRequest('https://secure.example.com'))
+      expect(response1.headers.get('Access-Control-Allow-Origin')).toBe('https://secure.example.com')
+      const response2 = await router.handle(generateRequest('https://another-secure.example.com'))
+      expect(response2.headers.get('Access-Control-Allow-Origin')).toBe('https://another-secure.example.com')
+      const response3 = await router.handle(generateRequest('http://unsecure.example.com'))
+      expect(response3.headers.get('Access-Control-Allow-Origin')).toBe(null)
     })
   })
 
@@ -123,7 +187,7 @@ describe('createCors(options)', () => {
       const { preflight, corsify } = createCors()
       const router = Router()
         .all('*', preflight)
-        .get('/foo', () => new Response(null, { status: 101 }))
+        .get('/foo', () => new WebsocketResponse(null, { status: 101 }))
       const request = new Request('https://foo.bar/foo', {
         headers: {
           origin: 'http://localhost:3000',
@@ -131,7 +195,7 @@ describe('createCors(options)', () => {
       })
       const response = await router.handle(request).then(corsify)
 
-      expect(response.headers.get('Access-Control-Allow-Origin')).toBe(null)
+      expect(response.headers.get('Access-Control-Allow-Origin')).toBe(undefined)
     })
 
     describe('repeated use', () => {

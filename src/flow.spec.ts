@@ -4,7 +4,7 @@ import { Router } from './Router'
 import { error } from './error'
 import { flow } from './flow'
 
-const request = (path: string, method: string = 'GET') =>
+const request = (path: string, method = 'GET') =>
   ({ method, url: `https://itty.dev${path}` })
 
 let router
@@ -35,13 +35,11 @@ describe('flow(router: RouterType, options: FlowOptions): RequestHandler', () =>
 
     it('catches errors', async () => {
       let response = await flow(router)(request('/throw'))
-
       expect(response.status).toBe(500)
     })
 
     it('does not include CORS', async () => {
       let response = await flow(router)(request('/items'))
-
       expect(response.headers.get('access-control-allow-methods')).toBe(null)
     })
   })
@@ -67,13 +65,11 @@ describe('flow(router: RouterType, options: FlowOptions): RequestHandler', () =>
             methods: ['GET', 'POST'],
           },
         })(request('/items'))
-
         expect(response.headers.get('access-control-allow-methods')).toBe('GET, POST')
       })
 
       it('will embed default CORS headers if set to true', async () => {
         let response = await flow(router, { cors: true })(request('/items'))
-
         expect(response.headers.get('access-control-allow-methods')).toBe('GET')
       })
     })

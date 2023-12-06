@@ -1,14 +1,16 @@
-import { RouteHandler, RouterType } from './Router'
+import { RouterType } from './Router'
 import { CorsOptions, createCors } from './createCors'
 import { error } from './error'
 import { json } from './json'
 import { withParams } from './withParams'
 
+type anyFunction = (...args: any) => any
+
 export type FlowOptions = {
   cors?: CorsOptions | true
-  errors?: Function | false
-  format?: Function | false
-  notFound?: RouteHandler | false
+  errors?: anyFunction | false
+  format?: anyFunction | false
+  notFound?: anyFunction | false
 }
 
 export const flow = (router: RouterType, options: FlowOptions = {}) => {
@@ -37,7 +39,6 @@ export const flow = (router: RouterType, options: FlowOptions = {}) => {
     // s@ts-expect-error - add optional formatting
     // response = format ? response.then(v => v !== undefined ? format(v) : v) : response
     response = response.then(v => format && v !== undefined ? format?.(v) : v)
-    // @ts-expect-error - add optional error handling
     response = errors ? response.catch(errors) : response
 
     // add optional cors and return response
