@@ -1,7 +1,6 @@
 import 'isomorphic-fetch'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { Router } from './Router'
-import { error } from './error'
 import { flow } from './flow'
 
 const request = (path: string, method = 'GET') =>
@@ -85,7 +84,7 @@ describe('flow(router: RouterType, options: FlowOptions): RequestHandler', () =>
 
       it('should not handle errors if set to false', async () => {
         const errorHandler = vi.fn()
-        let response = await flow(router, { errors: false })(request('/throw')).catch(errorHandler)
+        await flow(router, { errors: false })(request('/throw')).catch(errorHandler)
         expect(errorHandler).toHaveBeenCalled()
       })
     })

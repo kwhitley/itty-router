@@ -11,6 +11,11 @@ export type FlowOptions = {
   errors?: anyFunction | false
   format?: anyFunction | false
   notFound?: anyFunction | false
+
+  // proposed/under discussion
+  before?: anyFunction[]
+  after?: anyFunction[]
+  logging?: anyFunction
 }
 
 export const flow = (router: RouterType, options: FlowOptions = {}) => {
@@ -34,10 +39,8 @@ export const flow = (router: RouterType, options: FlowOptions = {}) => {
   }
 
   const flowed = async (...args: any[]) => {
-    // @ts-expect-error
+    // @ts-expect-error - itty types don't like this
     let response = router.handle(...args)
-    // s@ts-expect-error - add optional formatting
-    // response = format ? response.then(v => v !== undefined ? format(v) : v) : response
     response = response.then(v => format && v !== undefined ? format?.(v) : v)
     response = errors ? response.catch(errors) : response
 
@@ -45,11 +48,8 @@ export const flow = (router: RouterType, options: FlowOptions = {}) => {
     return cors ? response.then(corsHandlers?.corsify) : response
   }
 
+  // support flow(router) === { fetch: flow(router) } signature
   flowed.fetch = flowed
-
-  // CONSIDER REMOVING THIS ONE TO LIMIT SUPPORT
-  // @ts-ignore - we're bending rules here
-  // router.fetch = flowed
 
   return flowed
 }
