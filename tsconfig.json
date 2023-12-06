@@ -18,9 +18,8 @@
     "skipLibCheck": true,
     "strict": true,
     "traceResolution": false,
-    "outDir": "",
     "target": "esnext",
-    "module": "esnext",
+    "module": "NodeNext",
     "types": ["@cloudflare/workers-types", "@types/node"]
   },
   "exclude": ["node_modules", "dist", "**/*.spec.ts", "**/example.ts"],
