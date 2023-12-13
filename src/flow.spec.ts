@@ -1,6 +1,7 @@
 import 'isomorphic-fetch'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { Router } from './Router'
+import { error } from './error'
 import { flow } from './flow'
 
 const request = (path: string, method = 'GET') =>
@@ -13,6 +14,7 @@ beforeEach(() => {
             .get('/', () => 'index')
             .get('/items', () => [1,2,3])
             .get('/throw', (r) => r.a.b.c)
+            .get('/params/:foo', ({ foo }) => ({ foo }))
 })
 
 describe('flow(router: RouterType, options: FlowOptions): RequestHandler', () => {
@@ -41,6 +43,11 @@ describe('flow(router: RouterType, options: FlowOptions): RequestHandler', () =>
       let response = await flow(router)(request('/items'))
       expect(response.headers.get('access-control-allow-methods')).toBe(null)
     })
+
+    it('includes withParams by default', async () => {
+      let response = await flow(router)(request('/params/bar')).then(r => r.json())
+      expect(response.foo).toBe('bar')
+    })
   })
 
   describe('SIGNATURES (for easier environment compatability)', () => {
@@ -57,6 +64,44 @@ describe('flow(router: RouterType, options: FlowOptions): RequestHandler', () =>
   })
 
   describe('OPTIONS', () => {
+    describe('after?: anyFunction(request, ...args)', () => {
+      it('fires before request is handled', async () => {
+        let after = vi.fn()
+        await flow(router, { after })(request('/items'))
+        expect(after).toHaveBeenCalled()
+      })
+      it('has access to the response and request', async () => {
+        let after = vi.fn(({ status }, { method, url }) => ({
+          status,
+          method,
+        }))
+        await flow(router, { after })(request('/items'))
+        expect(after).toHaveReturnedWith({
+          status: 200,
+          method: 'GET',
+        })
+      })
+      it('can be used with before to recieve information via request', async () => {
+        let before = (request) => { request.start = 'foo' }
+        let after = vi.fn((_, { start }) => 'foo')
+        await flow(router, { after })(request('/items'))
+        expect(after).toHaveReturnedWith('foo')
+      })
+    })
+
+    describe('before?: anyFunction(request, ...args)', () => {
+      it('fires before request is handled', async () => {
+        let before = vi.fn()
+        await flow(router, { before })(request('/items'))
+        expect(before).toHaveBeenCalled()
+      })
+      it('has access to the request', async () => {
+        let before = vi.fn(({ method }) => method)
+        await flow(router, { before })(request('/items'))
+        expect(before).toHaveReturnedWith('GET')
+      })
+    })
+
     describe('cors?: CorsOptions | true', () => {
       it('will embed CORS headers if provided', async () => {
         let response = await flow(router, {
@@ -72,7 +117,6 @@ describe('flow(router: RouterType, options: FlowOptions): RequestHandler', () =>
         expect(response.headers.get('access-control-allow-methods')).toBe('GET')
       })
     })
-
 
     describe('errors?: Function | false', () => {
       it('should handle custom error function', async () => {
@@ -100,6 +144,25 @@ describe('flow(router: RouterType, options: FlowOptions): RequestHandler', () =>
       it('should not format response if set to false', async () => {
         let response = await flow(router, { format: false })(request('/items'))
         expect(response.body).toBeUndefined()
+      })
+    })
+
+    describe('notFound?: Function | false', () => {
+      it('should return a 404 by default', async () => {
+        let response = await flow(router)(request('/missing'))
+        expect(response.status).toBe(404)
+      })
+
+      it('can accept a custom function', async () => {
+        const notFound = () => error(418)
+        let response = await flow(router, { notFound })(request('/missing'))
+        console.log({ response })
+        expect(response.status).toBe(418)
+      })
+
+      it('will not catch a missing route if set to false', async () => {
+        let response = await flow(router, { notFound: false })(request('/missing'))
+        expect(response).toBeUndefined()
       })
     })
   })

@@ -8,6 +8,20 @@ router
   .get('/foo/:bar/:baz?', ({ bar, baz }) => ({ bar, baz }))
 
 export default flow(router, {
+  after: (response, request) => {
+    const { method, start } = request
+    const { status } = response
+    const duration = Date.now() - start
+    const url = new URL(request.url)
+    // console.log(`${status} ${method} ${url.pathname+(url.search || '')} ${duration}ms`)
+    console.log({
+      status,
+      method,
+      path: url.pathname+(url.search || ''),
+      ms: duration,
+    })
+  },
+  before: (request) => { request.start = Date.now() },
   cors: {
     methods: ['GET', 'POST', 'PATCH'],
   },
