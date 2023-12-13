@@ -10,7 +10,12 @@ export type CorsOptions = {
 // Create CORS function with default options.
 export const createCors = (options: CorsOptions = {}) => {
   // Destructure and set defaults for options.
-  const { origins = ['*'], maxAge, methods = ['GET'], headers = {} } = options
+  const {
+    origins = ['*'],
+    maxAge,
+    methods = ['*'],
+    headers = {},
+  } = options
 
   let allowOrigin: any
   const isAllowOrigin = typeof origins === 'function'
@@ -30,7 +35,7 @@ export const createCors = (options: CorsOptions = {}) => {
   // Pre-flight function.
   const preflight = (r: IRequest) => {
     // Use methods set.
-    const useMethods = [...new Set(['OPTIONS', ...methods])]
+    const useMethods = methods.includes('*') ? methods : [...new Set(['OPTIONS', ...methods])]
     const origin = r.headers.get('origin') || ''
 
     // set allowOrigin globally

@@ -23,8 +23,8 @@ export const flow = (router: RouterType, options: FlowOptions = {}) => {
     cors,
     errors = error,
     notFound = () => error(404),
-    after,
-    before,
+    // after,
+    // before,
   } = options
 
   // @ts-expect-error - come on, TS...
@@ -43,7 +43,7 @@ export const flow = (router: RouterType, options: FlowOptions = {}) => {
 
   const flowed = async (...args: any[]) => {
     // if before function is defined, await it
-    before && await before(...args)
+    // before && await before(...args)
 
     // @ts-expect-error - itty types don't like this
     let response = router.handle(...args)
@@ -58,7 +58,7 @@ export const flow = (router: RouterType, options: FlowOptions = {}) => {
     response = cors ? response.then(corsify) : response
 
     // if after function is defined, await it
-    after && await after(await response, ...args)
+    // after && await after(await response, ...args)
 
     // add optional cors and return response
     return response

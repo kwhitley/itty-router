@@ -16,8 +16,6 @@ export default flow(router, {
     console.log(`${status} ${method} ${url.pathname+(url.search || '')} - ${duration}ms`)
   },
   before: (request) => request.start = Date.now(),
-  cors: {
-    methods: ['GET', 'POST', 'PATCH'],
-  },
+  cors: true,
   notFound: () => error(404, 'Are you sure about that?'),
 })

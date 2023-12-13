@@ -121,7 +121,7 @@ describe('createCors(options)', () => {
       const request = new Request('https://foo.bar', { method: 'OPTIONS' })
       const response = await router.handle(request)
 
-      expect((response.headers.get('Allow') || '').includes('GET')).toBe(true)
+      expect((response.headers.get('Allow') || '').includes('*')).toBe(true)
     })
   })
 
@@ -155,7 +155,7 @@ describe('createCors(options)', () => {
       )
       expect(
         (response.headers.get('Access-Control-Allow-Methods') || '').includes(
-          'GET'
+          '*'
         )
       ).toBe(true)
     })
