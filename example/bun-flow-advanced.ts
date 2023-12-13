@@ -13,15 +13,9 @@ export default flow(router, {
     const { status } = response
     const duration = Date.now() - start
     const url = new URL(request.url)
-    // console.log(`${status} ${method} ${url.pathname+(url.search || '')} ${duration}ms`)
-    console.log({
-      status,
-      method,
-      path: url.pathname+(url.search || ''),
-      ms: duration,
-    })
+    console.log(`${status} ${method} ${url.pathname+(url.search || '')} - ${duration}ms`)
   },
-  before: (request) => { request.start = Date.now() },
+  before: (request) => request.start = Date.now(),
   cors: {
     methods: ['GET', 'POST', 'PATCH'],
   },
