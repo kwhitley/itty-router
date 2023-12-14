@@ -27,14 +27,15 @@ export type RouterOptions = {
   routes?: RouteEntry[]
 }
 
-export type RouteHandler<I = IRequest, A extends any[] = any[]> = {
-  (request: I, ...args: A): any
+export type RouteHandler<I = IRequest, Args = any[]> = {
+  // @ts-expect-error - TS never likes this syntax
+  (request: I, ...args: Args): any
 }
 
 export type RouteEntry = [string, RegExp, RouteHandler[], string]
 
 // this is the generic "Route", which allows per-route overrides
-export type Route = <RequestType = IRequest, Args extends any[] = any[], RT = RouterType>(
+export type Route = <RequestType = IRequest, Args = any[], RT = RouterType>(
   path: string,
   ...handlers: RouteHandler<RequestType, Args>[]
 ) => RT
@@ -47,7 +48,10 @@ export type UniversalRoute<RequestType = IRequest, Args extends any[] = any[]> =
 ) => RouterType<UniversalRoute<RequestType, Args>, Args>
 
 // helper function to detect equality in types (used to detect custom Request on router)
-type Equal<X, Y> = (<T>() => T extends X ? 1 : 2) extends (<T>() => T extends Y ? 1 : 2) ? true : false;
+type Equal<X, Y> = (<T>() => T extends X ? 1 : 2) extends (<T>() => T extends Y ? 1 : 2) ? true : false
+
+// used to determine if router generics have been modified
+type IsUntouched<Request, Args> = Args extends [] ? Equal<Request, IRequest> extends true ? true : false : false
 
 export type CustomRoutes<R = Route> = {
   [key: string]: R,
@@ -70,7 +74,7 @@ export type RouterType<R = Route, Args extends any[] = any[]> = {
 export const Router = <
   RequestType = IRequest,
   Args extends any[] = any[],
-  RouteType = Equal<RequestType, IRequest> extends true ? Route : UniversalRoute<RequestType, Args>
+  RouteType = IsUntouched<RequestType, Args> extends true ? Route : UniversalRoute<RequestType, Args>
 >({ base = '', routes = [] }: RouterOptions = {}): RouterType<RouteType, Args> =>
   // @ts-expect-error TypeScript doesn't know that Proxy makes this work
   ({

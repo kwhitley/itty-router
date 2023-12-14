@@ -49,7 +49,7 @@ describe('createCors(options)', () => {
       expect(response.headers.get('Access-Control-Max-Age')).toBe('60')
     })
 
-    it('origins should be array of string', async () => {
+    it('origins can be array of string', async () => {
       const { preflight } = createCors({
         origins: ['http://localhost:3000', 'http://localhost:4000']
       })
@@ -72,7 +72,7 @@ describe('createCors(options)', () => {
       expect(response3.headers.get('Access-Control-Allow-Origin')).toBe(null)
     })
 
-    it('origins should be function returns boolean', async () => {
+    it('origins can be function returning a boolean', async () => {
       const { preflight } = createCors({
         origins: (origin) => origin.startsWith('https://') && origin.endsWith('.example.com')
       })
@@ -228,22 +228,4 @@ describe('createCors(options)', () => {
       })
     })
   })
-
-  // it('returns { preflight, corsify }', async () => {
-  //   const router = Router()
-  //   const handler = vi.fn(({ content }) => content)
-  //   const request = new Request('https://foo.bar', {
-  //     method: 'POST',
-  //     headers: {
-  //       'content-type': 'application/json'
-  //     },
-  //     body: JSON.stringify({ foo: 'bar' })
-  //   })
-
-  //   await router
-  //           .post('/', withContent, handler)
-  //           .handle(request)
-
-  //   expect(handler).toHaveReturnedWith({ foo: 'bar' })
-  // })
 })
