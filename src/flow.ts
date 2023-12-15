@@ -1,10 +1,14 @@
-import { RouterType } from './Router'
+import { IRequest, RouteHandler, RouterType } from './Router'
 import { CorsOptions, createCors } from './createCors'
 import { error } from './error'
 import { json } from './json'
 import { withParams } from './withParams'
 
 type anyFunction = (...args: any) => any
+type afterFunction<Res = any, Req = IRequest, Args = any[]> = {
+  // @ts-expect-error - TS never likes this syntax
+  (response: Res, request: Req, ...args: Args): any
+}
 
 export type FlowOptions = {
   cors?: CorsOptions | true
@@ -13,18 +17,21 @@ export type FlowOptions = {
   notFound?: anyFunction | false
 
   // proposed/under discussion
-  before?: anyFunction
-  after?: anyFunction
+  before?: RouteHandler
+  after?: afterFunction
 }
 
-export const flow = (router: RouterType, options: FlowOptions = {}) => {
+export type Flowed = (request: IRequest, ...extra: any[]) => Promise<any>
+export type FlowedAndFetch = Flowed & { fetch: Flowed }
+
+export const flow = (router: RouterType, options: FlowOptions = {}): FlowedAndFetch => {
   const {
     format = json,
     cors,
     errors = error,
     notFound = () => error(404),
-    // after,
-    // before,
+    after,
+    before,
   } = options
 
   // @ts-expect-error - come on, TS...
@@ -42,8 +49,8 @@ export const flow = (router: RouterType, options: FlowOptions = {}) => {
   router.routes.unshift(['ALL', /^(.*)?\/*$/, beforeHandlers, '*'])
 
   const flowed = async (...args: any[]) => {
-    // if before function is defined, await it
-    // before && await before(...args)
+    // @ts-expect-error - if before function is defined, await it
+    before && await before(...args)
 
     // @ts-expect-error - itty types don't like this
     let response = router.handle(...args)
@@ -57,8 +64,8 @@ export const flow = (router: RouterType, options: FlowOptions = {}) => {
     // handle cors if cors enabled
     response = cors ? response.then(corsify) : response
 
-    // if after function is defined, await it
-    // after && await after(await response, ...args)
+    // @ts-expect-error - if after function is defined, await it
+    after && await after(await response, ...args)
 
     // add optional cors and return response
     return response

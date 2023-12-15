@@ -33,20 +33,20 @@ export type RouteHandler<R = IRequest, Args = any[]> = {
 export type RouteEntry = [string, RegExp, RouteHandler[], string]
 
 // this is the generic "Route", which allows per-route overrides
-export type Route<R = IRequest, A = any[]> = <RequestType = R, Args = A, RT = RouterType>(
+export type Route<R = IRequest, A = any[]> = <RequestType = R, Args = A>(
   path: string,
   ...handlers: RouteHandler<RequestType, Args>[]
-  // @ts-ignore foo
+  // @ts-expect-error - fiddly2
 ) => RouterType<RequestType, Args>
 
 export type CustomRoutes<R = Route> = {
   [key: string]: R,
 }
 
-export type RouterType<R = IRequest, A extends any[] = any[]> = {
+export type RouterType<R = IRequest, A extends any[] = any[], Output = any> = {
   __proto__: RouterType<R>,
   routes: RouteEntry[],
-  handle: <Args extends any[] = A>(request: RequestLike, ...extra: Args) => Promise<any>
+  handle: <Args extends any[] = A>(request: RequestLike, ...extra: Args) => Promise<Output>
   all: Route<R, A>,
   delete: Route<R, A>,
   get: Route<R, A>,
@@ -77,7 +77,7 @@ export const Router = <
                 .replace(/\./g, '\\.')                              // dot in path
                 .replace(/(\/?)\*/g, '($1.*)?')                     // wildcard
               }/*$`),
-              // @ts-ignore why not
+              // @ts-expect-error - fiddly
               handlers,                                             // embed handlers
               path,                                                 // embed clean route path
             ]

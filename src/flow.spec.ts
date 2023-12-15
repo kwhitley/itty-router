@@ -64,43 +64,43 @@ describe('flow(router: RouterType, options: FlowOptions): RequestHandler', () =>
   })
 
   describe('OPTIONS', () => {
-    // describe('after?: anyFunction(request, ...args)', () => {
-    //   it('fires before request is handled', async () => {
-    //     let after = vi.fn()
-    //     await flow(router, { after })(request('/items'))
-    //     expect(after).toHaveBeenCalled()
-    //   })
-    //   it('has access to the response and request', async () => {
-    //     let after = vi.fn(({ status }, { method, url }) => ({
-    //       status,
-    //       method,
-    //     }))
-    //     await flow(router, { after })(request('/items'))
-    //     expect(after).toHaveReturnedWith({
-    //       status: 200,
-    //       method: 'GET',
-    //     })
-    //   })
-    //   it('can be used with before to recieve information via request', async () => {
-    //     let before = (request) => { request.start = 'foo' }
-    //     let after = vi.fn((_, { start }) => 'foo')
-    //     await flow(router, { after })(request('/items'))
-    //     expect(after).toHaveReturnedWith('foo')
-    //   })
-    // })
+    describe('after?: anyFunction(request, ...args)', () => {
+      it('fires before request is handled', async () => {
+        let after = vi.fn()
+        await flow(router, { after })(request('/items'))
+        expect(after).toHaveBeenCalled()
+      })
+      it('has access to the response and request', async () => {
+        let after = vi.fn(({ status }, { method, url }) => ({
+          status,
+          method,
+        }))
+        await flow(router, { after })(request('/items'))
+        expect(after).toHaveReturnedWith({
+          status: 200,
+          method: 'GET',
+        })
+      })
+      it('can be used with before to recieve information via request', async () => {
+        let before = (request) => { request.start = 'foo' }
+        let after = vi.fn((_, { start }) => 'foo')
+        await flow(router, { after })(request('/items'))
+        expect(after).toHaveReturnedWith('foo')
+      })
+    })
 
-    // describe('before?: anyFunction(request, ...args)', () => {
-    //   it('fires before request is handled', async () => {
-    //     let before = vi.fn()
-    //     await flow(router, { before })(request('/items'))
-    //     expect(before).toHaveBeenCalled()
-    //   })
-    //   it('has access to the request', async () => {
-    //     let before = vi.fn(({ method }) => method)
-    //     await flow(router, { before })(request('/items'))
-    //     expect(before).toHaveReturnedWith('GET')
-    //   })
-    // })
+    describe('before?: anyFunction(request, ...args)', () => {
+      it('fires before request is handled', async () => {
+        let before = vi.fn()
+        await flow(router, { before })(request('/items'))
+        expect(before).toHaveBeenCalled()
+      })
+      it('has access to the request', async () => {
+        let before = vi.fn(({ method }) => method)
+        await flow(router, { before })(request('/items'))
+        expect(before).toHaveReturnedWith('GET')
+      })
+    })
 
     describe('cors?: CorsOptions | true', () => {
       it('will embed CORS headers if provided', async () => {

@@ -1,10 +1,6 @@
-// WITH FLOW
 import { Router, flow } from '../src'
 
-const router = Router()
+const app = Router()
+app.get('/', () => 'Hello Itty!')
 
-router
-  .get('/test', () => 'Success!')
-  .get('/foo/:bar/:baz?', ({ bar, baz }) => ({ bar, baz }))
-
-export default flow(router)
+export default flow(app)

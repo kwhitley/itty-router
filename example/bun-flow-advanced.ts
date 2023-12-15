@@ -15,11 +15,8 @@ type RouterArgs = [env: Env]
 const router = Router()
 
 router
+  .all('*', (request) => { request.start = Date.now() })
   .get('/test', () => 'Success!')
-  .get('/type-check', (request, env) => {
-    request.
-    env.
-  })
   .get('/foo/:bar/:baz?', ({ bar, baz }) => ({ bar, baz }))
 
 export default flow(router, {
@@ -34,3 +31,7 @@ export default flow(router, {
   cors: true,
   notFound: () => error(404, 'Are you sure about that?'),
 })
+
+const flowed = flow(router)
+
+flowed.fetch()
