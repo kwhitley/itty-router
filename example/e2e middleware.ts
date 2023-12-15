@@ -1,33 +1,32 @@
 import { IRequest, IRequestStrict, Router } from 'Router'
 
-type FooRequest = {
-  foo: string
-} & IRequest
-
 type HasFoo = {
-  foo?: string
-} & IRequest
+  foo: string
+} & IRequestStrict
 
 type HasBar = {
-  bar?: string
+  bar: string
 } & IRequestStrict
 
 const router = Router()
 
 // MIDDLEWARE: adds foo to the request
-const withFoo = (request: HasFoo & IRequest) => {
+const withFoo = (request: HasFoo) => {
   request.foo = 'bar' // no return = next handler gets fired (making this middleware)
 }
 
 // MIDDLEWARE: adds foo to the request
-const withBar = (request: HasBar & IRequest) => {
+const withBar = (request: HasBar) => {
   request.bar = 'baz' // no return = next handler gets fired (making this middleware)
 }
 
 // ADD ROUTES
 router
-  .all('*', withFoo, withBar) // we add Foo as global upstream middleware, but this could go anywhere
+  .all<HasFoo & HasBar>('*', withFoo, withBar, (request) => {
+    request.bar // this can be infered
+    request.foo // this can be infered
+  })
 
-  .get('/foo-test', (request) => {
-    return request.foo // 'bar'
+  .get('/', withFoo, withBar, (request) => {
+    return request
   })

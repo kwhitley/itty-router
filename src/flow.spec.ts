@@ -48,6 +48,11 @@ describe('flow(router: RouterType, options: FlowOptions): RequestHandler', () =>
       let response = await flow(router)(request('/params/bar')).then(r => r.json())
       expect(response.foo).toBe('bar')
     })
+
+    it('fetch returns a promise: flow(router)(request).then(response => {})', async () => {
+      let response = await flow(router)(request('/params/bar')).then(r => r.status)
+      expect(response).toBe(200)
+    })
   })
 
   describe('SIGNATURES (for easier environment compatability)', () => {
@@ -55,12 +60,6 @@ describe('flow(router: RouterType, options: FlowOptions): RequestHandler', () =>
       const flowed = flow(router)
       expect(flowed.fetch).toBe(flowed)
     })
-
-    // probably remove this one?
-    // it('flow(router)... later: router => { fetch: flow(router) }', async () => {
-    //   const flowed = flow(router)
-    //   expect(router.fetch).toBe(flowed)
-    // })
   })
 
   describe('OPTIONS', () => {

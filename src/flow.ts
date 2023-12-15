@@ -1,4 +1,4 @@
-import { IRequest, RouteHandler, RouterType } from './Router'
+import { IRequest, RequestLike, RouteHandler, RouterType } from './Router'
 import { CorsOptions, createCors } from './createCors'
 import { error } from './error'
 import { json } from './json'
@@ -21,7 +21,7 @@ export type FlowOptions = {
   after?: afterFunction
 }
 
-export type Flowed = (request: IRequest, ...extra: any[]) => Promise<any>
+export type Flowed = (request: RequestLike, ...extra: any[]) => Promise<any>
 export type FlowedAndFetch = Flowed & { fetch: Flowed }
 
 export const flow = (router: RouterType, options: FlowOptions = {}): FlowedAndFetch => {
