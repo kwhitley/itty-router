@@ -7,6 +7,7 @@
   - added: `CorsOptions` now exported from `createCors`
   - added: `flow(router)` to reduce initilization boilerplate
   - fixed: `createCors()` now correctly defaults to all methods "*" unless specified, not just GET
+  - added: router generics have now been overhauled to allow greater flexibility (may use router-level and route-level together)
 - **v4.0.00** - Partial changelog below
   - BREAKING: heavy TS rewrite for core Router (thank you, ChatGPT)
   - added: nearly all extras from itty-router-extras

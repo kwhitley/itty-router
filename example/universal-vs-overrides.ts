@@ -22,8 +22,8 @@ const universalRouter =
     })
     .get<IRequestStrict>('/type-check', (request, env) => {
       request.foo // should NOT be found
-      env.KB // should NOT be found *******
-      env.KV // should be found *******
+      env.KV // should be found
+      env.KB // should NOT be found
     })
     .puppy('/type-check', (request, env) => {
       request.foo // should be found
@@ -36,6 +36,7 @@ const universalRouter =
       env.KB // should NOT be found
     })
 
+// Router without generics will use IRequest by default
 const overrideRouter =
   Router()
     .get('/type-check', (request, env, ctx) => {
@@ -47,6 +48,3 @@ const overrideRouter =
       request.foo // should NOT be found
       ctx.waitUntil // should infer
     })
-    .puppy()
-
-    universalRouter.handle({ method: 'GET', url: '' }, {})
