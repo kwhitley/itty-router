@@ -12,12 +12,12 @@ type CustomRequest = {
 
 type RouterArgs = [env: Env]
 
-const router = Router<CustomRequest>()
+const router = Router()
 
 router
   .get('/test', () => 'Success!')
   .get('/type-check', (request, env) => {
-    request
+    request.
     env.
   })
   .get('/foo/:bar/:baz?', ({ bar, baz }) => ({ bar, baz }))

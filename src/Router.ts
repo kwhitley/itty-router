@@ -1,6 +1,4 @@
-export type GenericTraps = {
-  [key: string]: any
-}
+export type GenericTraps = Record<string, any>
 
 export type RequestLike = {
   method: string,
@@ -27,74 +25,63 @@ export type RouterOptions = {
   routes?: RouteEntry[]
 }
 
-export type RouteHandler<I = IRequest, Args = any[]> = {
+export type RouteHandler<R = IRequest, Args = any[]> = {
   // @ts-expect-error - TS never likes this syntax
-  (request: I, ...args: Args): any
+  (request: R, ...args: Args): any
 }
 
 export type RouteEntry = [string, RegExp, RouteHandler[], string]
 
 // this is the generic "Route", which allows per-route overrides
-export type Route = <RequestType = IRequest, Args = any[], RT = RouterType>(
+export type Route<R = IRequest, A = any[]> = <RequestType = R, Args = A, RT = RouterType>(
   path: string,
   ...handlers: RouteHandler<RequestType, Args>[]
-) => RT
-
-// this is an alternative UniveralRoute, accepting generics (from upstream), but without
-// per-route overrides
-export type UniversalRoute<RequestType = IRequest, Args extends any[] = any[]> = (
-  path: string,
-  ...handlers: RouteHandler<RequestType, Args>[]
-) => RouterType<UniversalRoute<RequestType, Args>, Args>
-
-// helper function to detect equality in types (used to detect custom Request on router)
-type Equal<X, Y> = (<T>() => T extends X ? 1 : 2) extends (<T>() => T extends Y ? 1 : 2) ? true : false
-
-// used to determine if router generics have been modified
-type IsUntouched<Request, Args> = Args extends [] ? Equal<Request, IRequest> extends true ? true : false : false
+  // @ts-ignore foo
+) => RouterType<RequestType, Args>
 
 export type CustomRoutes<R = Route> = {
   [key: string]: R,
 }
 
-export type RouterType<R = Route, Args extends any[] = any[]> = {
+export type RouterType<R = IRequest, A extends any[] = any[]> = {
   __proto__: RouterType<R>,
   routes: RouteEntry[],
-  handle: <A extends any[] = Args>(request: RequestLike, ...extra: Equal<R, Args> extends true ? A : Args) => Promise<any>
-  all: R,
-  delete: R,
-  get: R,
-  head: R,
-  options: R,
-  patch: R,
-  post: R,
-  put: R,
-} & CustomRoutes<R>
+  handle: <Args extends any[] = A>(request: RequestLike, ...extra: Args) => Promise<any>
+  all: Route<R, A>,
+  delete: Route<R, A>,
+  get: Route<R, A>,
+  head: Route<R, A>,
+  options: Route<R, A>,
+  patch: Route<R, A>,
+  post: Route<R, A>,
+  put: Route<R, A>,
+} & CustomRoutes<Route<R, A>>
 
 export const Router = <
   RequestType = IRequest,
-  Args extends any[] = any[],
-  RouteType = IsUntouched<RequestType, Args> extends true ? Route : UniversalRoute<RequestType, Args>
->({ base = '', routes = [] }: RouterOptions = {}): RouterType<RouteType, Args> =>
+  Args extends any[] = any[]
+>({ base = '', routes = [] }: RouterOptions = {}): RouterType<RequestType, Args> =>
   // @ts-expect-error TypeScript doesn't know that Proxy makes this work
   ({
     __proto__: new Proxy({}, {
       // @ts-expect-error (we're adding an expected prop "path" to the get)
-      get: (target: any, prop: string, receiver: object, path: string) => (route: string, ...handlers: RouteHandler<I>[]) =>
-        routes.push(
-          [
-            prop.toUpperCase(),
-            RegExp(`^${(path = (base + route)
-              .replace(/\/+(\/|$)/g, '$1'))                       // strip double & trailing splash
-              .replace(/(\/?\.?):(\w+)\+/g, '($1(?<$2>*))')       // greedy params
-              .replace(/(\/?\.?):(\w+)/g, '($1(?<$2>[^$1/]+?))')  // named params and image format
-              .replace(/\./g, '\\.')                              // dot in path
-              .replace(/(\/?)\*/g, '($1.*)?')                     // wildcard
-            }/*$`),
-            handlers,                                             // embed handlers
-            path,                                                 // embed clean route path
-          ]
-        ) && receiver
+      get: (target: any, prop: string, receiver: object, path: string) =>
+        (route: string, ...handlers: RouteHandler<RequestType, Args>[]) =>
+          routes.push(
+            [
+              prop.toUpperCase(),
+              RegExp(`^${(path = (base + route)
+                .replace(/\/+(\/|$)/g, '$1'))                       // strip double & trailing splash
+                .replace(/(\/?\.?):(\w+)\+/g, '($1(?<$2>*))')       // greedy params
+                .replace(/(\/?\.?):(\w+)/g, '($1(?<$2>[^$1/]+?))')  // named params and image format
+                .replace(/\./g, '\\.')                              // dot in path
+                .replace(/(\/?)\*/g, '($1.*)?')                     // wildcard
+              }/*$`),
+              // @ts-ignore why not
+              handlers,                                             // embed handlers
+              path,                                                 // embed clean route path
+            ]
+          ) && receiver
     }),
     routes,
     async handle (request: RequestLike, ...args)  {
