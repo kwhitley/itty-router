@@ -64,8 +64,14 @@ export const flow = (router: RouterType, options: FlowOptions = {}): FlowedAndFe
     // handle cors if cors enabled
     response = cors ? response.then(corsify) : response
 
-    // @ts-expect-error - if after function is defined, await it
-    after && await after(await response, ...args)
+    // @sts-expect-error - if after function is defined, await it
+    // after && (response = response.then(r => after(r, ...args)))
+
+    if (after) {
+      // @ts-expect-error - if after function is defined, await it
+      const afterResponse = await after(await response, ...args)
+      if (afterResponse !== undefined) return afterResponse
+    }
 
     // add optional cors and return response
     return response

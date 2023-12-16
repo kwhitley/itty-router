@@ -64,10 +64,27 @@ describe('flow(router: RouterType, options: FlowOptions): RequestHandler', () =>
 
   describe('OPTIONS', () => {
     describe('after?: anyFunction(request, ...args)', () => {
-      it('fires before request is handled', async () => {
-        let after = vi.fn()
-        await flow(router, { after })(request('/items'))
+      it('fires after response is complete', async () => {
+        let after = vi.fn(r => r)
+        let response = await flow(router, { after })(request('/items'))
         expect(after).toHaveBeenCalled()
+        expect(after).toHaveReturnedWith(response)
+      })
+      it('modifies the final response if a return is given', async () => {
+        let after = (r) => 'foo'
+        let response = await flow(router, { after })(request('/items'))
+        expect(response).toBe('foo')
+      })
+      it('does NOT modify the final response if returning undefined or nothing', async () => {
+        let after = (r) => {}
+        let response = await flow(router, { after })(request('/items'))
+        expect(response.status).toBe(200)
+      })
+      it('can be used with before to recieve information via request', async () => {
+        let before = (request) => { request.start = 'foo' }
+        let after = vi.fn((_, { start }) => 'foo')
+        await flow(router, { after })(request('/items'))
+        expect(after).toHaveReturnedWith('foo')
       })
       it('has access to the response and request', async () => {
         let after = vi.fn(({ status }, { method, url }) => ({
@@ -155,7 +172,6 @@ describe('flow(router: RouterType, options: FlowOptions): RequestHandler', () =>
       it('can accept a custom function', async () => {
         const notFound = () => error(418)
         let response = await flow(router, { notFound })(request('/missing'))
-        console.log({ response })
         expect(response.status).toBe(418)
       })
 
