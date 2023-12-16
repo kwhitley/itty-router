@@ -7,8 +7,13 @@ export type CorsOptions = {
   headers?: any
 }
 
+export interface CorsFns {
+  corsify(req: Request): Response;
+  preflight(r: IRequest): Response;
+}
+
 // Create CORS function with default options.
-export const createCors = (options: CorsOptions = {}) => {
+export const createCors = (options: CorsOptions = {}): CorsFns => {
   // Destructure and set defaults for options.
   const {
     origins = ['*'],

@@ -1,12 +1,11 @@
 import { IRequest, RequestLike, RouteHandler, RouterType } from './Router'
-import { CorsOptions, createCors } from './createCors'
+import { CorsFns, CorsOptions, createCors } from './createCors'
 import { error } from './error'
 import { json } from './json'
 import { withParams } from './withParams'
 
 type anyFunction = (...args: any) => any
-type afterFunction<Res = any, Req = IRequest, Args = any[]> = {
-  // @ts-expect-error - TS never likes this syntax
+type afterFunction<Res = any, Req = IRequest, Args extends Array<any> = any[]> = {
   (response: Res, request: Req, ...args: Args): any
 }
 
@@ -34,8 +33,7 @@ export const flow = (router: RouterType, options: FlowOptions = {}): FlowedAndFe
     before,
   } = options
 
-  // @ts-expect-error - come on, TS...
-  const { preflight, corsify } = cors ? createCors(cors === true ? undefined : cors) : {}
+  const { preflight, corsify }: Partial<CorsFns> = cors ? createCors(cors === true ? undefined : cors) : {}
 
   // register a notFound route, if given
   notFound && router.all('*', notFound)
@@ -48,12 +46,10 @@ export const flow = (router: RouterType, options: FlowOptions = {}): FlowedAndFe
   // then add upstream middleware
   router.routes.unshift(['ALL', /^(.*)?\/*$/, beforeHandlers, '*'])
 
-  const flowed = async (...args: any[]) => {
-    // @ts-expect-error - if before function is defined, await it
-    before && await before(...args)
+  const flowed: RouteHandler = async (req, ...args: any[]) => {
+    before && await before(req, ...args)
 
-    // @ts-expect-error - itty types don't like this
-    let response = router.handle(...args)
+    let response = router.handle(req, ...args)
 
     // handle formatting, if given
     response = response.then(v => format && v !== undefined ? format?.(v) : v)
@@ -64,8 +60,7 @@ export const flow = (router: RouterType, options: FlowOptions = {}): FlowedAndFe
     // handle cors if cors enabled
     response = cors ? response.then(corsify) : response
 
-    // @ts-expect-error - if after function is defined, await it
-    return (await after?.(await response, ...args)) ?? response
+    return (await after?.(await response, req, ...args)) ?? response
   }
 
   // support flow(router) === { fetch: flow(router) } signature
