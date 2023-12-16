@@ -59,7 +59,6 @@ export const Router = <
   RequestType = IRequest,
   Args extends any[] = any[]
 >({ base = '', routes = [] }: RouterOptions = {}): RouterType<RequestType, Args> =>
-  // @ts-expect-error TypeScript doesn't know that Proxy makes this work
   ({
     __proto__: new Proxy({}, {
       // @ts-expect-error (we're adding an expected prop "path" to the get)
@@ -97,4 +96,4 @@ export const Router = <
         }
       }
     }
-  })
+  } as RouterType<RequestType, Args>)
