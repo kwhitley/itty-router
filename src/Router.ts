@@ -25,18 +25,16 @@ export type RouterOptions = {
   routes?: RouteEntry[]
 }
 
-export type RouteHandler<R = IRequest, Args = any[]> = {
-  // @ts-expect-error - TS never likes this syntax
+export type RouteHandler<R = IRequest, Args extends Array<any> = any[]> = {
   (request: R, ...args: Args): any
 }
 
 export type RouteEntry = [string, RegExp, RouteHandler[], string]
 
 // this is the generic "Route", which allows per-route overrides
-export type Route<R = IRequest, A = any[]> = <RequestType = R, Args = A>(
+export type Route<R = IRequest, A extends Array<any> = any[]> = <RequestType = R, Args extends Array<any> = A>(
   path: string,
   ...handlers: RouteHandler<RequestType, Args>[]
-  // @ts-expect-error - fiddly2
 ) => RouterType<RequestType, Args>
 
 export type CustomRoutes<R = Route> = {
@@ -61,7 +59,6 @@ export const Router = <
   RequestType = IRequest,
   Args extends any[] = any[]
 >({ base = '', routes = [] }: RouterOptions = {}): RouterType<RequestType, Args> =>
-  // @ts-expect-error TypeScript doesn't know that Proxy makes this work
   ({
     __proto__: new Proxy({}, {
       // @ts-expect-error (we're adding an expected prop "path" to the get)
@@ -99,4 +96,4 @@ export const Router = <
         }
       }
     }
-  })
+  } as RouterType<RequestType, Args>)
