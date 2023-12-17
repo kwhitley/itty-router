@@ -161,7 +161,6 @@ describe('flow(router: RouterType, options: FlowOptions): RequestHandler', () =>
 
       it('should not format response if set to false', async () => {
         let response = await createRouter(AutoRouter({ format: false })).fetch(request('/items'))
-        console.log({ response })
         expect(response.body).toBeUndefined()
       })
     })

@@ -56,12 +56,7 @@ export const AutoRouter = (options: FlowOptions = {}): AUtoRouterType => {
 
     let response = originalHandle(req, ...args)
 
-    response = response.then(v => v !== undefined
-                                  ? (notFound as unknown as Function)?.(v)
-                                  : notFound
-                                    ? notFound(v)
-                                    : v
-                            )
+    response = response.then(v => v !== undefined ? (format ? format(v) : v) : notFound ? notFound(v) : v)
 
     // handle errors if error handler given
     response = errors ? response.catch(errors) : response
