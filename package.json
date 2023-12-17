@@ -11,6 +11,11 @@
       "require": "./index.js",
       "types": "./index.d.ts"
     },
+    "./AutoRouter": {
+      "import": "./AutoRouter.mjs",
+      "require": "./AutoRouter.js",
+      "types": "./AutoRouter.d.ts"
+    },
     "./createCors": {
       "import": "./createCors.mjs",
       "require": "./createCors.js",
