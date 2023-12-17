@@ -1,5 +1,5 @@
-import { IRequest, RequestLike, RouteHandler, RouterType } from './Router'
-import { CorsFns, CorsOptions, createCors } from './createCors'
+import { IRequest, RouteHandler, RouterType } from './Router'
+import { CorsHandlers, CorsOptions, createCors } from './createCors'
 import { error } from './error'
 import { json } from './json'
 import { withParams } from './withParams'
@@ -20,7 +20,7 @@ export type FlowOptions = {
   after?: afterFunction
 }
 
-export type Flowed = (request: RequestLike, ...extra: any[]) => Promise<any>
+export type Flowed = (request: IRequest, ...extra: any[]) => Promise<any>
 export type FlowedAndFetch = Flowed & { fetch: Flowed }
 
 export const flow = (router: RouterType, options: FlowOptions = {}): FlowedAndFetch => {
@@ -33,7 +33,7 @@ export const flow = (router: RouterType, options: FlowOptions = {}): FlowedAndFe
     before,
   } = options
 
-  const { preflight, corsify }: Partial<CorsFns> = cors ? createCors(cors === true ? undefined : cors) : {}
+  const { preflight, corsify }: Partial<CorsHandlers> = cors ? createCors(cors === true ? undefined : cors) : {}
 
   // register a notFound route, if given
   notFound && router.all('*', notFound)
@@ -46,7 +46,7 @@ export const flow = (router: RouterType, options: FlowOptions = {}): FlowedAndFe
   // then add upstream middleware
   router.routes.unshift(['ALL', /^(.*)?\/*$/, beforeHandlers, '*'])
 
-  const flowed: RouteHandler = async (req, ...args: any[]) => {
+  const flowed: FlowedAndFetch = async (req, ...args: any[]) => {
     before && await before(req, ...args)
 
     let response = router.handle(req, ...args)

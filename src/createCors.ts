@@ -7,13 +7,13 @@ export type CorsOptions = {
   headers?: any
 }
 
-export interface CorsFns {
-  corsify(req: Request): Response;
-  preflight(r: IRequest): Response;
+export interface CorsHandlers {
+  corsify(response: Response): any
+  preflight(Request: IRequest): any
 }
 
 // Create CORS function with default options.
-export const createCors = (options: CorsOptions = {}): CorsFns => {
+export const createCors = (options: CorsOptions = {}): CorsHandlers => {
   // Destructure and set defaults for options.
   const {
     origins = ['*'],
@@ -38,20 +38,20 @@ export const createCors = (options: CorsOptions = {}): CorsFns => {
   if (maxAge) rHeaders['Access-Control-Max-Age'] = maxAge
 
   // Pre-flight function.
-  const preflight = (r: IRequest) => {
+  const preflight = (request: IRequest): any => {
     // Use methods set.
     const useMethods = methods.includes('*') ? methods : [...new Set(['OPTIONS', ...methods])]
-    const origin = r.headers.get('origin') || ''
+    const origin = request.headers.get('origin') || ''
 
     // set allowOrigin globally
     allowOrigin = isAllowOrigin(origin) && { 'Access-Control-Allow-Origin': origin }
 
     // Check if method is OPTIONS.
-    if (r.method === 'OPTIONS') {
+    if (request.method === 'OPTIONS') {
       const reqHeaders = {
         ...rHeaders,
         'Access-Control-Allow-Methods': useMethods.join(', '),
-        'Access-Control-Allow-Headers': r.headers.get(
+        'Access-Control-Allow-Headers': request.headers.get(
           'Access-Control-Request-Headers'
         ),
         ...allowOrigin,
@@ -60,9 +60,9 @@ export const createCors = (options: CorsOptions = {}): CorsFns => {
       // Handle CORS pre-flight request.
       return new Response(null, {
         headers:
-          r.headers.get('Origin') &&
-          r.headers.get('Access-Control-Request-Method') &&
-          r.headers.get('Access-Control-Request-Headers')
+          request.headers.get('Origin') &&
+          request.headers.get('Access-Control-Request-Method') &&
+          request.headers.get('Access-Control-Request-Headers')
             ? reqHeaders
             : { Allow: useMethods.join(', ') },
       })
