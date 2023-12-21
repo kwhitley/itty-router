@@ -509,23 +509,31 @@ describe('NESTING', () => {
   })
 
   it('can pass routers as handlers (without explicit base path)', async () => {
-    const child = Router().get('/', () => 'child')
+    const grandchild = Router().get('/', () => 'grandchild')
+    const child = Router()
+                    .get('/', () => 'child')
+                    .get('/grandchild/*', grandchild)
     const parent = Router()
                     .get('/', () => 'parent')
                     .all('/child/*', child)
 
     expect(await parent.handle(buildRequest({ path: '/' }))).toBe('parent')
     expect(await parent.handle(buildRequest({ path: '/child' }))).toBe('child')
+    expect(await parent.handle(buildRequest({ path: '/child/grandchild' }))).toBe('grandchild')
   })
 
   it('can pass routers as handlers (WITH explicit base path)', async () => {
-    const child = Router({ base: '/child' }).get('/', () => 'child')
+    const grandchild = Router({ base: '/child/grandchild' }).get('/', () => 'grandchild')
+    const child = Router({ base: '/child' })
+                    .get('/', () => 'child')
+                    .get('/grandchild/*', grandchild)
     const parent = Router()
                     .get('/', () => 'parent')
                     .all('/child/*', child)
 
     expect(await parent.handle(buildRequest({ path: '/' }))).toBe('parent')
     expect(await parent.handle(buildRequest({ path: '/child' }))).toBe('child')
+    expect(await parent.handle(buildRequest({ path: '/child/grandchild' }))).toBe('grandchild')
   })
 })
 
