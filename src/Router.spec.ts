@@ -57,8 +57,8 @@ describe('Router', () => {
 
     const router = Router({
       routes: [
-        ['GET', /^\/test\.(?<x>[^/]+)\/*$/, [basicHandler]],
-        ['GET', /^\/custom-(?<custom>\d{2,4})$/, [customHandler]],
+        ['GET', /^\/test\.(?<x>[^/]+)\/*$/, [basicHandler], '/test'],
+        ['GET', /^\/custom-(?<custom>\d{2,4})$/, [customHandler], '/custom'],
       ],
     })
 
@@ -78,7 +78,7 @@ describe('Router', () => {
     const router = Router()
 
     // allows manual loading (after config)
-    router.routes.push(['GET', /^\/custom2-(?<custom>\w\d{3})$/, [handler]])
+    router.routes.push(['GET', /^\/custom2-(?<custom>\w\d{3})$/, [handler], '/custom'])
 
     await router.handle(buildRequest({ path: '/custom2-a456' }))
     expect(handler).toHaveReturnedWith({ custom: 'a456' }) // custom route hit
@@ -141,7 +141,7 @@ describe('Router', () => {
 
       await router.handle(buildRequest({ path: '/foo' }))
 
-      expect(route.callback).not.toHaveBeenCalled()
+      expect(route?.callback).not.toHaveBeenCalled()
     })
 
     it('returns { method, route } from matched route', async () => {
@@ -266,27 +266,6 @@ describe('Router', () => {
       expect(handler).toHaveReturnedWith({ collection: 'todos', id: '13' })
     })
 
-    it('can handle nested routers', async () => {
-      const router1 = Router()
-      const router2 = Router({ base: '/nested' })
-      const handler1 = vi.fn()
-      const handler2 = vi.fn()
-      const handler3 = vi.fn()
-      router1.get('/pet', handler1)
-      router1.get('/nested/*', router2.handle)
-      router2.get('/', handler3)
-      router2.get('/bar/:id?', handler2)
-
-      await router1.handle(buildRequest({ path: '/pet' }))
-      expect(handler1).toHaveBeenCalled()
-
-      await router1.handle(buildRequest({ path: '/nested/bar' }))
-      expect(handler2).toHaveBeenCalled()
-
-      await router1.handle(buildRequest({ path: '/nested' }))
-      expect(handler3).toHaveBeenCalled()
-    })
-
     it('allows any method to match an "all" route', async () => {
       const router = Router()
       const handler = vi.fn()
@@ -376,7 +355,7 @@ describe('Router', () => {
     it('can easily create a ThrowableRouter', async () => {
       const error = (status, message) => new Response(message, { status })
 
-      const ThrowableRouter = (options) =>
+      const ThrowableRouter = (options = {}) =>
         new Proxy(Router(options), {
           get:
             (obj, prop) =>
@@ -504,6 +483,49 @@ describe('Router', () => {
 
     await router.handle(request)
     expect(handler).toHaveReturnedWith({ cat: 'dog', foo: ['bar', 'baz'] })
+  })
+})
+
+describe('NESTING', () => {
+  it('can handle legacy nested routers (with explicit base path)', async () => {
+    const router1 = Router()
+    const router2 = Router({ base: '/nested' })
+    const handler1 = vi.fn()
+    const handler2 = vi.fn()
+    const handler3 = vi.fn()
+    router1.get('/pet', handler1)
+    router1.get('/nested/*', router2.handle)
+    router2.get('/', handler3)
+    router2.get('/bar/:id?', handler2)
+
+    await router1.handle(buildRequest({ path: '/pet' }))
+    expect(handler1).toHaveBeenCalled()
+
+    await router1.handle(buildRequest({ path: '/nested/bar' }))
+    expect(handler2).toHaveBeenCalled()
+
+    await router1.handle(buildRequest({ path: '/nested' }))
+    expect(handler3).toHaveBeenCalled()
+  })
+
+  it('can pass routers as handlers (without explicit base path)', async () => {
+    const child = Router().get('/', () => 'child')
+    const parent = Router()
+                    .get('/', () => 'parent')
+                    .all('/child/*', child)
+
+    expect(await parent.handle(buildRequest({ path: '/' }))).toBe('parent')
+    expect(await parent.handle(buildRequest({ path: '/child' }))).toBe('child')
+  })
+
+  it('can pass routers as handlers (WITH explicit base path)', async () => {
+    const child = Router({ base: '/child' }).get('/', () => 'child')
+    const parent = Router()
+                    .get('/', () => 'parent')
+                    .all('/child/*', child)
+
+    expect(await parent.handle(buildRequest({ path: '/' }))).toBe('parent')
+    expect(await parent.handle(buildRequest({ path: '/child' }))).toBe('child')
   })
 })
 

@@ -36,7 +36,7 @@ export type RouteEntry = [string, RegExp, RouteHandler[], string]
 // this is the generic "Route", which allows per-route overrides
 export type Route = <RequestType = IRequest, Args extends any[] = any[], RT = RouterType>(
   path: string,
-  ...handlers: RouteHandler<RequestType, Args>[]
+  ...handlers: RouteHandlerOrRouter<RequestType, Args>[]
 ) => RT
 
 // this is an alternative UniveralRoute, accepting generics (from upstream), but without
@@ -57,6 +57,7 @@ export type RouterType<R = Route, Args extends any[] = any[]> = {
   __proto__: RouterType<R>,
   routes: RouteEntry[],
   handle: <A extends any[] = Args>(request: RequestLike, ...extra: Equal<R, Args> extends true ? A : Args) => Promise<any>
+  base: string,
   all: R,
   delete: R,
   get: R,
@@ -67,6 +68,8 @@ export type RouterType<R = Route, Args extends any[] = any[]> = {
   put: R,
 } & CustomRoutes<R>
 
+type RouteHandlerOrRouter<RequestType = IRequest, Args extends any[] = any[]> = RouteHandler<RequestType, Args> | RouterType
+
 export const Router = <
   RequestType = IRequest,
   Args extends any[] = any[],
@@ -76,10 +79,24 @@ export const Router = <
   ({
     __proto__: new Proxy({}, {
       // @ts-expect-error (we're adding an expected prop "path" to the get)
-      get: (target: any, prop: string, receiver: object, path: string) => (route: string, ...handlers: RouteHandler<I>[]) =>
+      get: (target: any, prop: string, receiver: RouterType, path: string) => (route: string, ...handlers: RouteHandlerOrRouter<I>[]) => {
+        handlers = handlers.map(h =>
+          // @ts-expect-error
+          h.handle
+          // @ts-expect-error
+            ? h.base ? h.handle : (r, ...args) => {
+                r.url = new URL(r.url)
+                r.url.pathname = r.url.pathname.replace(route.replace(/\/\*$/, ''), '')
+
+                // @ts-expect-error
+                return h.handle(r, ...args)
+              }
+            : h
+        )
+
         routes.push(
           [
-            prop.toUpperCase(),
+            prop?.toUpperCase?.(),
             RegExp(`^${(path = (base + route)
               .replace(/\/+(\/|$)/g, '$1'))                       // strip double & trailing splash
               .replace(/(\/?\.?):(\w+)\+/g, '($1(?<$2>*))')       // greedy params
@@ -87,13 +104,18 @@ export const Router = <
               .replace(/\./g, '\\.')                              // dot in path
               .replace(/(\/?)\*/g, '($1.*)?')                     // wildcard
             }/*$`),
+            // @ts-expect-error
             handlers,                                             // embed handlers
             path,                                                 // embed clean route path
           ]
-        ) && receiver
+        )
+
+        return receiver
+      }
     }),
     routes,
-    async handle (request: RequestLike, ...args)  {
+    base,
+    async handle (request: RequestLike, ...args) {
       let response, match, url = new URL(request.url), query: any = request.query = { __proto__: null }
       for (let [k, v] of url.searchParams) {
         query[k] = query[k] === undefined ? v : [query[k], v].flat()
