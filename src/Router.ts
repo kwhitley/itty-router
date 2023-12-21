@@ -29,7 +29,7 @@ export type RouterOptions = {
 
 export type RouteHandler<I = IRequest, A extends any[] = any[]> = {
   (request: I, ...args: A): any
-}
+} & MayBeRouter
 
 export type RouteEntry = [string, RegExp, RouteHandler[], string]
 
@@ -51,6 +51,11 @@ type Equal<X, Y> = (<T>() => T extends X ? 1 : 2) extends (<T>() => T extends Y 
 
 export type CustomRoutes<R = Route> = {
   [key: string]: R,
+}
+
+type MayBeRouter = {
+  handle?: any
+  base?: string
 }
 
 export type RouterType<R = Route, Args extends any[] = any[]> = {
@@ -81,14 +86,11 @@ export const Router = <
       // @ts-expect-error (we're adding an expected prop "path" to the get)
       get: (target: any, prop: string, receiver: RouterType, path: string) => (route: string, ...handlers: RouteHandlerOrRouter<I>[]) => {
         handlers = handlers.map(h =>
-          // @ts-expect-error
           h.handle
-          // @ts-expect-error
             ? h.base ? h.handle : (r, ...args) => {
                 r.url = new URL(r.url)
                 r.url.pathname = r.url.pathname.replace(route.replace(/\/\*$/, ''), '')
 
-                // @ts-expect-error
                 return h.handle(r, ...args)
               }
             : h
