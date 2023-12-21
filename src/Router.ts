@@ -106,7 +106,7 @@ export const Router = <
               .replace(/\./g, '\\.')                              // dot in path
               .replace(/(\/?)\*/g, '($1.*)?')                     // wildcard
             }/*$`),
-            // @ts-expect-error
+            // @ts-expect-error - not worth fixing for an internal type
             handlers,                                             // embed handlers
             path,                                                 // embed clean route path
           ]
