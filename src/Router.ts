@@ -96,7 +96,7 @@ export const Router = <
 
         routes.push(
           [
-            prop?.toUpperCase?.(),
+            prop.toUpperCase?.(),
             RegExp(`^${(path = (base + route)
               .replace(/\/+(\/|$)/g, '$1'))                       // strip double & trailing splash
               .replace(/(\/?\.?):(\w+)\+/g, '($1(?<$2>*))')       // greedy params

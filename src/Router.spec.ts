@@ -517,6 +517,8 @@ describe('NESTING', () => {
                     .get('/', () => 'parent')
                     .all('/child/*', child)
 
+                    console.log({ child, parent })
+
     expect(await parent.handle(buildRequest({ path: '/' }))).toBe('parent')
     expect(await parent.handle(buildRequest({ path: '/child' }))).toBe('child')
     expect(await parent.handle(buildRequest({ path: '/child/grandchild' }))).toBe('grandchild')
