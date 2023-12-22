@@ -95,17 +95,17 @@ export const Router = <
     routes,
     async handle (request: RequestLike, ...args)  {
       let response, match, url = new URL(request.url), query: any = request.query = { __proto__: null }
-      for (let [k, v] of url.searchParams) {
-        query[k] = query[k] === undefined ? v : [query[k], v].flat()
-      }
-      for (let [method, regex, handlers, path] of routes) {
+
+      for (let [k, v] of url.searchParams)
+        // @ts-expect-error - overloads
+        query[k] = query[k] ? [].concat(query[k], v) : v
+
+      for (let [method, regex, handlers, path] of routes)
         if ((method === request.method || method === 'ALL') && (match = url.pathname.match(regex))) {
           request.params = match.groups || {}                                     // embed params in request
           request.route = path                                                    // embed route path in request
-          for (let handler of handlers) {
-            if ((response = await handler(request.proxy || request, ...args)) !== undefined) return response
-          }
+          for (let handler of handlers)
+            if ((response = await handler(request.proxy ?? request, ...args)) != null) return response
         }
-      }
     }
   })
