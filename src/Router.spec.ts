@@ -526,8 +526,6 @@ describe('NESTING', () => {
                     .get('/', () => 'parent')
                     .all('/child/:bar/*', child)
 
-    console.log({ child: child.routes, parent: parent.routes })
-
     expect(await parent.handle(toReq('/'))).toBe('parent')
     expect(await parent.handle(toReq('/child/kitten'))).toBe('child')
   })
@@ -537,8 +535,6 @@ describe('NESTING', () => {
     const parent = Router()
                     .get('/', () => 'parent')
                     .all('/child/:bar/*', child.handle)
-
-    console.log({ child: child.routes, parent: parent.routes })
 
     expect(await parent.handle(toReq('/'))).toBe('parent')
     expect(await parent.handle(toReq('/child/kitten'))).toBe('child')

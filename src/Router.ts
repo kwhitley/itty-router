@@ -118,6 +118,7 @@ export const Router = <
       }
     }),
     routes,
+    base,
     async handle (request: RequestLike, ...args)  {
       let response, match, url = new URL(request.url), query: Record<string, any> = request.query = { __proto__: null }
 
