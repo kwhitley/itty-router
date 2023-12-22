@@ -31,7 +31,12 @@ export type RouteHandler<I = IRequest, A extends any[] = any[]> = {
   (request: I, ...args: A): any
 } & MayBeRouter
 
-export type RouteEntry = [string, RegExp, RouteHandler[], string]
+export type RouteEntry = [
+  httpMethod: string,
+  match: RegExp,
+  handlers: RouteHandler[],
+  path?: string,
+]
 
 // this is the generic "Route", which allows per-route overrides
 export type Route = <RequestType = IRequest, Args extends any[] = any[], RT = RouterType>(
@@ -55,6 +60,7 @@ export type CustomRoutes<R = Route> = {
 
 type MayBeRouter = {
   handle?: any
+  fetch?: any
   base?: string
 }
 
@@ -84,19 +90,19 @@ export const Router = <
   // @ts-expect-error TypeScript doesn't know that Proxy makes this work
   ({
     __proto__: new Proxy({}, {
-      // @ts-expect-error (we're adding an expected prop "path" to the get)
-      get: (target: any, prop: string, receiver: RouterType, path: string) => (route: string, ...handlers: RouteHandlerOrRouter<I>[]) => {
-        // @ts-expect-error - patch for aliasing router.fetch
-        if (prop == 'fetch') return receiver.handle(route, ...handlers)
+      // @ts-expect-error - we're adding an expected prop "path" to the get
+      get: (target: any, prop: string, receiver: RouterType, path: string) =>
+        prop == 'handle' ? receiver.fetch :
+        (route: string, ...handlers: RouteHandlerOrRouter<any>[]) => {
 
         // this remaps handlers to allow for nested routers as handlers
         handlers = handlers.map(h =>
-          h.handle
-            ? h.base ? h.handle : (r, ...args) => {
+          h.fetch
+            ? h.base ? h.fetch : (r, ...args) => {
                 r.url = new URL(r.url)
                 r.url.pathname = r.url.pathname.replace(route.replace(/\/\*$/, ''), '')
 
-                return h.handle(r, ...args)
+                return h.fetch(r, ...args)
               }
             : h
         )
@@ -122,7 +128,7 @@ export const Router = <
     }),
     routes,
     base,
-    async handle (request: RequestLike, ...args)  {
+    async fetch (request: RequestLike, ...args)  {
       let response, match, url = new URL(request.url), query: Record<string, any> = request.query = { __proto__: null }
 
       // 1. parse query params
@@ -131,11 +137,11 @@ export const Router = <
 
       // 2. then test routes
       for (let [method, regex, handlers, path] of routes)
-        if ((method === request.method || method === 'ALL') && (match = url.pathname.match(regex))) {
+        if ((method == request.method || method == 'ALL') && (match = url.pathname.match(regex))) {
           request.params = match.groups || {}                                     // embed params in request
           request.route = path                                                    // embed route path in request
           for (let handler of handlers)
             if ((response = await handler(request.proxy ?? request, ...args)) != null) return response
         }
-    }
+    },
   })
