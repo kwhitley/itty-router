@@ -508,7 +508,7 @@ describe('NESTING', () => {
     expect(handler3).toHaveBeenCalled()
   })
 
-  it('can pass routers as handlers (without explicit base path)', async () => {
+  it('can pass routers as handlers (WITHOUT explicit base path)', async () => {
     const grandchild = Router().get('/', () => 'grandchild')
     const child = Router()
                     .get('/', () => 'child')
@@ -517,12 +517,23 @@ describe('NESTING', () => {
                     .get('/', () => 'parent')
                     .all('/child/*', child)
 
-                    console.log({ child, parent })
-
     expect(await parent.handle(buildRequest({ path: '/' }))).toBe('parent')
     expect(await parent.handle(buildRequest({ path: '/child' }))).toBe('child')
     expect(await parent.handle(buildRequest({ path: '/child/grandchild' }))).toBe('grandchild')
   })
+
+  // CURRENTLY FAILS
+  // it('can nest with route params on the nested route', async () => {
+  //   const child = Router({ base: '/child/:bar' }).get('*', ({ url }) => url.href)
+  //   const parent = Router()
+  //                   .get('/', () => 'parent')
+  //                   .all('/child/:bar/*', child)
+
+  //   console.log({ child: child.routes, parent: parent.routes })
+
+  //   expect(await parent.handle(buildRequest({ path: '/' }))).toBe('parent')
+  //   expect(await parent.handle(buildRequest({ path: '/child/kitten' }))).toBe('child')
+  // })
 
   it('can pass routers as handlers (WITH explicit base path)', async () => {
     const grandchild = Router({ base: '/child/grandchild' }).get('/', () => 'grandchild')
