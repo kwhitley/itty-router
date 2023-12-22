@@ -116,6 +116,13 @@ describe('Router', () => {
       expect(typeof response?.catch).toBe('function')
     })
 
+    it('is aliased through router.fetch', async () => {
+      const router = Router().get('/foo', () => 'bar')
+      const response = await router.fetch(toReq('/foo'))
+
+      expect(response).toBe('bar')
+    })
+
     it('returns { path, query } from match', async () => {
       const route = routes.find((r) => r.path === '/foo/:id')
       await router.handle(toReq('/foo/13?foo=bar&cat=dog'))

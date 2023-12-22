@@ -62,6 +62,7 @@ export type RouterType<R = Route, Args extends any[] = any[]> = {
   __proto__: RouterType<R>,
   routes: RouteEntry[],
   handle: <A extends any[] = Args>(request: RequestLike, ...extra: Equal<R, Args> extends true ? A : Args) => Promise<any>
+  fetch: <A extends any[] = Args>(request: RequestLike, ...extra: Equal<R, Args> extends true ? A : Args) => Promise<any>
   base: string,
   all: R,
   delete: R,
@@ -85,6 +86,9 @@ export const Router = <
     __proto__: new Proxy({}, {
       // @ts-expect-error (we're adding an expected prop "path" to the get)
       get: (target: any, prop: string, receiver: RouterType, path: string) => (route: string, ...handlers: RouteHandlerOrRouter<I>[]) => {
+        // @ts-expect-error - patch for aliasing router.fetch
+        if (prop == 'fetch') return receiver.handle(route, ...handlers)
+
         // this remaps handlers to allow for nested routers as handlers
         handlers = handlers.map(h =>
           h.handle
