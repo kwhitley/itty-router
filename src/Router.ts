@@ -85,7 +85,6 @@ export const Router = <
     __proto__: new Proxy({}, {
       // @ts-expect-error (we're adding an expected prop "path" to the get)
       get: (target: any, prop: string, receiver: RouterType, path: string) => (route: string, ...handlers: RouteHandlerOrRouter<I>[]) => {
-
         // this remaps handlers to allow for nested routers as handlers
         handlers = handlers.map(h =>
           h.handle
