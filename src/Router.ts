@@ -96,10 +96,11 @@ export const Router = <
     async handle (request: RequestLike, ...args)  {
       let response, match, url = new URL(request.url), query: any = request.query = { __proto__: null }
 
+      // 1. parse query params
       for (let [k, v] of url.searchParams)
-        // @ts-expect-error - overloads
-        query[k] = query[k] ? [].concat(query[k], v) : v
+        query[k] = query[k] ? ([] as string[]).concat(query[k], v) : v
 
+      // 2. then test routes
       for (let [method, regex, handlers, path] of routes)
         if ((method === request.method || method === 'ALL') && (match = url.pathname.match(regex))) {
           request.params = match.groups || {}                                     // embed params in request
