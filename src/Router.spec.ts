@@ -1,6 +1,6 @@
 import 'isomorphic-fetch'
 import { describe, expect, it, vi } from 'vitest'
-import { buildRequest, createTestRunner, extract } from '../test'
+import { createTestRunner, extract, toReq } from '../test'
 import { Router } from './Router'
 
 const ERROR_MESSAGE = 'Error Message'
@@ -17,7 +17,7 @@ describe('Router', () => {
     { path: '/foo', callback: vi.fn(extract), method: 'post' },
     {
       path: '/passthrough',
-      callback: vi.fn(({ path, name }) => ({ path, name })),
+      callback: vi.fn(({ method, name }) => ({ method, name })),
       method: 'get',
     },
   ]
@@ -62,13 +62,13 @@ describe('Router', () => {
       ],
     })
 
-    await router.handle(buildRequest({ path: '/test.a.b' }))
+    await router.handle(toReq('/test.a.b'))
     expect(basicHandler).toHaveReturnedWith({ x: 'a.b' })
 
-    await router.handle(buildRequest({ path: '/custom-12345' }))
+    await router.handle(toReq('/custom-12345'))
     expect(customHandler).not.toHaveBeenCalled() // custom route mismatch
 
-    await router.handle(buildRequest({ path: '/custom-123' }))
+    await router.handle(toReq('/custom-123'))
     expect(customHandler).toHaveReturnedWith({ custom: '123' }) // custom route hit
   })
 
@@ -80,7 +80,7 @@ describe('Router', () => {
     // allows manual loading (after config)
     router.routes.push(['GET', /^\/custom2-(?<custom>\w\d{3})$/, [handler], '/custom'])
 
-    await router.handle(buildRequest({ path: '/custom2-a456' }))
+    await router.handle(toReq('/custom2-a456'))
     expect(handler).toHaveReturnedWith({ custom: 'a456' }) // custom route hit
   })
 
@@ -98,7 +98,7 @@ describe('Router', () => {
       const handler3 = vi.fn((req) => ({ c: 3, ...req }))
       r.get('/multi/:id', handler1, handler2, handler3)
 
-      await r.handle(buildRequest({ path: '/multi/foo' }))
+      await r.handle(toReq('/multi/foo'))
 
       expect(handler2).toHaveBeenCalled()
       expect(handler3).not.toHaveBeenCalled()
@@ -110,7 +110,7 @@ describe('Router', () => {
       const syncRouter = Router()
       syncRouter.get('/foo', () => 3)
 
-      const response = syncRouter.handle(buildRequest({ path: '/foo' }))
+      const response = syncRouter.handle(toReq('/foo'))
 
       expect(typeof response?.then).toBe('function')
       expect(typeof response?.catch).toBe('function')
@@ -118,7 +118,7 @@ describe('Router', () => {
 
     it('returns { path, query } from match', async () => {
       const route = routes.find((r) => r.path === '/foo/:id')
-      await router.handle(buildRequest({ path: '/foo/13?foo=bar&cat=dog' }))
+      await router.handle(toReq('/foo/13?foo=bar&cat=dog'))
 
       expect(route?.callback).toHaveReturnedWith({
         params: { id: '13' },
@@ -128,7 +128,7 @@ describe('Router', () => {
 
     it('BUG: avoids toString prototype bug', async () => {
       const route = routes.find((r) => r.path === '/foo/:id')
-      await router.handle(buildRequest({ path: '/foo/13?toString=value' }))
+      await router.handle(toReq('/foo/13?toString=value'))
 
       expect(route?.callback).toHaveReturnedWith({
         params: { id: '13' },
@@ -139,7 +139,7 @@ describe('Router', () => {
     it('requires exact route match', async () => {
       const route = routes.find((r) => r.path === '/')
 
-      await router.handle(buildRequest({ path: '/foo' }))
+      await router.handle(toReq('/foo'))
 
       expect(route?.callback).not.toHaveBeenCalled()
     })
@@ -152,10 +152,10 @@ describe('Router', () => {
       const router = Router()
       router.get(route1, handler).post(route2, handler)
 
-      await router.handle(buildRequest({ path: route1, method: 'GET' }))
+      await router.handle(toReq(route1))
       expect(handler).toHaveReturnedWith({ method: 'GET', route: route1 })
 
-      await router.handle(buildRequest({ path: route2, method: 'POST' }))
+      await router.handle(toReq(`POST ${route2}`))
       expect(handler).toHaveReturnedWith({ method: 'POST', route: route2 })
     })
 
@@ -166,30 +166,28 @@ describe('Router', () => {
       router.get('/foo/static', handler1)
       router.get('/foo/:id', handler2)
 
-      await router.handle(buildRequest({ path: '/foo/static' }))
+      await router.handle(toReq('/foo/static'))
       expect(handler1).toHaveBeenCalled()
       expect(handler2).not.toHaveBeenCalled()
 
-      await router.handle(buildRequest({ path: '/foo/3' }))
+      await router.handle(toReq('/foo/3'))
       expect(handler1).toHaveBeenCalledTimes(1)
       expect(handler2).toHaveBeenCalled()
     })
 
     it('honors correct method (e.g. GET, POST, etc)', async () => {
       const route = routes.find((r) => r.path === '/foo' && r.method === 'post')
-      await router.handle(buildRequest({ method: 'POST', path: '/foo' }))
+      await router.handle(toReq('POST /foo'))
 
-      expect(route.callback).toHaveBeenCalled()
+      expect(route!.callback).toHaveBeenCalled()
     })
 
     it('passes the entire original request through to the handler', async () => {
       const route = routes.find((r) => r.path === '/passthrough')
-      await router.handle(
-        buildRequest({ path: '/passthrough', name: 'miffles' })
-      )
+      await router.handle({ ...toReq('/passthrough'), name: 'miffles' })
 
-      expect(route.callback).toHaveReturnedWith({
-        path: '/passthrough',
+      expect(route!.callback).toHaveReturnedWith({
+        method: 'GET',
         name: 'miffles',
       })
     })
@@ -204,10 +202,10 @@ describe('Router', () => {
       router2.get('/foo', matchHandler)
       router1.all('/nested/*', router2.handle).all('*', missingHandler)
 
-      await router1.handle(buildRequest({ path: '/foo' }))
+      await router1.handle(toReq('/foo'))
       expect(missingHandler).toHaveBeenCalled()
 
-      await router1.handle(buildRequest({ path: '/nested/foo' }))
+      await router1.handle(toReq('/nested/foo'))
       expect(matchHandler).toHaveBeenCalled()
     })
 
@@ -229,7 +227,7 @@ describe('Router', () => {
       r.get('/middleware/*', middleware)
       r.get('/middleware/:id', handler)
 
-      await r.handle(buildRequest({ path: '/middleware/foo' }))
+      await r.handle(toReq('/middleware/foo'))
 
       expect(handler).toHaveBeenCalled()
       expect(handler).toHaveReturnedWith(13)
@@ -240,10 +238,10 @@ describe('Router', () => {
       const handler = vi.fn()
       router.get('/foo/:id?', handler)
 
-      await router.handle(buildRequest({ path: '/api/foo' }))
+      await router.handle(toReq('/api/foo'))
       expect(handler).toHaveBeenCalled()
 
-      await router.handle(buildRequest({ path: '/api/foo/13' }))
+      await router.handle(toReq('/api/foo/13'))
       expect(handler).toHaveBeenCalledTimes(2)
     })
 
@@ -252,7 +250,7 @@ describe('Router', () => {
       const handler = vi.fn()
       router.get('/foo/:id?', handler)
 
-      await router.handle(buildRequest({ path: '/foo' }))
+      await router.handle(toReq('/foo'))
       expect(handler).toHaveBeenCalled()
     })
 
@@ -261,7 +259,7 @@ describe('Router', () => {
       const handler = vi.fn((req) => req.params)
       router.get('/:id', handler)
 
-      await router.handle(buildRequest({ path: '/todos/13' }))
+      await router.handle(toReq('/todos/13'))
       expect(handler).toHaveBeenCalled()
       expect(handler).toHaveReturnedWith({ collection: 'todos', id: '13' })
     })
@@ -271,10 +269,10 @@ describe('Router', () => {
       const handler = vi.fn()
       router.all('/crud/*', handler)
 
-      await router.handle(buildRequest({ path: '/crud/foo' }))
+      await router.handle(toReq('/crud/foo'))
       expect(handler).toHaveBeenCalled()
 
-      await router.handle(buildRequest({ method: 'POST', path: '/crud/bar' }))
+      await router.handle(toReq('POST /crud/bar'))
       expect(handler).toHaveBeenCalledTimes(2)
     })
 
@@ -289,7 +287,7 @@ describe('Router', () => {
 
       const escape = (err) => err
 
-      await router.handle(buildRequest({ path: '/foo' })).catch(escape)
+      await router.handle(toReq('/foo')).catch(escape)
 
       expect(handler1).toHaveBeenCalled()
       expect(handler2).toHaveBeenCalled()
@@ -305,7 +303,7 @@ describe('Router', () => {
 
       router.get('/foo', handlerWithError)
 
-      await router.handle(buildRequest({ path: '/foo' })).catch(errorHandler)
+      await router.handle(toReq('/foo')).catch(errorHandler)
 
       expect(handlerWithError).toHaveBeenCalled()
       expect(errorHandler).toHaveBeenCalled()
@@ -374,7 +372,7 @@ describe('Router', () => {
 
       router.get('/foo', handlerWithError)
 
-      const response = await router.handle(buildRequest({ path: '/foo' }))
+      const response = await router.handle(toReq('/foo'))
 
       expect(response instanceof Response).toBe(true)
       expect(response.status).toBe(500)
@@ -400,7 +398,7 @@ describe('Router', () => {
       const originalA = 'A'
       const originalB = {}
       r.get('*', h)
-      const req = buildRequest({ path: '/foo' })
+      const req: any = toReq('/foo')
 
       await r.handle(req, originalA, originalB)
 
@@ -419,7 +417,7 @@ describe('Router', () => {
 
       router.get('/foo', withProxy, handler)
 
-      await router.handle(buildRequest({ path: '/foo' }))
+      await router.handle(toReq('/foo'))
 
       expect(handler).toHaveReturnedWith(proxy)
     })
@@ -498,13 +496,13 @@ describe('NESTING', () => {
     router2.get('/', handler3)
     router2.get('/bar/:id?', handler2)
 
-    await router1.handle(buildRequest({ path: '/pet' }))
+    await router1.handle(toReq('/pet'))
     expect(handler1).toHaveBeenCalled()
 
-    await router1.handle(buildRequest({ path: '/nested/bar' }))
+    await router1.handle(toReq('/nested/bar'))
     expect(handler2).toHaveBeenCalled()
 
-    await router1.handle(buildRequest({ path: '/nested' }))
+    await router1.handle(toReq('/nested'))
     expect(handler3).toHaveBeenCalled()
   })
 
@@ -517,9 +515,9 @@ describe('NESTING', () => {
                     .get('/', () => 'parent')
                     .all('/child/*', child)
 
-    expect(await parent.handle(buildRequest({ path: '/' }))).toBe('parent')
-    expect(await parent.handle(buildRequest({ path: '/child' }))).toBe('child')
-    expect(await parent.handle(buildRequest({ path: '/child/grandchild' }))).toBe('grandchild')
+    expect(await parent.handle(toReq('/'))).toBe('parent')
+    expect(await parent.handle(toReq('/child'))).toBe('child')
+    expect(await parent.handle(toReq('/child/grandchild'))).toBe('grandchild')
   })
 
   it('can nest with route params on the nested route (only if given child base path)', async () => {
@@ -530,8 +528,8 @@ describe('NESTING', () => {
 
     console.log({ child: child.routes, parent: parent.routes })
 
-    expect(await parent.handle(buildRequest({ path: '/' }))).toBe('parent')
-    expect(await parent.handle(buildRequest({ path: '/child/kitten' }))).toBe('child')
+    expect(await parent.handle(toReq('/'))).toBe('parent')
+    expect(await parent.handle(toReq('/child/kitten'))).toBe('child')
   })
 
   it('can nest with route params on the nested route if given router.handle and base path', async () => {
@@ -542,8 +540,8 @@ describe('NESTING', () => {
 
     console.log({ child: child.routes, parent: parent.routes })
 
-    expect(await parent.handle(buildRequest({ path: '/' }))).toBe('parent')
-    expect(await parent.handle(buildRequest({ path: '/child/kitten' }))).toBe('child')
+    expect(await parent.handle(toReq('/'))).toBe('parent')
+    expect(await parent.handle(toReq('/child/kitten'))).toBe('child')
   })
 
   it('can pass routers as handlers (WITH explicit base path)', async () => {
@@ -555,9 +553,9 @@ describe('NESTING', () => {
                     .get('/', () => 'parent')
                     .all('/child/*', child)
 
-    expect(await parent.handle(buildRequest({ path: '/' }))).toBe('parent')
-    expect(await parent.handle(buildRequest({ path: '/child' }))).toBe('child')
-    expect(await parent.handle(buildRequest({ path: '/child/grandchild' }))).toBe('grandchild')
+    expect(await parent.handle(toReq('/'))).toBe('parent')
+    expect(await parent.handle(toReq('/child'))).toBe('child')
+    expect(await parent.handle(toReq('/child/grandchild'))).toBe('grandchild')
   })
 })
 
@@ -570,7 +568,7 @@ describe('MIDDLEWARE', () => {
 
     router.get('*', h1, h2, h3)
 
-    const results = await router.handle(buildRequest({ path: '/' }))
+    const results = await router.handle(toReq('/'))
     expect(h1).toHaveBeenCalled()
     expect(h2).toHaveBeenCalled()
     expect(h3).toHaveBeenCalled()
