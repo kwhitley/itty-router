@@ -94,7 +94,7 @@ export const Router = <
     }),
     routes,
     async handle (request: RequestLike, ...args)  {
-      let response, match, url = new URL(request.url), query: any = request.query = { __proto__: null }
+      let response, match, url = new URL(request.url), query: Record<string, any> = request.query = { __proto__: null }
 
       // 1. parse query params
       for (let [k, v] of url.searchParams)
