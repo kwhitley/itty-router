@@ -87,7 +87,7 @@ export const Router = <
       // @ts-expect-error (we're adding an expected prop "path" to the get)
       get: (target: any, prop: string, receiver: RouterType, path: string) => (route: string, ...handlers: RouteHandlerOrRouter<I>[]) => {
         // @ts-expect-error - patch for aliasing router.fetch
-        if (prop == 'fetch') return receiver.handle(route, ...handlers)
+        if (prop == 'handle') return receiver.fetch(route, ...handlers)
 
         // this remaps handlers to allow for nested routers as handlers
         handlers = handlers.map(h =>
@@ -122,7 +122,7 @@ export const Router = <
     }),
     routes,
     base,
-    async handle (request: RequestLike, ...args)  {
+    async fetch (request: RequestLike, ...args)  {
       let response, match, url = new URL(request.url), query: Record<string, any> = request.query = { __proto__: null }
 
       // 1. parse query params
