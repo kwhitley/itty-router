@@ -74,11 +74,16 @@ describe('Router', () => {
   })
 
   it('allows easy custom Router creation', async () => {
-    const logger = vi.fn()
+    const logger = vi.fn() // vitest spy function
 
+    // create a CustomRouter that creates a Router with some predefined options
     const CustomRouter = (options = {}) => Router({
-      ...options,
+      ...options, // we still want to pass in any real options
+
+      // but let's add one to
       getMethods: function() { return Array.from(this.routes.reduce((acc, [method]) => acc.add(method), new Set())) },
+
+      // and a chaining function to "rewire" and intercept fetch requests
       addLogging: function(logger = () => {}) {
         const ogFetch = this.fetch
         this.fetch = (...args) => {
@@ -86,14 +91,15 @@ describe('Router', () => {
           return ogFetch(...args)
         }
 
-        return this
+        return this // this let's us chain
       }
     })
 
+    // implement the CustomRouter
     const router = CustomRouter()
                     .get('/', () => 'foo')
                     .post('/', () => {})
-                    .addLogging(logger)
+                    .addLogging(logger) // we added this!
 
     const response = await router.fetch(toReq('/'))
 
