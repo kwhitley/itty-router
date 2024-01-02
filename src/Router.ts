@@ -31,7 +31,12 @@ export type RouteHandler<I = IRequest, A extends any[] = any[]> = {
   (request: I, ...args: A): any
 } & MaybeRouter
 
-export type RouteEntry = [string, RegExp, RouteHandler[], string]
+export type RouteEntry = [
+  httpMethod: string,
+  match: RegExp,
+  handlers: RouteHandler[],
+  path?: string,
+]
 
 // this is the generic "Route", which allows per-route overrides
 export type Route = <RequestType = IRequest, Args extends any[] = any[], RT = RouterType>(
@@ -132,11 +137,11 @@ export const Router = <
 
       // 2. then test routes
       for (let [method, regex, handlers, path] of routes)
-        if ((method === request.method || method === 'ALL') && (match = url.pathname.match(regex))) {
+        if ((method == request.method || method == 'ALL') && (match = url.pathname.match(regex))) {
           request.params = match.groups || {}                                     // embed params in request
           request.route = path                                                    // embed route path in request
           for (let handler of handlers)
             if ((response = await handler(request.proxy ?? request, ...args)) != null) return response
         }
-    }
+    },
   })
