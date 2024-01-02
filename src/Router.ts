@@ -29,7 +29,7 @@ export type RouterOptions = {
 
 export type RouteHandler<I = IRequest, A extends any[] = any[]> = {
   (request: I, ...args: A): any
-} & MayBeRouter
+} & MaybeRouter
 
 export type RouteEntry = [string, RegExp, RouteHandler[], string]
 
@@ -53,8 +53,9 @@ export type CustomRoutes<R = Route> = {
   [key: string]: R,
 }
 
-type MayBeRouter = {
+type MaybeRouter = {
   handle?: any
+  fetch?: any
   base?: string
 }
 
@@ -91,12 +92,12 @@ export const Router = <
 
         // this remaps handlers to allow for nested routers as handlers
         handlers = handlers.map(h =>
-          h.handle
-            ? h.base ? h.handle : (r, ...args) => {
+          h.fetch
+            ? h.base ? h.fetch : (r, ...args) => {
                 r.url = new URL(r.url)
                 r.url.pathname = r.url.pathname.replace(route.replace(/\/\*$/, ''), '')
 
-                return h.handle(r, ...args)
+                return h.fetch(r, ...args)
               }
             : h
         )

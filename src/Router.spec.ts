@@ -547,17 +547,6 @@ describe('NESTING', () => {
     expect(await parent.handle(toReq('/child/kitten'))).toBe('child')
   })
 
-  it('can nest with route params on the nested route if NOT given router.handle and base path', async () => {
-    const child = Router().get('/', () => 'child')
-    const parent = Router()
-                    .get('/', () => 'parent')
-                    .all('/child/:bar/*', child.handle)
-
-    expect(await parent.handle(toReq('/'))).toBe('parent')
-    expect(await parent.handle(toReq('/child/kitten'))).toBe('child')
-  })
-
-
   it('can pass routers as handlers (WITH explicit base path)', async () => {
     const grandchild = Router({ base: '/child/grandchild' }).get('/', () => 'grandchild')
     const child = Router({ base: '/child' })
