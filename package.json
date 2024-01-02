@@ -31,6 +31,11 @@
       "require": "./html.js",
       "types": "./html.d.ts"
     },
+    "./IttyRouter": {
+      "import": "./IttyRouter.mjs",
+      "require": "./IttyRouter.js",
+      "types": "./IttyRouter.d.ts"
+    },
     "./jpeg": {
       "import": "./jpeg.mjs",
       "require": "./jpeg.js",

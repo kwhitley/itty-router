@@ -25,7 +25,7 @@ export type IRequest = IRequestStrict & GenericTraps
 export type RouterOptions = {
   base?: string
   routes?: RouteEntry[]
-}
+} & Record<string, any>
 
 export type RouteHandler<I = IRequest, A extends any[] = any[]> = {
   (request: I, ...args: A): any
@@ -52,7 +52,7 @@ export type UniversalRoute<RequestType = IRequest, Args extends any[] = any[]> =
 ) => RouterType<UniversalRoute<RequestType, Args>, Args>
 
 // helper function to detect equality in types (used to detect custom Request on router)
-type Equal<X, Y> = (<T>() => T extends X ? 1 : 2) extends (<T>() => T extends Y ? 1 : 2) ? true : false;
+export type Equal<X, Y> = (<T>() => T extends X ? 1 : 2) extends (<T>() => T extends Y ? 1 : 2) ? true : false;
 
 export type CustomRoutes<R = Route> = {
   [key: string]: R,
@@ -78,7 +78,7 @@ export type RouterType<R = Route, Args extends any[] = any[]> = {
   patch: R,
   post: R,
   put: R,
-} & CustomRoutes<R>
+} & CustomRoutes<R> & Record<string, any>
 
 type RouteHandlerOrRouter<RequestType = IRequest, Args extends any[] = any[]> = RouteHandler<RequestType, Args> | RouterType
 
@@ -86,7 +86,7 @@ export const Router = <
   RequestType = IRequest,
   Args extends any[] = any[],
   RouteType = Equal<RequestType, IRequest> extends true ? Route : UniversalRoute<RequestType, Args>
->({ base = '', routes = [] }: RouterOptions = {}): RouterType<RouteType, Args> =>
+>({ base = '', routes = [], ...other }: RouterOptions = {}): RouterType<RouteType, Args> =>
   // @ts-expect-error TypeScript doesn't know that Proxy makes this work
   ({
     __proto__: new Proxy({}, {
@@ -128,6 +128,7 @@ export const Router = <
     }),
     routes,
     base,
+    ...other,
     async fetch (request: RequestLike, ...args)  {
       let response, match, url = new URL(request.url), query: Record<string, any> = request.query = { __proto__: null }
 

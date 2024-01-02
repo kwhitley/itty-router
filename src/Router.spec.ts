@@ -51,6 +51,57 @@ describe('Router', () => {
     expect(router.routes.length).toBe(3) // accessible off the main router
   })
 
+  it('allows overloading custom properties via options', () => {
+    const router = Router({ port: 3001 })
+
+    expect(router.port).toBe(3001)
+  })
+
+  it('allows overloading custom properties via direct access', () => {
+    const router = Router()
+    router.port = 3001
+
+    expect(router.port).toBe(3001)
+  })
+
+  it('allows overloading custom properties via direct access', () => {
+    const router = Router({
+      getMethods: function() { return Array.from(this.routes.reduce((acc, [method]) => acc.add(method), new Set())) }
+    }).get('/', () => {})
+      .post('/', () => {})
+
+    expect(router.getMethods()).toEqual(['GET', 'POST'])
+  })
+
+  it('allows easy custom Router creation', async () => {
+    const logger = vi.fn()
+
+    const CustomRouter = (options = {}) => Router({
+      ...options,
+      getMethods: function() { return Array.from(this.routes.reduce((acc, [method]) => acc.add(method), new Set())) },
+      addLogging: function(logger = () => {}) {
+        const ogFetch = this.fetch
+        this.fetch = (...args) => {
+          logger(...args)
+          return ogFetch(...args)
+        }
+
+        return this
+      }
+    })
+
+    const router = CustomRouter()
+                    .get('/', () => 'foo')
+                    .post('/', () => {})
+                    .addLogging(logger)
+
+    const response = await router.fetch(toReq('/'))
+
+    expect(router.getMethods()).toEqual(['GET', 'POST'])
+    expect(response).toBe('foo')
+    expect(logger).toHaveBeenCalled()
+  })
+
   it('allows preloading advanced routes', async () => {
     const basicHandler = vi.fn((req) => req.params)
     const customHandler = vi.fn((req) => req.params)
