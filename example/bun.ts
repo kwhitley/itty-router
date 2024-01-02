@@ -1,15 +1,9 @@
-import { Router, error, json, withParams } from '../dist/index.js'
+import { Router, error, json, text, withParams } from '../src'
 
-const router = Router()
+const router = Router({ port: 3001 })
+                .all('*', withParams)
+                .get('/test', () => text('Success!'))
+                .get('/foo/:bar/:baz?', ({ bar, baz }) => json(({ bar, baz })))
+                .all('*', () => error(404))
 
-router
-  .all('*', withParams)
-  .get('/test', () => 'Success!')
-  .get('/foo/:bar/:baz?', ({ bar, baz }) => ({ bar, baz }))
-  .all('*', () => error(404))
-
-export default {
-  port: 3001,
-  fetch: (request, env, ctx) =>
-    router.handle(request, env, ctx).then(json).catch(error),
-}
+export default router
