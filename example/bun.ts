@@ -1,4 +1,8 @@
-import { Router, error, json, text, withParams } from '../src'
+import { Router, error, json, text, withParams, RouterOptions, RouterType } from '../src'
+
+type CustomRouterType = RouterType & {
+  addLogging: (logger: Function) => CustomRouterType
+}
 
 const router = Router({ port: 3001 })
                 .all('*', withParams)
