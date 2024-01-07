@@ -51,6 +51,14 @@ describe('createResponse(mimeType: string, transform?: Function)', () => {
     expect(r2).toBe(r1)
   })
 
+  it('will ignore an undefined body', async () => {
+    const r1 = json()
+    const r2 = json(undefined)
+
+    expect(r1).toBeUndefined()
+    expect(r2).toBeUndefined()
+  })
+
   describe('format helpers', () => {
     const formats = [
       { name: 'json', fn: json, mime: 'application/json; charset=utf-8' },

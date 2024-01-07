@@ -82,18 +82,19 @@ export const Router = <
     }),
     routes,
     async handle (request: RequestLike, ...args)  {
-      let response, match, url = new URL(request.url), query: any = request.query = { __proto__: null }
-      for (let [k, v] of url.searchParams) {
-        query[k] = query[k] === undefined ? v : [query[k], v].flat()
-      }
-      for (let [method, regex, handlers, path] of routes) {
+      let response, match, url = new URL(request.url), query: Record<string, any> = request.query = { __proto__: null }
+
+      // 1. parse query params
+      for (let [k, v] of url.searchParams)
+        query[k] = query[k] ? ([] as string[]).concat(query[k], v) : v
+
+      // 2. then test routes
+      for (let [method, regex, handlers, path] of routes)
         if ((method === request.method || method === 'ALL') && (match = url.pathname.match(regex))) {
           request.params = match.groups || {}                                     // embed params in request
           request.route = path                                                    // embed route path in request
-          for (let handler of handlers) {
-            if ((response = await handler(request.proxy || request, ...args)) !== undefined) return response
-          }
+          for (let handler of handlers)
+            if ((response = await handler(request.proxy ?? request, ...args)) != null) return response
         }
-      }
     }
   } as RouterType<RequestType, Args>)

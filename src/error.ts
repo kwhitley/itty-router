@@ -12,17 +12,13 @@ export interface ErrorFormatter {
   (error: ErrorLike): Response
 }
 
-const getMessage = (code: number): string => {
-  return (
-    {
-      400: 'Bad Request',
-      401: 'Unauthorized',
-      403: 'Forbidden',
-      404: 'Not Found',
-      500: 'Internal Server Error',
-    }[code] || 'Unknown Error'
-  )
-}
+const getMessage = (code: number): string => ({
+  400: 'Bad Request',
+  401: 'Unauthorized',
+  403: 'Forbidden',
+  404: 'Not Found',
+  500: 'Internal Server Error',
+})[code] || 'Unknown Error'
 
 export const error: ErrorFormatter = (a = 500, b?: ErrorBody) => {
   // handle passing an Error | StatusError directly in

@@ -167,7 +167,7 @@ router
 ```
 
 ### 3. It's all Promises.
-We `await` every handler, looking for a return value.  If we get one, we break the flow and return your value.  If we don't, we continue processing handlers/routes until we do.  This means that every handler can either be synchronous or async - it's all the same.
+itty `await`s every handler, looking for a return value.  If it gets one, it breaks the flow and returns the value.  If it doesn't, it continues processing handlers/routes until it does.  This means that every handler can either be synchronous or async - it's all the same.
 
 When paired with the fact that we can simply return raw data and transform it later, this is AWESOME for working with async APIs, database layers, etc.  We don't need to transform anything at the route, we can simply return the Promise (to data) itself!
 
@@ -186,7 +186,7 @@ router
 ```
 
 ### 4. Only one required argument.  The rest is up to you.
-We only require one argument in itty - a Request-like object with the following shape: `{ url, method }` (usually a native [Request](https://developer.mozilla.org/en-US/docs/Web/API/Request)).  Because itty is not opinionated about [Response](https://developer.mozilla.org/en-US/docs/Web/API/Response) creation, there is not "response" argument built in.  Every other argument you pass to `route.handle` is given to each handler, in the same order.  
+itty only requires one argument - a Request-like object with the following shape: `{ url, method }` (usually a native [Request](https://developer.mozilla.org/en-US/docs/Web/API/Request)).  Because itty is not opinionated about [Response](https://developer.mozilla.org/en-US/docs/Web/API/Response) creation, there is not "response" argument built in.  Every other argument you pass to `route.handle` is given to each handler, in the same order.  
 
 > ### This makes itty one of the most platform-agnostic routers, *period*, as it's able to match up to any platform's signature.
 

@@ -1,12 +1,21 @@
 /* istanbul ignore file */
 import { expect, it, vi } from 'vitest'
 
-export const buildRequest = ({
-  method = 'GET',
-  path,
-  url = `https://example.com${path}`,
-  ...other
-}) => ({ method, path, url, ...other })
+// generates a request from a string like:
+// GET /whatever
+// /foo
+export const toReq = (methodAndPath: string) => {
+  let [method, path] = methodAndPath.split(' ')
+  if (!path) {
+    path = method
+    method = 'GET'
+  }
+
+  return {
+    method,
+    url: `https://example.com${path}`
+  }
+}
 
 export const extract = ({ params, query }) => ({ params, query })
 
@@ -27,7 +36,7 @@ const testRoute = async (
     path,
   })
 
-  await router.handle(buildRequest({ method: method.toUpperCase(), path }))
+  await router.handle(toReq(`${method.toUpperCase()} ${path}`))
 
   if (!returns) {
     expect(handler).not.toHaveBeenCalled()
