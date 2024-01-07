@@ -25,13 +25,18 @@ export type IRequest = IRequestStrict & GenericTraps
 export type RouterOptions = {
   base?: string
   routes?: RouteEntry[]
-}
+} & Record<string, any>
 
 export type RouteHandler<I = IRequest, A extends any[] = any[]> = {
   (request: I, ...args: A): any
 }
 
-export type RouteEntry = [string, RegExp, RouteHandler[], string]
+export type RouteEntry = [
+  httpMethod: string,
+  match: RegExp,
+  handlers: RouteHandler[],
+  path?: string,
+]
 
 // this is the generic "Route", which allows per-route overrides
 export type Route = <RequestType = IRequest, Args extends any[] = any[], RT = RouterType>(
@@ -56,6 +61,7 @@ export type CustomRoutes<R = Route> = {
 export type RouterType<R = Route, Args extends any[] = any[]> = {
   __proto__: RouterType<R>,
   routes: RouteEntry[],
+  fetch: <A extends any[] = Args>(request: RequestLike, ...extra: Equal<R, Args> extends true ? A : Args) => Promise<any>
   handle: <A extends any[] = Args>(request: RequestLike, ...extra: Equal<R, Args> extends true ? A : Args) => Promise<any>
   all: R,
   delete: R,
@@ -71,29 +77,33 @@ export const Router = <
   RequestType = IRequest,
   Args extends any[] = any[],
   RouteType = Equal<RequestType, IRequest> extends true ? Route : UniversalRoute<RequestType, Args>
->({ base = '', routes = [] }: RouterOptions = {}): RouterType<RouteType, Args> =>
+>({ base = '', routes = [], ...other }: RouterOptions = {}): RouterType<RouteType, Args> =>
   // @ts-expect-error TypeScript doesn't know that Proxy makes this work
   ({
     __proto__: new Proxy({}, {
       // @ts-expect-error (we're adding an expected prop "path" to the get)
-      get: (target: any, prop: string, receiver: object, path: string) => (route: string, ...handlers: RouteHandler<I>[]) =>
-        routes.push(
-          [
-            prop.toUpperCase(),
-            RegExp(`^${(path = (base + route)
-              .replace(/\/+(\/|$)/g, '$1'))                       // strip double & trailing splash
-              .replace(/(\/?\.?):(\w+)\+/g, '($1(?<$2>*))')       // greedy params
-              .replace(/(\/?\.?):(\w+)/g, '($1(?<$2>[^$1/]+?))')  // named params and image format
-              .replace(/\./g, '\\.')                              // dot in path
-              .replace(/(\/?)\*/g, '($1.*)?')                     // wildcard
-            }/*$`),
-            handlers,                                             // embed handlers
-            path,                                                 // embed clean route path
-          ]
-        ) && receiver
+      get: (target: any, prop: string, receiver: RouterType, path: string) => (route: string, ...handlers: RouteHandler<I>[]) =>
+        prop == 'handle'
+        // @ts-expect-error - patch for aliasing router.fetch
+        ? receiver.fetch(route, ...handlers)
+        : routes.push(
+            [
+              prop.toUpperCase(),
+              RegExp(`^${(path = (base + route)
+                .replace(/\/+(\/|$)/g, '$1'))                       // strip double & trailing splash
+                .replace(/(\/?\.?):(\w+)\+/g, '($1(?<$2>*))')       // greedy params
+                .replace(/(\/?\.?):(\w+)/g, '($1(?<$2>[^$1/]+?))')  // named params and image format
+                .replace(/\./g, '\\.')                              // dot in path
+                .replace(/(\/?)\*/g, '($1.*)?')                     // wildcard
+              }/*$`),
+              handlers,                                             // embed handlers
+              path,                                                 // embed clean route path
+            ]
+          ) && receiver
     }),
     routes,
-    async handle (request: RequestLike, ...args)  {
+    ...other,
+    async fetch (request: RequestLike, ...args)  {
       let response, match, url = new URL(request.url), query: Record<string, any> = request.query = { __proto__: null }
 
       // 1. parse query params
@@ -102,11 +112,11 @@ export const Router = <
 
       // 2. then test routes
       for (let [method, regex, handlers, path] of routes)
-        if ((method === request.method || method === 'ALL') && (match = url.pathname.match(regex))) {
+        if ((method == request.method || method == 'ALL') && (match = url.pathname.match(regex))) {
           request.params = match.groups || {}                                     // embed params in request
           request.route = path                                                    // embed route path in request
           for (let handler of handlers)
             if ((response = await handler(request.proxy ?? request, ...args)) != null) return response
         }
-    }
+    },
   })
