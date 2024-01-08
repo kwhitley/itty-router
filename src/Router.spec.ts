@@ -468,13 +468,23 @@ describe('OPTIONS', () => {
     })
   })
 
-  describe('format: Function', () => {
+  describe('after: ResponseHandler', () => {
     it('allows a formatting function to modify unformed responses', async () => {
       const spy = vi.fn(v => v)
       const router = Router({ after: spy }).get('/foo', () => 'Foo')
       await router.fetch(toReq('/foo'))
 
       expect(spy).toHaveBeenCalledWith('Foo')
+    })
+  })
+
+  describe('errors: ErrorHandler', () => {
+    it('catches errors', async () => {
+      const errors = vi.fn()
+      const router = Router({ errors }).get('/throw', (a) => a.b.c)
+      await router.fetch(toReq('/throw'))
+
+      expect(errors).toHaveBeenCalled()
     })
   })
 })
