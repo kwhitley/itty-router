@@ -71,7 +71,7 @@ export type RouterType<R = Route, Args extends any[] = any[]> = {
   patch: R,
   post: R,
   put: R,
-} & CustomRoutes<R>
+} & CustomRoutes<R> & Record<string, any>
 
 export const Router = <
   RequestType = IRequest,

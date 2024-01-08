@@ -484,6 +484,65 @@ describe('Router', () => {
   })
 })
 
+describe('CUSTOM ROUTERS/PROPS', () => {
+  it('allows overloading custom properties via options', () => {
+    const router = Router({ port: 3001 })
+
+    expect(router.port).toBe(3001)
+  })
+
+  it('allows overloading custom properties via direct access', () => {
+    const router = Router()
+    router.port = 3001
+
+    expect(router.port).toBe(3001)
+  })
+
+  it('allows overloading custom methods with access to "this"', () => {
+    const router = Router({
+      getMethods: function() { return Array.from(this.routes.reduce((acc, [method]) => acc.add(method), new Set())) }
+    }).get('/', () => {})
+      .post('/', () => {})
+
+    expect(router.getMethods()).toEqual(['GET', 'POST'])
+  })
+
+  it('allows easy custom Router creation', async () => {
+    const logger = vi.fn() // vitest spy function
+
+    // create a CustomRouter that creates a Router with some predefined options
+    const CustomRouter = (options = {}) => Router({
+      ...options, // we still want to pass in any real options
+
+      // but let's add one to
+      getMethods: function() { return Array.from(this.routes.reduce((acc, [method]) => acc.add(method), new Set())) },
+
+      // and a chaining function to "rewire" and intercept fetch requests
+      addLogging: function(logger = () => {}) {
+        const ogFetch = this.fetch
+        this.fetch = (...args) => {
+          logger(...args)
+          return ogFetch(...args)
+        }
+
+        return this // this let's us chain
+      }
+    })
+
+    // implement the CustomRouter
+    const router = CustomRouter()
+                    .get('/', () => 'foo')
+                    .post('/', () => {})
+                    .addLogging(logger) // we added this!
+
+    const response = await router.fetch(toReq('/'))
+
+    expect(router.getMethods()).toEqual(['GET', 'POST'])
+    expect(response).toBe('foo')
+    expect(logger).toHaveBeenCalled()
+  })
+})
+
 describe('NESTING', () => {
   it('can handle legacy nested routers (with explicit base path)', async () => {
     const router1 = Router()
@@ -511,8 +570,6 @@ describe('NESTING', () => {
     const parent = Router()
                     .get('/', () => 'parent')
                     .all('/child/:bar/*', child.handle)
-
-    console.log({ child: child.routes, parent: parent.routes })
 
     expect(await parent.handle(toReq('/'))).toBe('parent')
     expect(await parent.handle(toReq('/child/kitten'))).toBe('child')
