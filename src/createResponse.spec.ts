@@ -35,6 +35,23 @@ describe('createResponse(mimeType: string, transform?: Function)', () => {
     expect(response.status).toBe(400)
   })
 
+  it('can pass in headers as Headers object', () => {
+    const payload = { foo: 'bar' }
+    const type = 'application/json; charset=utf-8'
+    const fooHeader = 'bar'
+    const headers = new Headers()
+    headers.append('fooHeader', 'foo')
+    const json = createResponse(type)
+
+    const response = json(payload, {
+      headers,
+      status: 400,
+    })
+
+    expect(response.headers.get('fooHeader')).toBe('foo')
+    expect(response.status).toBe(400)
+  })
+
   it('can pass in custom body transform function', async () => {
     const stars = createResponse('text/plain', (s) => s.replace(/./g, '*'))
 

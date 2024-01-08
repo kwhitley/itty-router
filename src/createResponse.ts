@@ -15,6 +15,13 @@ export const createResponse =
     body === undefined || body?.constructor.name === 'Response'
     ? body
     : new Response(transform ? transform(body) : body, {
-                    headers: { 'content-type': format, ...headers },
+                    headers: {
+                      'content-type': format,
+                      ...(headers.entries
+                          // @ts-expect-error - foul
+                          ? Object.fromEntries(headers)
+                          : headers
+                          ),
+                    },
                     ...rest
                   })
