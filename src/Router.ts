@@ -82,11 +82,11 @@ export const Router = <
   ({
     __proto__: new Proxy({}, {
       // @ts-expect-error (we're adding an expected prop "path" to the get)
-      get: (target: any, prop: string, receiver: RouterType, path: string) => (route: string, ...handlers: RouteHandler<I>[]) =>
-        prop == 'handle'
-        // @ts-expect-error - patch for aliasing router.fetch
-        ? receiver.fetch(route, ...handlers)
-        : routes.push(
+      get: (target: any, prop: string, receiver: RouterType, path: string) =>
+        prop == 'handle' ? receiver.fetch :
+        // @ts-expect-error - unresolved type
+        (route: string, ...handlers: RouteHandler<I>[]) =>
+          routes.push(
             [
               prop.toUpperCase(),
               RegExp(`^${(path = (base + route)

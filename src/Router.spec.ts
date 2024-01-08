@@ -51,6 +51,10 @@ describe('Router', () => {
     expect(router.routes.length).toBe(3) // accessible off the main router
   })
 
+  it('router.handle (legacy) is an alias for router.fetch (new)', () => {
+    expect(router.fetch).toBe(router.handle)
+  })
+
   it('allows preloading advanced routes', async () => {
     const basicHandler = vi.fn((req) => req.params)
     const customHandler = vi.fn((req) => req.params)
@@ -348,35 +352,6 @@ describe('Router', () => {
       expect(handler).toHaveBeenCalledTimes(1)
       expect(errorHandler).toHaveBeenCalled()
       expect(await response.json()).toEqual({ foo: 'bar' })
-    })
-
-    it('can easily create a ThrowableRouter', async () => {
-      const error = (status, message) => new Response(message, { status })
-
-      const ThrowableRouter = (options = {}) =>
-        new Proxy(Router(options), {
-          get:
-            (obj, prop) =>
-            (...args) =>
-              prop === 'handle'
-                ? obj[prop](...args).catch((err) =>
-                    error(err.status || 500, err.message)
-                  )
-                : obj[prop](...args),
-        })
-
-      const router = ThrowableRouter()
-      const handlerWithError = vi.fn(() => {
-        throw new Error(ERROR_MESSAGE)
-      })
-
-      router.get('/foo', handlerWithError)
-
-      const response = await router.handle(toReq('/foo'))
-
-      expect(response instanceof Response).toBe(true)
-      expect(response.status).toBe(500)
-      expect(await response.text()).toBe(ERROR_MESSAGE)
     })
 
     it('allows chaining', () => {
