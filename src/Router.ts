@@ -25,6 +25,8 @@ export type IRequest = IRequestStrict & GenericTraps
 export type RouterOptions = {
   base?: string
   routes?: RouteEntry[]
+  after?: Function
+  errors?: Function
 } & Record<string, any>
 
 export type RouteHandler<I = IRequest, A extends any[] = any[]> = {
@@ -63,6 +65,8 @@ export type RouterType<R = Route, Args extends any[] = any[]> = {
   routes: RouteEntry[],
   fetch: <A extends any[] = Args>(request: RequestLike, ...extra: Equal<R, Args> extends true ? A : Args) => Promise<any>
   handle: <A extends any[] = Args>(request: RequestLike, ...extra: Equal<R, Args> extends true ? A : Args) => Promise<any>
+  after: Function
+  errors: Function
   all: R,
   delete: R,
   get: R,
@@ -77,7 +81,7 @@ export const Router = <
   RequestType = IRequest,
   Args extends any[] = any[],
   RouteType = Equal<RequestType, IRequest> extends true ? Route : UniversalRoute<RequestType, Args>
->({ base = '', routes = [], ...other }: RouterOptions = {}): RouterType<RouteType, Args> =>
+>({ base = '', routes = [], ...options }: RouterOptions = {}): RouterType<RouteType, Args> =>
   // @ts-expect-error TypeScript doesn't know that Proxy makes this work
   ({
     __proto__: new Proxy({}, {
@@ -102,7 +106,7 @@ export const Router = <
           ) && receiver
     }),
     routes,
-    ...other,
+    ...options,
     async fetch (request: RequestLike, ...args)  {
       let response, match, url = new URL(request.url), query: Record<string, any> = request.query = { __proto__: null }
 
@@ -116,7 +120,14 @@ export const Router = <
           request.params = match.groups || {}                                     // embed params in request
           request.route = path                                                    // embed route path in request
           for (let handler of handlers)
-            if ((response = await handler(request.proxy ?? request, ...args)) != null) return response
+            try {
+              if ((response = await handler(request.proxy ?? request, ...args)) != null)
+                return options.after ? options.after(response) : response
+            } catch(err) {
+              if (options.errors)
+                return options.errors(err)
+              throw err
+            }
         }
     },
   })

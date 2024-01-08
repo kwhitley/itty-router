@@ -459,6 +459,26 @@ describe('Router', () => {
   })
 })
 
+describe('OPTIONS', () => {
+  describe('base: string', () => {
+    it('allows a base path to pre prepended to all routes', async () => {
+      const router = Router({ base: '/api' }).get('/foo', () => 'Foo')
+
+      expect(await router.fetch(toReq('/api/foo'))).toBe('Foo')
+    })
+  })
+
+  describe('format: Function', () => {
+    it('allows a formatting function to modify unformed responses', async () => {
+      const spy = vi.fn(v => v)
+      const router = Router({ after: spy }).get('/foo', () => 'Foo')
+      await router.fetch(toReq('/foo'))
+
+      expect(spy).toHaveBeenCalledWith('Foo')
+    })
+  })
+})
+
 describe('CUSTOM ROUTERS/PROPS', () => {
   it('allows overloading custom properties via options', () => {
     const router = Router({ port: 3001 })

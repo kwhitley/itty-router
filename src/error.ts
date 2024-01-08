@@ -21,20 +21,17 @@ const getMessage = (code: number): string => ({
 })[code] || 'Unknown Error'
 
 export const error: ErrorFormatter = (a = 500, b?: ErrorBody) => {
-  // handle passing an Error | StatusError directly in
   if (a instanceof Error) {
     const { message, ...err } = a
     a = a.status || 500
     b = {
       error: message || getMessage(a),
-      ...err,
+      ...err
     }
   }
 
-  b = {
+  return json({
     status: a,
     ...(typeof b === 'object' ? b : { error: b || getMessage(a) }),
-  }
-
-  return json(b, { status: a })
+  }, { status: a })
 }
