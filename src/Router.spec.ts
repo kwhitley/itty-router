@@ -183,14 +183,14 @@ describe('Router', () => {
       const route = routes.find((r) => r.path === '/foo' && r.method === 'post')
       await router.handle(toReq('POST /foo'))
 
-      expect(route!.callback).toHaveBeenCalled()
+      expect(route?.callback).toHaveBeenCalled()
     })
 
     it('passes the entire original request through to the handler', async () => {
       const route = routes.find((r) => r.path === '/passthrough')
       await router.handle({ ...toReq('/passthrough'), name: 'miffles' })
 
-      expect(route!.callback).toHaveReturnedWith({
+      expect(route?.callback).toHaveReturnedWith({
         method: 'GET',
         name: 'miffles',
       })

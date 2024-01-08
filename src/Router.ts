@@ -22,11 +22,15 @@ export type IRequestStrict = {
 
 export type IRequest = IRequestStrict & GenericTraps
 
+export type ErrorHandler = <ErrorType extends Error>(error: ErrorType) => any
+
+export type ResponseHandler = <ResponseType = any>(response: ResponseType) => any
+
 export type RouterOptions = {
   base?: string
   routes?: RouteEntry[]
-  after?: Function
-  errors?: Function
+  after?: ResponseHandler
+  errors?: ErrorHandler
 } & Record<string, any>
 
 export type RouteHandler<I = IRequest, A extends any[] = any[]> = {
@@ -65,8 +69,8 @@ export type RouterType<R = Route, Args extends any[] = any[]> = {
   routes: RouteEntry[],
   fetch: <A extends any[] = Args>(request: RequestLike, ...extra: Equal<R, Args> extends true ? A : Args) => Promise<any>
   handle: <A extends any[] = Args>(request: RequestLike, ...extra: Equal<R, Args> extends true ? A : Args) => Promise<any>
-  after: Function
-  errors: Function
+  after: ResponseHandler
+  errors: ErrorHandler
   all: R,
   delete: R,
   get: R,
