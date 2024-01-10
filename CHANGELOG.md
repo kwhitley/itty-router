@@ -1,5 +1,7 @@
 ## Changelog
 
+- **v4.0.27**
+  - fixed: .toUpperCase issue that prevented serialization of entire router
 - **v4.0.24**
   - fixed: createResponse(undefined) should return undefined (not a Response)
 - **v4.1.0**

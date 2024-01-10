@@ -43,12 +43,12 @@ export default async () => {
       {
         format: 'esm',
         file: file.esm,
-        sourcemap: false,
+        sourcemap: true,
       },
       {
         format: 'cjs',
         file: file.cjs,
-        sourcemap: false,
+        sourcemap: true,
       },
     ],
     plugins: [
