@@ -486,11 +486,22 @@ describe('OPTIONS', () => {
 
   describe('errors: ErrorHandler', () => {
     it('catches errors', async () => {
-      const errors = vi.fn()
-      const router = Router({ errors }).get('/throw', (a) => a.b.c)
+      const error = vi.fn()
+      const router = Router({ error }).get('/throw', (a) => a.b.c)
       await router.fetch(toReq('/throw'))
 
-      expect(errors).toHaveBeenCalled()
+      expect(error).toHaveBeenCalled()
+    })
+  })
+
+  describe('errors: ErrorHandler', () => {
+    it('catches errors in the after phase', async () => {
+      const error = vi.fn()
+      const after = a => a.b.c
+      const router = Router({ after, error }).get('/', () => 'foo')
+      await router.fetch(toReq('/'))
+
+      expect(error).toHaveBeenCalled()
     })
   })
 })

@@ -1,15 +1,19 @@
-import { Router, error, json, withParams } from '../src/index'
+import { Router, createCors, error, json, text, withParams } from '../src/index'
+
+const { preflight, corsify } = createCors()
 
 const router = Router({
   port: 3001,
-  after: json,
-  errors: error,
+  // after: json,
+  after: r => corsify(json(r)),
+  error,
 })
 
 router
-  .all('*', withParams)
-  .get('/test', () => 'Success!')
-  .get('/foo/:bar/:baz?', ({ bar, baz }) => ({ bar, baz }))
+  .all('*', withParams, preflight)
+  .get('/test', () => text('Success!'))
+  .post('/test', () => text('Post Success!'))
+  .get('/foo/:bar/:baz?', ({ bar, baz }) => json({ bar, baz }))
   .get('/throw', (a) => a.b.c) // this is caught!
   .all('*', () => error(404))
 

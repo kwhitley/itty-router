@@ -30,7 +30,7 @@ export type RouterOptions = {
   base?: string
   routes?: RouteEntry[]
   after?: ResponseHandler
-  errors?: ErrorHandler
+  error?: ErrorHandler
 } & Record<string, any>
 
 export type RouteHandler<I = IRequest, A extends any[] = any[]> = {
@@ -70,7 +70,7 @@ export type RouterType<R = Route, Args extends any[] = any[]> = {
   fetch: <A extends any[] = Args>(request: RequestLike, ...extra: Equal<R, Args> extends true ? A : Args) => Promise<any>
   handle: <A extends any[] = Args>(request: RequestLike, ...extra: Equal<R, Args> extends true ? A : Args) => Promise<any>
   after: ResponseHandler
-  errors: ErrorHandler
+  error: ErrorHandler
   all: R,
   delete: R,
   get: R,
@@ -127,9 +127,9 @@ export const Router = <
             try {
               if ((response = await handler(request.proxy ?? request, ...args)) != null)
                 return options.after ? options.after(response) : response
-            } catch(err) {
-              if (options.errors)
-                return options.errors(err)
+            } catch(err: any) {
+              if (options.error)
+                return await (options.error(err)).then
               throw err
             }
         }

@@ -7,13 +7,15 @@ export type CorsOptions = {
   headers?: any
 }
 
+type CorsifyType = <InputResponseType = Response>(response: InputResponseType) => Response
+
 // Create CORS function with default options.
 export const createCors = (options: CorsOptions = {}) => {
   // Destructure and set defaults for options.
   const { origins = ['*'], maxAge, methods = ['GET'], headers = {} } = options
 
   let allowOrigin: any
-  const isAllowOrigin = typeof origins === 'function' 
+  const isAllowOrigin = typeof origins === 'function'
     ? origins
     : (origin: string) => (origins.includes(origin) || origins.includes('*'))
 
@@ -47,6 +49,8 @@ export const createCors = (options: CorsOptions = {}) => {
         ...allowOrigin,
       }
 
+      console.log('CORS headers', reqHeaders)
+
       // Handle CORS pre-flight request.
       return new Response(null, {
         headers:
@@ -60,7 +64,7 @@ export const createCors = (options: CorsOptions = {}) => {
   }
 
   // Corsify function.
-  const corsify = (response: Response): Response => {
+  const corsify: CorsifyType = (response) => {
     if (!response)
       throw new Error(
         'No fetch handler responded and no upstream to proxy to specified.'
