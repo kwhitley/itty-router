@@ -51,6 +51,12 @@ describe('Router', () => {
     expect(router.routes.length).toBe(3) // accessible off the main router
   })
 
+  it('can serialize router without throwing', () => {
+    const router = Router().get('/', () => 'foo')
+
+    expect(() => console.log(router)).not.toThrow()
+  })
+
   it('router.handle (legacy) is an alias for router.fetch (new)', () => {
     expect(router.fetch).toBe(router.handle)
   })
