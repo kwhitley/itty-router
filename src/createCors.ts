@@ -63,13 +63,14 @@ export const createCors = (options: CorsOptions = {}) => {
     }
   }
 
-  // Corsify function.
+  // @ts-expect-error - intentional
   const corsify: CorsifyType = (response) => {
     if (!response)
       throw new Error(
         'No fetch handler responded and no upstream to proxy to specified.'
       )
 
+    // @ts-expect-error - alos intentional flexibility
     const { headers, status, body } = response
 
     // Bypass for protocol shifts or redirects, or if CORS is already set.
