@@ -79,7 +79,6 @@ export const createCors = (options: CorsOptions = {}) => {
 		Object.entries({
 			...rHeaders,
 			...allowOrigin,
-			'content-type': headers.get('content-type'),
 		}).forEach(([name, value]) => headers.append(name, value as string))
 
     return new Response(body, {
