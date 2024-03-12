@@ -1,8 +1,9 @@
 ## Changelog
 
+- **v4.1.0**
+  - added: createResponse and all Response helpers support web standards Headers class
 - **v4.0.28**
   - fixed: withContent throws 400 (instead of 500) on failed JSON parse ([@smcstewart](https://github.com/smcstewart))
-  - added: createResponse and all Response helpers support web standards Headers class
 - **v4.0.27**
   - fixed: .toUpperCase issue that prevented serialization of entire router
 - **v4.0.24**
