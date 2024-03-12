@@ -1,11 +1,13 @@
 ## Changelog
 
+- **v4.0.28**
+  - fixed: withContent throws 400 (instead of 500) on failed JSON parse ([@smcstewart](https://github.com/smcstewart))
 - **v4.0.27**
   - fixed: .toUpperCase issue that prevented serialization of entire router
 - **v4.0.24**
   - fixed: createResponse(undefined) should return undefined (not a Response)
 - **v4.1.0**
-  - added: `HasContent<ContentType>` type to `withContent` (credit [@alexrosenfeld10](https://github.com/alexrosenfeld10))
+  - added: `HasContent<ContentType>` type to `withContent` ([@alexrosenfeld10](https://github.com/alexrosenfeld10))
   - added: Adds basic text/formData support to supplement the native JSON support of `withContent`
 - **v4.0.00** - Partial changelog below
   - BREAKING: heavy TS rewrite for core Router (thank you, ChatGPT)
@@ -13,16 +15,16 @@
   - added: createCors from itty-cors
   - added: complete documentation at https://itty.dev
   - feature: withParams may be used as upstream middleware (hooray!)
-- **v3.0.11** - changed environment build to rollup (from tsup) and code golfed the toQuery logic. (credit [@DrLoopFall](https://github.com/DrLoopFall))
-- **v3.0.9** - fixes some TS issue, previously requiring you to define Router Methods to chain request definitions. (credit [@jahands](https://github.com/jahands))
-- **v3.0.0** - total TS conversion with improved types, adding greedy params (credit [@markusahlstrand](https://github.com/markusahlstrand))
+- **v3.0.11** - changed environment build to rollup (from tsup) and code golfed the toQuery logic. ([@DrLoopFall](https://github.com/DrLoopFall))
+- **v3.0.9** - fixes some TS issue, previously requiring you to define Router Methods to chain request definitions. ([@jahands](https://github.com/jahands))
+- **v3.0.0** - total TS conversion with improved types, adding greedy params ([@markusahlstrand](https://github.com/markusahlstrand))
 - **v2.6.4** - merely a republish, attempting to solve NPM test scores vs CI/CD
 - **v2.6.2** - fixes issue with using base path of "/" with route definitions starting with "/" (creating double slash)
 - **v2.6.1** - fixes named export in ESM/mjs export
 - **v2.6.0** - package now is hybrid export, supporting both ESM (.mjs) and CJS (.js) minified versions
 - **v2.5.3** - corrects type for router.handle to return Promise<any>
 - **v2.5.2** - fixes issue with arrow functions in CommonJS named exports (rare issue)
-- **v2.5.1** - added context to Cloudflare ES module syntax example (credit [@jcapogna](https://github.com/jcapogna))
+- **v2.5.1** - added context to Cloudflare ES module syntax example ([@jcapogna](https://github.com/jcapogna))
 - **v2.5.0** - improved TypeScript docs/types (thanks [@SupremeTechnopriest](https://github.com/SupremeTechnopriest)!)
 - **v2.4.9** - fixed the cursed "optional" file format capturing bug - RIP all the bytes lost
 - **v2.4.6** - fixed README issues
