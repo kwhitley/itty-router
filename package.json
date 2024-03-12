@@ -1,6 +1,6 @@
 {
   "name": "itty-router",
-  "version": "4.1.0",
+  "version": "4.1.1",
   "description": "A tiny, zero-dependency router, designed to make beautiful APIs in any environment.",
   "main": "./index.js",
   "module": "./index.mjs",

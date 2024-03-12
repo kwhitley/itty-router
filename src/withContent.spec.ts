@@ -5,78 +5,43 @@ import { withContent } from './withContent'
 import { StatusError } from './StatusError'
 
 describe('withContent (middleware)', () => {
+  const JSON_CONTENT = { foo: 'bar' }
+  const TEXT_CONTENT = 'foobarbaz'
+
   it('can access the awaited Response body as request.content', async () => {
     const router = Router()
     const handler = vi.fn(({ content }) => content)
     const request = new Request('https://foo.bar', {
       method: 'POST',
-      headers: {
-        'content-type': 'application/json',
-      },
-      body: JSON.stringify({ foo: 'bar' }),
+      // headers: { 'content-type': 'application/json' },
+      body: JSON.stringify(JSON_CONTENT),
     })
 
     await router.post('/', withContent, handler).handle(request)
 
-    expect(handler).toHaveReturnedWith({ foo: 'bar' })
+    expect(handler).toHaveReturnedWith(JSON_CONTENT)
   })
 
-  it('throws an "Unexpected end of JSON input" error when no content is sent in the body', async () => {
+  it('will embed content as text if JSON parse fails', async () => {
     const router = Router()
     const handler = vi.fn(({ content }) => content)
     const request = new Request('https://foo.bar', {
       method: 'POST',
-      headers: {
-        'content-type': 'application/json',
-      },
+      body: TEXT_CONTENT,
     })
 
-    await expect(
-      router.post('/', withContent, handler).handle(request)
-    ).rejects.toThrowError(/Unexpected end of JSON input/)
+    await router.post('/', withContent, handler).handle(request)
 
-    expect(handler).not.toHaveBeenCalled()
-    expect(handler).not.toHaveReturned()
+    expect(handler).toHaveReturnedWith(TEXT_CONTENT)
   })
 
-  it('returns a 400 when no content is sent in the body', async () => {
+  it('will return empty string (but not throw) if no body', async () => {
     const router = Router()
-    const handler = vi.fn(({ content }) => content)
-    const request = new Request('https://foo.bar', {
-      method: 'POST',
-      headers: {
-        'content-type': 'application/json',
-      },
-    })
+    const handler = vi.fn(({ content }) => content ?? true)
+    const request = new Request('https://foo.bar', { method: 'POST' })
 
-    try {
-      await router.post('/', withContent, handler).handle(request)
-    } catch (e) {
-      expect(e).toBeInstanceOf(StatusError)
-      expect(e).toContain({ status: 400 })
-    }
-    expect(handler).not.toHaveBeenCalled()
-    expect(handler).not.toHaveReturned()
-  })
+    await router.post('/', withContent, handler).handle(request)
 
-  it('returns a 400 when invalid JSON content is sent in the body', async () => {
-    const router = Router()
-    const handler = vi.fn(({ content }) => content)
-    const request = new Request('https://foo.bar', {
-      method: 'POST',
-      headers: {
-        'content-type': 'application/json',
-      },
-      body: 'foo is invalid JSON',
-    })
-
-    try {
-      await router.post('/', withContent, handler).handle(request)
-    } catch (e) {
-      expect(e).toBeInstanceOf(StatusError)
-      expect(e).toContain({ status: 400 })
-    }
-    expect(handler).not.toHaveBeenCalled()
-    expect(handler).not.toHaveReturned()
+    expect(handler).toHaveReturnedWith('')
   })
 })

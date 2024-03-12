@@ -1,5 +1,7 @@
 ## Changelog
 
+- **v4.1.1**
+  - fixed: withContent will successfully parse non-JSON as fallback, preventing errors
 - **v4.1.0**
   - added: createResponse and all Response helpers support web standards Headers class
 - **v4.0.28**
