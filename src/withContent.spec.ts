@@ -1,4 +1,5 @@
 import 'isomorphic-fetch'
+import FormData from 'form-data'
 import { describe, expect, it, vi } from 'vitest'
 import { Router } from './Router'
 import { withContent } from './withContent'
