@@ -35,10 +35,7 @@ describe('withContent (middleware)', () => {
 
   it('will return FormData content, if applicable', async () => {
     const router = Router()
-    const handler = vi.fn(({ content }) => {
-      console.log('content is', content, typeof content)
-      return content.get('foo')
-    })
+    const handler = vi.fn(({ content }) => content.get('foo'))
     const body = new FormData()
     body.append('foo', 'bar')
 

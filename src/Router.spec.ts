@@ -53,7 +53,7 @@ describe('Router', () => {
   it('can serialize router without throwing', () => {
     const router = Router().get('/', () => 'foo')
 
-    expect(() => console.log(router)).not.toThrow()
+    expect(() => router.toString()).not.toThrow()
   })
 
   it('router.handle (legacy) is an alias for router.fetch (new)', () => {
