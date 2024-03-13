@@ -1,6 +1,6 @@
-import 'isomorphic-fetch'
 import { describe, expect, it } from 'vitest'
 import { error } from './error'
+
 describe('error(status: number, body: string | object)', () => {
   const errorMessage = 'Bad'
 

@@ -1,8 +1,16 @@
-import 'isomorphic-fetch'
 import { describe, expect, it, vi } from 'vitest'
 import { createCors } from './createCors'
 import { json } from './json'
 import { Router } from './Router'
+
+class WebSocketResponse {
+  constructor(body, options = {}) {
+    this.body = body
+    this.status = options.status || 101
+    this.statusText = options.statusText || 'Switching Protocols'
+    this.headers = options.headers || new Headers()
+  }
+}
 
 describe('createCors(options)', () => {
   it('returns { preflight, corsify }', async () => {
@@ -169,7 +177,7 @@ describe('createCors(options)', () => {
       const { preflight, corsify } = createCors()
       const router = Router()
         .all('*', preflight)
-        .get('/foo', () => new Response(null, { status: 101 }))
+        .get('/foo', () => new WebSocketResponse(null, { status: 101 }))
       const request = new Request('https://foo.bar/foo', {
         headers: {
           origin: 'http://localhost:3000',

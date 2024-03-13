@@ -1,4 +1,3 @@
-import 'isomorphic-fetch'
 import { describe, expect, it } from 'vitest'
 import { status } from './status'
 

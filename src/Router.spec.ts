@@ -1,4 +1,3 @@
-import 'isomorphic-fetch'
 import { describe, expect, it, vi } from 'vitest'
 import { createTestRunner, extract, toReq } from '../test'
 import { Router } from './Router'
