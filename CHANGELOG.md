@@ -1,5 +1,7 @@
 ## Changelog
 
+- **v4.2.0**
+  - added: withContent now parses JSON->formData->text with fallthrough
 - **v4.1.1**
   - fixed: withContent will successfully parse non-JSON as fallback, preventing errors
 - **v4.1.0**
