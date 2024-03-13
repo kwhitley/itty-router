@@ -1,5 +1,7 @@
 ## Changelog
 
+- **v4.2.1**
+  - maintenance: updated deps, test coverage, removed isomorphic-fetch dev dep
 - **v4.2.0**
   - added: withContent now parses JSON->formData->text with fallthrough
 - **v4.1.1**
