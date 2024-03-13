@@ -1,4 +1,3 @@
-import 'isomorphic-fetch'
 import { describe, expect, it, vi } from 'vitest'
 import { createTestRunner, extract, toReq } from '../test'
 import { Router } from './Router'
@@ -54,7 +53,7 @@ describe('Router', () => {
   it('can serialize router without throwing', () => {
     const router = Router().get('/', () => 'foo')
 
-    expect(() => console.log(router)).not.toThrow()
+    expect(() => router.toString()).not.toThrow()
   })
 
   it('router.handle (legacy) is an alias for router.fetch (new)', () => {
@@ -189,14 +188,14 @@ describe('Router', () => {
       const route = routes.find((r) => r.path === '/foo' && r.method === 'post')
       await router.handle(toReq('POST /foo'))
 
-      expect(route!.callback).toHaveBeenCalled()
+      expect(route?.callback).toHaveBeenCalled()
     })
 
     it('passes the entire original request through to the handler', async () => {
       const route = routes.find((r) => r.path === '/passthrough')
       await router.handle({ ...toReq('/passthrough'), name: 'miffles' })
 
-      expect(route!.callback).toHaveReturnedWith({
+      expect(route?.callback).toHaveReturnedWith({
         method: 'GET',
         name: 'miffles',
       })

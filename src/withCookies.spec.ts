@@ -1,4 +1,3 @@
-import 'isomorphic-fetch'
 import { describe, expect, it, vi } from 'vitest'
 import { Router } from './Router'
 import { withCookies } from './withCookies'

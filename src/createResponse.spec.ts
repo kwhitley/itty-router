@@ -1,4 +1,3 @@
-import 'isomorphic-fetch'
 import { describe, expect, it } from 'vitest'
 import { createResponse } from './createResponse'
 
@@ -38,10 +37,9 @@ describe('createResponse(mimeType: string, transform?: Function)', () => {
   it('can pass in headers as Headers object', () => {
     const payload = { foo: 'bar' }
     const type = 'application/json; charset=utf-8'
-    const fooHeader = 'bar'
+    const json = createResponse(type)
     const headers = new Headers()
     headers.append('fooHeader', 'foo')
-    const json = createResponse(type)
 
     const response = json(payload, {
       headers,

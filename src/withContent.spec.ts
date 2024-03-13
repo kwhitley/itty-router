@@ -1,9 +1,6 @@
-import 'isomorphic-fetch'
-import FormData from 'form-data'
 import { describe, expect, it, vi } from 'vitest'
 import { Router } from './Router'
 import { withContent } from './withContent'
-import { StatusError } from './StatusError'
 
 describe('withContent (middleware)', () => {
   const JSON_CONTENT = { foo: 'bar' }
@@ -34,6 +31,18 @@ describe('withContent (middleware)', () => {
     await router.post('/', withContent, handler).handle(request)
 
     expect(handler).toHaveReturnedWith(TEXT_CONTENT)
+  })
+
+  it('will return FormData content, if applicable', async () => {
+    const router = Router()
+    const handler = vi.fn(({ content }) => content.get('foo'))
+    const body = new FormData()
+    body.append('foo', 'bar')
+
+    const request = new Request('https://foo.bar', { method: 'POST', body })
+    await router.post('/', withContent, handler).handle(request)
+
+    expect(handler).toHaveReturnedWith('bar')
   })
 
   it('will return empty string (but not throw) if no body', async () => {

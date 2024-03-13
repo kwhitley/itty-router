@@ -8,16 +8,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
-
-      - name: Use Node.js 16.x
+      - name: Use Node.js 20.x
         uses: actions/setup-node@v3
         with:
-          node-version: 16.x
-
-      - name: npm install, npm run coverage
-        run: |
-          npm install
-          npm run coverage
-
+          node-version: 20.x
+      - name: Install Dependencies
+        run: yarn
+      - name: Test & Generate Coverage
+        run: yarn coverage
       - name: Coveralls
         uses: coverallsapp/github-action@v2
