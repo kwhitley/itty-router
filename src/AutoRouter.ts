@@ -1,6 +1,6 @@
-import { error } from 'error'
-import { json } from 'json'
-import { withParams } from 'withParams'
+import { error } from './error'
+import { json } from './json'
+import { withParams } from './withParams'
 import { Router, RouterOptions} from './Router'
 
 // MORE FINE-GRAINED/SIMPLIFIED CONTROL, BUT CANNOT FULLY REPLACE BEFORE/AFTER STAGES
@@ -17,7 +17,8 @@ export const AutoRouter = ({
   ],
   onError: [error],
   after: [
-    (r: any) => r ?? missing(),
+    // @ts-ignore
+    (r: any, ...args) => r ?? missing(r, ...args),
     format,
     ...after,
   ],

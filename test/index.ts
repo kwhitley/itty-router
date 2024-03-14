@@ -36,7 +36,7 @@ const testRoute = async (
     path,
   })
 
-  await router.handle(toReq(`${method.toUpperCase()} ${path}`))
+  await router.fetch(toReq(`${method.toUpperCase()} ${path}`))
 
   if (!returns) {
     expect(handler).not.toHaveBeenCalled()

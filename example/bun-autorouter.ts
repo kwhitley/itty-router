@@ -8,6 +8,7 @@ import { withParams } from 'withParams'
 const router = AutoRouter({
   port: 3001,
   missing: () => error(404, 'Are you sure about that?'),
+  format: () => {},
   before: [
     (r: any) => { r.date = new Date },
   ],

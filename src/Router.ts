@@ -9,7 +9,7 @@ import {
   UniversalRoute,
 } from './IttyRouter'
 
-// export type ErrorHandler = <Input = Error>(input: Input) => void
+export type ErrorHandler = <Input = Error>(input: Input) => void
 
 export type RouterOptions = {
   before?: Function[]
@@ -53,13 +53,13 @@ export const Router = <
           url = new URL(request.url),
           query: Record<string, any> = request.query = { __proto__: null }
 
-      try {
-        // 1. parse query params
-        for (let [k, v] of url.searchParams)
-          query[k] = query[k] ? ([] as string[]).concat(query[k], v) : v
+      // 1. parse query params
+      for (let [k, v] of url.searchParams)
+        query[k] = query[k] ? ([] as string[]).concat(query[k], v) : v
 
+      t: try {
         for (let handler of other.before || [])
-          if ((response = await handler(request.proxy ?? request, ...args)) != null) break
+          if ((response = await handler(request.proxy ?? request, ...args)) != null) break t
 
         // 2. then test routes
         outer: for (let [method, regex, handlers, path] of routes)
@@ -73,7 +73,7 @@ export const Router = <
       } catch (err) {
         if (!other.onError) throw err
 
-        for (let handler of other.onError || [])
+        for (let handler of other.onError)
           response = await handler(response ?? err) ?? response
       }
 

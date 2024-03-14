@@ -7,11 +7,7 @@ const router = Router({
   port: 3001,
   before: [withParams],
   onError: [error],
-  after: [
-    (r: any) => r ?? error(404, 'Are you sure about that?'),
-    json
-  ],
-  // missing: () => error(404, 'Are you sure about that?'),
+  after: [json],
 })
 
 router
@@ -20,6 +16,6 @@ router
   .get('/params/:foo', ({ foo }) => foo)
   .get('/json', () => ({ foo: 'bar' }))
   .get('/throw', (a) => a.b.c)
-  // .all('*', () => error(404)) // still works
+  .all('*', () => error(404))
 
 export default router
