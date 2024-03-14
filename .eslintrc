@@ -18,6 +18,7 @@
   "rules": {
     "@typescript-eslint/no-empty-function": "off",
     "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/ban-types": "off",
     "linebreak-style": ["error", "unix"],
     "prefer-const": "off",
     "quotes": ["error", "single", { "allowTemplateLiterals": true }],

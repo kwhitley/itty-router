@@ -1,10 +1,8 @@
 import { describe, expect, it, vi } from 'vitest'
-import { createTestRunner, extract, toReq } from '../test'
+import { toReq } from '../test'
 import { Router } from './Router'
 
 describe(`SPECIFIC TESTS: Router`, () => {
-
-
   it('supports both router.handle and router.fetch', () => {
     const router = Router()
     expect(router.fetch).toBe(router.handle)
@@ -42,7 +40,7 @@ describe(`SPECIFIC TESTS: Router`, () => {
 
   it('allows catching errors with an onError stage', async () => {
     const handler = vi.fn(r => r instanceof Error)
-    const noop = vi.fn(r => {})
+    const noop = vi.fn(() => {})
     const router1 = Router({ onError: [
       noop,
       handler,
@@ -69,7 +67,7 @@ describe(`SPECIFIC TESTS: Router`, () => {
   })
 
   it('after stages that return nothing will not modify response', async () => {
-    const handler = vi.fn(r => {})
+    const handler = vi.fn(() => {})
     const router = Router({
       after: [
         handler,

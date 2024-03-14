@@ -17,7 +17,7 @@ export const AutoRouter = ({
   ],
   onError: [error],
   after: [
-    // @ts-ignore
+    // @ts-expect-error because TS
     (r: any, ...args) => r ?? missing(r, ...args),
     format,
     ...after,
