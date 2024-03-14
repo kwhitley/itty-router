@@ -31,15 +31,15 @@
       "require": "./error.js",
       "types": "./error.d.ts"
     },
-    "./FlowRouter": {
-      "import": "./FlowRouter.mjs",
-      "require": "./FlowRouter.js",
-      "types": "./FlowRouter.d.ts"
-    },
     "./html": {
       "import": "./html.mjs",
       "require": "./html.js",
       "types": "./html.d.ts"
+    },
+    "./IttyRouter": {
+      "import": "./IttyRouter.mjs",
+      "require": "./IttyRouter.js",
+      "types": "./IttyRouter.d.ts"
     },
     "./jpeg": {
       "import": "./jpeg.mjs",

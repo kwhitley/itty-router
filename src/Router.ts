@@ -9,11 +9,11 @@ import {
   UniversalRoute,
 } from './IttyRouter'
 
-export type ErrorHandler = <Input = Error>(input: Input) => void
+// export type ErrorHandler = <Input = Error>(input: Input) => void
 
 export type RouterOptions = {
   before?: Function[]
-  onError?: ErrorHandler[]
+  onError?: Function[]
   after?: Function[]
 } & IttyRouterOptions
 
@@ -27,7 +27,7 @@ export const Router = <
     __proto__: new Proxy({}, {
       // @ts-expect-error (we're adding an expected prop "path" to the get)
       get: (target: any, prop: string, receiver: RouterType, path: string) =>
-        // prop == 'handle' ? receiver.fetch :
+        prop == 'handle' ? receiver.fetch :
           // @ts-expect-error - unresolved type
           (route: string, ...handlers: RouteHandler<I>[]) =>
             routes.push(
@@ -70,18 +70,15 @@ export const Router = <
             for (let handler of handlers)
               if ((response = await handler(request.proxy ?? request, ...args)) != null) break outer
           }
-
-        // 3. respond with missing hook if available + needed
-        response = response ?? other.missing?.(request.proxy ?? request, ...args)
       } catch (err) {
         if (!other.onError) throw err
 
         for (let handler of other.onError || [])
-          response = await handler(response ?? err)
+          response = await handler(response ?? err) ?? response
       }
 
       for (let handler of other.after || [])
-        response = await handler(response)
+        response = await handler(response, request.proxy ?? request, ...args) ?? response
 
       return response
     },

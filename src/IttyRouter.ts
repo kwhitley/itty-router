@@ -62,7 +62,6 @@ export type RouterType<R = Route, Args extends any[] = any[]> = {
   __proto__: RouterType<R>,
   routes: RouteEntry[],
   fetch: <A extends any[] = Args>(request: RequestLike, ...extra: Equal<R, Args> extends true ? A : Args) => Promise<any>
-  handle: <A extends any[] = Args>(request: RequestLike, ...extra: Equal<R, Args> extends true ? A : Args) => Promise<any>
   all: R,
   delete: R,
   get: R,
@@ -83,7 +82,6 @@ export const IttyRouter = <
     __proto__: new Proxy({}, {
       // @ts-expect-error (we're adding an expected prop "path" to the get)
       get: (target: any, prop: string, receiver: RouterType, path: string) =>
-        prop == 'handle' ? receiver.fetch :
         // @ts-expect-error - unresolved type
         (route: string, ...handlers: RouteHandler<I>[]) =>
           routes.push(
