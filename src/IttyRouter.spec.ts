@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest'
 import { createTestRunner, extract, toReq } from '../test'
-import { Router } from './Router'
+import { IttyRouter as Router } from './IttyRouter'
 
 const ERROR_MESSAGE = 'Error Message'
 

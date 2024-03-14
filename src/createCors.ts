@@ -1,4 +1,4 @@
-import { IRequest } from './Router'
+import { IRequest } from './IttyRouter'
 
 export type CorsOptions = {
   origins?: string[] | ((origin: string) => boolean)
@@ -13,7 +13,7 @@ export const createCors = (options: CorsOptions = {}) => {
   const { origins = ['*'], maxAge, methods = ['GET'], headers = {} } = options
 
   let allowOrigin: any
-  const isAllowOrigin = typeof origins === 'function' 
+  const isAllowOrigin = typeof origins === 'function'
     ? origins
     : (origin: string) => (origins.includes(origin) || origins.includes('*'))
 

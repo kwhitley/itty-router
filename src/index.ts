@@ -1,4 +1,4 @@
-export * from './Router'
+export * from './IttyRouter'
 
 // classes
 export * from './StatusError'

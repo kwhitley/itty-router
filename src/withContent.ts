@@ -1,4 +1,4 @@
-import { IRequest, IRequestStrict } from './Router'
+import { IRequest, IRequestStrict } from './IttyRouter'
 
 export type HasContent<ContentType> = {
   content: ContentType

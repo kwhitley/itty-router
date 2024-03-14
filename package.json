@@ -11,6 +11,11 @@
       "require": "./index.js",
       "types": "./index.d.ts"
     },
+    "./AutoRouter": {
+      "import": "./AutoRouter.mjs",
+      "require": "./AutoRouter.js",
+      "types": "./AutoRouter.d.ts"
+    },
     "./createCors": {
       "import": "./createCors.mjs",
       "require": "./createCors.js",
@@ -25,6 +30,11 @@
       "import": "./error.mjs",
       "require": "./error.js",
       "types": "./error.d.ts"
+    },
+    "./FlowRouter": {
+      "import": "./FlowRouter.mjs",
+      "require": "./FlowRouter.js",
+      "types": "./FlowRouter.d.ts"
     },
     "./html": {
       "import": "./html.mjs",
