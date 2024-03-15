@@ -2,6 +2,13 @@ import { error } from './error'
 import { json } from './json'
 import { withParams } from './withParams'
 import { Router, RouterOptions} from './Router'
+import { RouteHandler } from 'IttyRouter'
+import { ResponseFormatter } from './createResponse'
+
+type AutoRouterOptions = {
+  missing?: RouteHandler
+  format?: ResponseFormatter
+} & RouterOptions
 
 // MORE FINE-GRAINED/SIMPLIFIED CONTROL, BUT CANNOT FULLY REPLACE BEFORE/AFTER STAGES
 export const AutoRouter = ({
@@ -9,7 +16,7 @@ export const AutoRouter = ({
   missing = () => error(404),
   after = [],
   before = [],
-  ...options }: RouterOptions = {}
+  ...options }: AutoRouterOptions = {}
 ) => Router({
   before: [
     withParams,
@@ -17,7 +24,6 @@ export const AutoRouter = ({
   ],
   onError: [error],
   after: [
-    // @ts-expect-error because TS
     (r: any, ...args) => r ?? missing(r, ...args),
     format,
     ...after,

@@ -49,7 +49,7 @@ export type Route = <RequestType = IRequest, Args extends any[] = any[], RT = Ro
 export type UniversalRoute<RequestType = IRequest, Args extends any[] = any[]> = (
   path: string,
   ...handlers: RouteHandler<RequestType, Args>[]
-) => RouterType<UniversalRoute<RequestType, Args>, Args>
+) => IttyRouterType<UniversalRoute<RequestType, Args>, Args>
 
 // helper function to detect equality in types (used to detect custom Request on router)
 export type Equal<X, Y> = (<T>() => T extends X ? 1 : 2) extends (<T>() => T extends Y ? 1 : 2) ? true : false;
@@ -58,8 +58,8 @@ export type CustomRoutes<R = Route> = {
   [key: string]: R,
 }
 
-export type RouterType<R = Route, Args extends any[] = any[]> = {
-  __proto__: RouterType<R>,
+export type IttyRouterType<R = Route, Args extends any[] = any[]> = {
+  __proto__: IttyRouterType<R>,
   routes: RouteEntry[],
   fetch: <A extends any[] = Args>(request: RequestLike, ...extra: Equal<R, Args> extends true ? A : Args) => Promise<any>
   all: R,
@@ -76,7 +76,7 @@ export const IttyRouter = <
   RequestType = IRequest,
   Args extends any[] = any[],
   RouteType = Equal<RequestType, IRequest> extends true ? Route : UniversalRoute<RequestType, Args>
->({ base = '', routes = [], ...other }: IttyRouterOptions = {}): RouterType<RouteType, Args> =>
+>({ base = '', routes = [], ...other }: IttyRouterOptions = {}): IttyRouterType<RouteType, Args> =>
   // @ts-expect-error TypeScript doesn't know that Proxy makes this work
   ({
     __proto__: new Proxy({}, {

@@ -1,20 +1,30 @@
 import {
   Equal,
   IRequest,
+  IttyRouterOptions,
+  IttyRouterType,
   RequestLike,
   Route,
   RouteHandler,
-  IttyRouterOptions,
-  RouterType,
-  UniversalRoute,
+  UniversalRoute
 } from './IttyRouter'
 
-export type ErrorHandler = <Input = Error>(input: Input) => void
+export type ResponseHandler<ResponseType = any, RequestType = IRequest, Args extends any[] = any[]> =
+    (response: ResponseType, request: RequestType, ...args: Args) => any
+
+export type ErrorHandler<ErrorOrResponse = Error, RequestType = IRequest, Args extends any[] = any[]> =
+    (response: ErrorOrResponse, request: RequestType, ...args: Args) => any
+
+export type RouterType<R = Route, Args extends any[] = any[]> = {
+  before?: RouteHandler[]
+  onError?: ErrorHandler[]
+  after?: ResponseHandler[]
+} & IttyRouterType<R, Args>
 
 export type RouterOptions = {
-  before?: Function[]
-  onError?: Function[]
-  after?: Function[]
+  before?: RouteHandler[]
+  onError?: ErrorHandler[]
+  after?: ResponseHandler[]
 } & IttyRouterOptions
 
 export const Router = <
@@ -74,7 +84,7 @@ export const Router = <
         if (!other.onError) throw err
 
         for (let handler of other.onError)
-          response = await handler(response ?? err) ?? response
+          response = await handler(response ?? err, request.proxy ?? request, ...args) ?? response
       }
 
       for (let handler of other.after || [])
@@ -83,3 +93,30 @@ export const Router = <
       return response
     },
   })
+
+// const afterHandler: RouteHandler<Response> = (response) => { response.headers }
+// const errorHandler: ErrorHandler<Error> = (err) => { err.message }
+
+// const router = Router({
+//   after: [
+//     afterHandler,
+//     (response: Response) => { response.headers },
+//   ],
+//   onError: [
+//     // errorHandler,
+//     // (err: Error) => { err.message },
+//     // ()
+//   ]
+// })
+
+// type CustomRequest = {
+//   foo: string
+// } & IRequest
+
+// router.before = [
+//   (r: CustomRequest | IRequest) => { r.foo }
+// ]
+
+// router.get<CustomRequest>('/', (r) => r.foo)
+
+

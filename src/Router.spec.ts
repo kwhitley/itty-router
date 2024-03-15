@@ -54,6 +54,23 @@ describe(`SPECIFIC TESTS: Router`, () => {
     expect(router2.fetch(toReq('/'))).rejects.toThrow()
   })
 
+  it('onError and after stages have access to request and args', async () => {
+    const request = toReq('/')
+    const arg1 = { foo: 'bar' }
+
+    const errorHandler = vi.fn((a,b,c) => [b.url, c])
+    const afterHandler = vi.fn((a,b,c) => [a, b.url, c])
+    const router = Router({
+      onError: [ errorHandler ],
+      after: [ afterHandler ],
+    })
+    .get('/', a => a.b.c)
+
+    await router.fetch(toReq('/'), arg1)
+    expect(errorHandler).toHaveReturnedWith([request.url, arg1])
+    expect(afterHandler).toHaveReturnedWith([[request.url, arg1], request.url, arg1])
+  })
+
   it('allows modifying responses in an after stage', async () => {
     const router = Router({
       after: [r => Number(r) || 0],
@@ -79,6 +96,23 @@ describe(`SPECIFIC TESTS: Router`, () => {
 
     expect(response).toBe(13)
     expect(handler).toHaveBeenCalled()
+  })
+
+  it('can introspect/modify before/after/onError stages after initialization', async () => {
+    const handler1 = vi.fn(() => {})
+    const handler2 = vi.fn(() => {})
+    const router = Router({
+      before: [ handler1, handler2 ],
+      after: [ handler1, handler2 ],
+    })
+
+    // manipulate
+    router.after.push(() => true)
+
+    const response = await router.fetch(toReq('/'))
+    expect(router.before.length).toBe(2)
+    expect(router.after.length).toBe(3)
+    expect(response).toBe(true)
   })
 })
 
