@@ -70,7 +70,7 @@ describe(`SPECIFIC TESTS: AutoRouter`, () => {
       describe('after: (response: Response, request: IRequest, ...args) - ResponseHandler', async () => {
         it('modifies the response if returning non-null value', async () => {
           const router = AutoRouter({
-            after: [ r => true ]
+            after: [ () => true ]
           }).get('*', () => 314)
 
           const response = await router.fetch(toReq('/'))
