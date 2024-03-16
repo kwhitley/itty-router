@@ -45,13 +45,13 @@ describe('withContent (middleware)', () => {
     expect(handler).toHaveReturnedWith('bar')
   })
 
-  it('will return empty string (but not throw) if no body', async () => {
+  it('will return undefined (but not throw) if no body', async () => {
     const router = Router()
-    const handler = vi.fn(({ content }) => content ?? true)
+    const handler = vi.fn(({ content }) => content === undefined ? true : false)
     const request = new Request('https://foo.bar', { method: 'POST' })
 
     await router.post('/', withContent, handler).handle(request)
 
-    expect(handler).toHaveReturnedWith('')
+    expect(handler).toHaveReturnedWith(true)
   })
 })
