@@ -76,14 +76,14 @@ export const createCors = (options: CorsOptions = {}) => {
       return response
 
     // Return new response with CORS headers.
+		Object.entries({
+			...rHeaders,
+			...allowOrigin,
+		}).forEach(([name, value]) => headers.append(name, value as string))
+
     return new Response(body, {
       status,
-      headers: {
-        ...Object.fromEntries(headers),
-        ...rHeaders,
-        ...allowOrigin,
-        'content-type': headers.get('content-type'),
-      },
+      headers,
     })
   }
 
