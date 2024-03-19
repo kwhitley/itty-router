@@ -22,7 +22,7 @@ export const AutoRouter = ({
     withParams,
     ...before
   ],
-  onError: [error],
+  catch: error,
   after: [
     (r: any, ...args) => r ?? missing(r, ...args),
     format,

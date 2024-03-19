@@ -38,30 +38,41 @@ describe(`SPECIFIC TESTS: Router`, () => {
     expect(response).toBe(true)
   })
 
-  it('allows catching errors with an onError stage', async () => {
+  it('allows catching errors with a catch handler', async () => {
     const handler = vi.fn(r => r instanceof Error)
-    const noop = vi.fn(() => {})
-    const router1 = Router({ onError: [
-      noop,
-      handler,
-    ] }).get('/', a => a.b.c)
+    const router1 = Router({ catch: handler }).get('/', a => a.b.c)
     const router2 = Router().get('/', a => a.b.c)
 
     const response = await router1.fetch(toReq('/'))
-    expect(noop).toHaveBeenCalled()
     expect(handler).toHaveReturnedWith(true)
     expect(response).toBe(true)
     expect(router2.fetch(toReq('/'))).rejects.toThrow()
   })
 
-  it('onError and after stages have access to request and args', async () => {
+  it('an error in the after stage will still be caught with a catch handler', async () => {
+    const handler = vi.fn(r => r instanceof Error)
+    const router1 = Router({
+      after: [a => a.b.c],
+      catch: handler
+    }).get('/', () => 'hey!')
+    const router2 = Router({
+      after: [a => a.b.c],
+    }).get('/', () => 'hey!')
+
+    const response1 = await router1.fetch(toReq('/'))
+    expect(handler).toHaveReturnedWith(true)
+    expect(response1).toBe(true)
+    expect(router2.fetch(toReq('/'))).rejects.toThrow()
+  })
+
+  it('catch and after stages have access to request and args', async () => {
     const request = toReq('/')
     const arg1 = { foo: 'bar' }
 
     const errorHandler = vi.fn((a,b,c) => [b.url, c])
     const afterHandler = vi.fn((a,b,c) => [a, b.url, c])
     const router = Router({
-      onError: [ errorHandler ],
+      catch: errorHandler,
       after: [ afterHandler ],
     })
     .get('/', a => a.b.c)
@@ -98,7 +109,7 @@ describe(`SPECIFIC TESTS: Router`, () => {
     expect(handler).toHaveBeenCalled()
   })
 
-  it('can introspect/modify before/after/onError stages after initialization', async () => {
+  it('can introspect/modify before/after/catch stages after initialization', async () => {
     const handler1 = vi.fn(() => {})
     const handler2 = vi.fn(() => {})
     const router = Router({
