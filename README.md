@@ -33,8 +33,8 @@
   <a href="https://github.com/kwhitley/itty-router" target="_blank">
     <img src="https://img.shields.io/github/stars/kwhitley/itty-router?style=social" alt="repo stars" />
   </a>
-  <a href="https://www.twitter.com/kevinrwhitley" target="_blank">
-    <img src="https://img.shields.io/twitter/follow/kevinrwhitley.svg?style=social&label=Follow" alt="follow the author" />
+  <a href="https://www.twitter.com/ittydev" target="_blank">
+    <img src="https://img.shields.io/twitter/follow/ittydev.svg?style=social&label=Follow" alt="follow ittydev" />
   </a>
   <a href="" target="_blank">
     <img src="" alt="" />
