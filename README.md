@@ -2,6 +2,7 @@
   <a href="https://itty.dev/itty-router">
      <img src="https://github.com/kwhitley/itty-router/assets/865416/319e4148-0a2d-4396-b18b-9e1cbb8e27b6" alt="Itty Router" />
   </a>
+  <br /><br />
 <p>
 
 <p align="center">
@@ -23,9 +24,9 @@
   <a href="https://github.com/kwhitley/itty-router/issues" target="_blank">
     <img src="https://img.shields.io/github/issues/kwhitley/itty-router?style=flat-square" alt="open issues" />
   </a>
-</p>
 
-<p align="center">
+  <br />
+
   <a href="https://discord.gg/53vyrZAu9u" target="_blank">
     <img src="https://img.shields.io/discord/832353585802903572?label=Discord&logo=Discord&style=flat-square&logoColor=fff" alt="join us on discord" />
   </a>
