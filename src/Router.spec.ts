@@ -49,14 +49,14 @@ describe(`SPECIFIC TESTS: Router`, () => {
     expect(router2.fetch(toReq('/'))).rejects.toThrow()
   })
 
-  it('an error in the after stage will still be caught with a catch handler', async () => {
+  it('an error in the finally stage will still be caught with a catch handler', async () => {
     const handler = vi.fn(r => r instanceof Error)
     const router1 = Router({
-      after: [a => a.b.c],
+      finally: [a => a.b.c],
       catch: handler
     }).get('/', () => 'hey!')
     const router2 = Router({
-      after: [a => a.b.c],
+      finally: [a => a.b.c],
     }).get('/', () => 'hey!')
 
     const response1 = await router1.fetch(toReq('/'))
@@ -65,26 +65,26 @@ describe(`SPECIFIC TESTS: Router`, () => {
     expect(router2.fetch(toReq('/'))).rejects.toThrow()
   })
 
-  it('catch and after stages have access to request and args', async () => {
+  it('catch and finally stages have access to request and args', async () => {
     const request = toReq('/')
     const arg1 = { foo: 'bar' }
 
     const errorHandler = vi.fn((a,b,c) => [b.url, c])
-    const afterHandler = vi.fn((a,b,c) => [a, b.url, c])
+    const finallyHandler = vi.fn((a,b,c) => [a, b.url, c])
     const router = Router({
       catch: errorHandler,
-      after: [ afterHandler ],
+      finally: [ finallyHandler ],
     })
     .get('/', a => a.b.c)
 
     await router.fetch(toReq('/'), arg1)
     expect(errorHandler).toHaveReturnedWith([request.url, arg1])
-    expect(afterHandler).toHaveReturnedWith([[request.url, arg1], request.url, arg1])
+    expect(finallyHandler).toHaveReturnedWith([[request.url, arg1], request.url, arg1])
   })
 
-  it('allows modifying responses in an after stage', async () => {
+  it('allows modifying responses in an finally stage', async () => {
     const router = Router({
-      after: [r => Number(r) || 0],
+      finally: [r => Number(r) || 0],
     }).get('/:id?', r => r.params.id)
 
     const response1 = await router.fetch(toReq('/13'))
@@ -94,10 +94,10 @@ describe(`SPECIFIC TESTS: Router`, () => {
     expect(response2).toBe(0)
   })
 
-  it('after stages that return nothing will not modify response', async () => {
+  it('finally stages that return nothing will not modify response', async () => {
     const handler = vi.fn(() => {})
     const router = Router({
-      after: [
+      finally: [
         handler,
         r => Number(r) || 0,
       ],
@@ -109,20 +109,20 @@ describe(`SPECIFIC TESTS: Router`, () => {
     expect(handler).toHaveBeenCalled()
   })
 
-  it('can introspect/modify before/after/catch stages after initialization', async () => {
+  it('can introspect/modify before/finally/catch stages finally initialization', async () => {
     const handler1 = vi.fn(() => {})
     const handler2 = vi.fn(() => {})
     const router = Router({
       before: [ handler1, handler2 ],
-      after: [ handler1, handler2 ],
+      finally: [ handler1, handler2 ],
     })
 
     // manipulate
-    router.after.push(() => true)
+    router.finally.push(() => true)
 
     const response = await router.fetch(toReq('/'))
     expect(router.before.length).toBe(2)
-    expect(router.after.length).toBe(3)
+    expect(router.finally.length).toBe(3)
     expect(response).toBe(true)
   })
 })

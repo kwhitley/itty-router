@@ -12,7 +12,7 @@ const router = AutoRouter({
   before: [
     (r: any) => { r.date = new Date },
   ],
-  after: [
+  finally: [
     (r: Response, request: IRequest) =>
       console.log(r.status, request.method, request.url, 'delivered in', Date.now() - request.date, 'ms from', request.date.toLocaleString()),
   ]

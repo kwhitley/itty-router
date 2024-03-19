@@ -11,7 +11,7 @@ const logger = (response: Response, request: IRequest) => {
 const router = Router({
   port: 3001,
   before: [withParams],
-  after: [json, logger],
+  finally: [json, logger],
   catch: error,
 })
 

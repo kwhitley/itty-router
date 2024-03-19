@@ -12,19 +12,19 @@ import {
 export type ResponseHandler<ResponseType = any, RequestType = IRequest, Args extends any[] = any[]> =
     (response: ResponseType, request: RequestType, ...args: Args) => any
 
-export type ErrorHandler<ErrorOrResponse = Error, RequestType = IRequest, Args extends any[] = any[]> =
-    (response: ErrorOrResponse, request: RequestType, ...args: Args) => any
+export type ErrorHandler<ErrorType = Error, RequestType = IRequest, Args extends any[] = any[]> =
+    (response: ErrorType, request: RequestType, ...args: Args) => any
 
 export type RouterType<R = Route, Args extends any[] = any[]> = {
   before?: RouteHandler[]
   catch?: ErrorHandler
-  after?: ResponseHandler[]
+  finally?: ResponseHandler[]
 } & IttyRouterType<R, Args>
 
 export type RouterOptions = {
   before?: RouteHandler[]
   catch?: ErrorHandler
-  after?: ResponseHandler[]
+  finally?: ResponseHandler[]
 } & IttyRouterOptions
 
 export const Router = <
@@ -86,7 +86,7 @@ export const Router = <
       }
 
       try {
-        for (let handler of other.after || [])
+        for (let handler of other.finally || [])
           response = await handler(response, request.proxy ?? request, ...args) ?? response
       } catch(err: any) {
         if (!other.catch) throw err
@@ -97,12 +97,12 @@ export const Router = <
     },
   })
 
-// const afterHandler: RouteHandler<Response> = (response) => { response.headers }
+// const finallyHandler: RouteHandler<Response> = (response) => { response.headers }
 // const errorHandler: ErrorHandler<Error> = (err) => { err.message }
 
 // const router = Router({
-//   after: [
-//     afterHandler,
+//   finally: [
+//     finallyHandler,
 //     (response: Response) => { response.headers },
 //   ],
 //   catch: errorHandler,
