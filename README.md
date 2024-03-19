@@ -68,7 +68,7 @@ export default AutoRouter()
 // that's it ^-^
 ```
 
-## [Full Documentation](https://itty.dev/itty-router) @ [itty.dev](https://itty.dev)
+# [Full Documentation](https://itty.dev/itty-router) @ [itty.dev](https://itty.dev)
 
 Complete API documentation is available at [itty.dev/itty-router](https://itty.dev/itty-router), or join our [Discord](https://discord.gg/53vyrZAu9u) channel to chat with community members for quick help!
 
