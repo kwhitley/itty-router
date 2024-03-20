@@ -22,7 +22,7 @@ describe('Common Router Spec', () => {
         { path: '/foo', callback: vi.fn(extract), method: 'post' },
         {
           path: '/passthrough',
-          callback: vi.fn(({ method, name }) => ({ method, name })),
+          callback: vi.fn(r => r),
           method: 'get',
         },
       ]
@@ -190,13 +190,11 @@ describe('Common Router Spec', () => {
         })
 
         it('passes the entire original request through to the handler', async () => {
+          const request = toReq('/passthrough')
           const route = routes.find((r) => r.path === '/passthrough')
-          await router.fetch({ ...toReq('/passthrough'), name: 'miffles' })
+          await router.fetch(request)
 
-          expect(route?.callback).toHaveReturnedWith({
-            method: 'GET',
-            name: 'miffles',
-          })
+          expect(route?.callback).toHaveReturnedWith(request)
         })
 
         it('allows missing handler later in flow with "all" channel', async () => {

@@ -11,17 +11,16 @@ export const createResponse =
     format = 'text/plain; charset=utf-8',
     transform?: BodyTransformer
   ): ResponseFormatter =>
-  (body, { headers = {}, ...rest } = {}) =>
-    body === undefined || body?.constructor.name === 'Response'
+  (body, { ...options } = {}) =>
+    body === undefined || body instanceof Response // skip function if undefined or an existing Response
     ? body
     : new Response(transform ? transform(body) : body, {
+                    ...options,
                     headers: {
                       'content-type': format,
-                      ...(headers.entries
+                      ...options.headers?.entries
                           // @ts-expect-error - foul
-                          ? Object.fromEntries(headers)
-                          : headers
-                          ),
+                          ? Object.fromEntries(options.headers)
+                          : options.headers
                     },
-                    ...rest
                   })

@@ -1,6 +1,8 @@
 import { describe, expect, it, vi } from 'vitest'
 import { toReq } from '../test'
 import { Router } from './Router'
+import { json } from './json'
+import { error } from './error'
 
 describe(`SPECIFIC TESTS: Router`, () => {
   it('supports both router.handle and router.fetch', () => {
@@ -124,6 +126,29 @@ describe(`SPECIFIC TESTS: Router`, () => {
     expect(router.before.length).toBe(2)
     expect(router.finally.length).toBe(3)
     expect(response).toBe(true)
+  })
+
+  it('response-handler pollution tests - (createResponse)', async () => {
+    const router = Router({
+      finally: [json]
+    }).get('/', () => [1,2,3])
+    const request = toReq('/')
+    request.headers.append('foo', 'bar')
+
+    const response = await router.fetch(request)
+    const body = await response.json()
+    expect(response.headers.get('foo')).toBe(null)
+    expect(body).toEqual([1,2,3])
+  })
+
+  it('response-handler pollution tests - (createResponse)', async () => {
+    const router = Router({ catch: error }).get('/', (a) => a.b.c)
+    const request = toReq('/')
+    request.headers.append('foo', 'bar')
+
+    const response = await router.fetch(request)
+    expect(response.headers.get('foo')).toBe(null)
+    expect(response.status).toBe(500)
   })
 })
 

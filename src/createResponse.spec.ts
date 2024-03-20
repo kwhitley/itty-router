@@ -74,6 +74,16 @@ describe('createResponse(mimeType: string, transform?: Function)', () => {
     expect(r2).toBeUndefined()
   })
 
+  it('will not apply a Request as 2nd options argument (using Request.url check method)', async () => {
+    const request = new Request('http://foo.bar', { headers: { foo: 'bar' }})
+    const response = json(1, request)
+    // const { ...restCheck } = request
+
+    // expect(restCheck.url).toBe('http://foo.bar/')
+    // expect(request.url).toBe('http://foo.bar/')
+    expect(response.headers.get('foo')).toBe(null)
+  })
+
   describe('format helpers', () => {
     const formats = [
       { name: 'json', fn: json, mime: 'application/json; charset=utf-8' },
