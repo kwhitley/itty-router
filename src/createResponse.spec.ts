@@ -59,11 +59,12 @@ describe('createResponse(mimeType: string, transform?: Function)', () => {
     expect(body).toBe('***')
   })
 
-  it('will ignore a Response, to allow downstream use', async () => {
+  it('will ignore a Response, to allow downstream use (will not modify headers)', async () => {
     const r1 = json({ foo: 'bar' })
-    const r2 = json(r1)
+    const r2 = text(r1)
 
     expect(r2).toBe(r1)
+    expect(r2.headers.get('content-type')?.includes('text')).toBe(false)
   })
 
   it('will ignore an undefined body', async () => {

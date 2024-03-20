@@ -1,10 +1,8 @@
+import { RouteHandler } from 'IttyRouter'
+import { ResponseHandler, Router, RouterOptions } from './Router'
 import { error } from './error'
 import { json } from './json'
 import { withParams } from './withParams'
-import { Router, RouterOptions} from './Router'
-import { RouteHandler } from 'IttyRouter'
-import { ResponseFormatter } from './createResponse'
-import { ResponseHandler } from './Router'
 
 type AutoRouterOptions = {
   missing?: RouteHandler

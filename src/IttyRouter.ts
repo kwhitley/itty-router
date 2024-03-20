@@ -39,7 +39,7 @@ export type RouteEntry = [
 ]
 
 // this is the generic "Route", which allows per-route overrides
-export type Route = <RequestType = IRequest, Args extends any[] = any[], RT = RouterType>(
+export type Route = <RequestType = IRequest, Args extends any[] = any[], RT = IttyRouterType>(
   path: string,
   ...handlers: RouteHandler<RequestType, Args>[]
 ) => RT
