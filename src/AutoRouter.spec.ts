@@ -67,10 +67,10 @@ describe(`SPECIFIC TESTS: AutoRouter`, () => {
         expect(handler).toHaveReturnedWith('number')
       })
 
-      describe('after: (response: Response, request: IRequest, ...args) - ResponseHandler', async () => {
+      describe('finally: (response: Response, request: IRequest, ...args) - ResponseHandler', async () => {
         it('modifies the response if returning non-null value', async () => {
           const router = AutoRouter({
-            after: [ () => true ]
+            finally: [ () => true ]
           }).get('*', () => 314)
 
           const response = await router.fetch(toReq('/'))
@@ -79,7 +79,7 @@ describe(`SPECIFIC TESTS: AutoRouter`, () => {
 
         it('does not modify the response if returning null values', async () => {
           const router = AutoRouter({
-            after: [
+            finally: [
               () => {},
               () => undefined,
               () => null,

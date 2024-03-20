@@ -11,10 +11,7 @@ export const toReq = (methodAndPath: string) => {
     method = 'GET'
   }
 
-  return {
-    method,
-    url: `https://example.com${path}`
-  }
+  return new Request(`https://example.com${path}`, { method })
 }
 
 export const extract = ({ params, query }) => ({ params, query })

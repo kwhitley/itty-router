@@ -1,20 +1,19 @@
+import { RouteHandler } from 'IttyRouter'
+import { ResponseHandler, Router, RouterOptions } from './Router'
 import { error } from './error'
 import { json } from './json'
 import { withParams } from './withParams'
-import { Router, RouterOptions} from './Router'
-import { RouteHandler } from 'IttyRouter'
-import { ResponseFormatter } from './createResponse'
 
 type AutoRouterOptions = {
   missing?: RouteHandler
-  format?: ResponseFormatter
+  format?: ResponseHandler
 } & RouterOptions
 
-// MORE FINE-GRAINED/SIMPLIFIED CONTROL, BUT CANNOT FULLY REPLACE BEFORE/AFTER STAGES
+// MORE FINE-GRAINED/SIMPLIFIED CONTROL, BUT CANNOT FULLY REPLACE BEFORE/FINALLY STAGES
 export const AutoRouter = ({
   format = json,
   missing = () => error(404),
-  after = [],
+  finally: f = [],
   before = [],
   ...options }: AutoRouterOptions = {}
 ) => Router({
@@ -23,19 +22,19 @@ export const AutoRouter = ({
     ...before
   ],
   catch: error,
-  after: [
+  finally: [
     (r: any, ...args) => r ?? missing(r, ...args),
     format,
-    ...after,
+    ...f,
   ],
   ...options,
 })
 
-// LESS FINE-GRAINED CONTROL, BUT CAN COMPLETELY REPLACE BEFORE/AFTER STAGES
+// LESS FINE-GRAINED CONTROL, BUT CAN COMPLETELY REPLACE BEFORE/FINALLY STAGES
 // export const AutoRouter2 = ({ ...options }: RouterOptions = {}) => Router({
 //   before: [withParams],
 //   onError: [error],
-//   after: [
+//   finally: [
 //     (r: any) => r ?? error(404),
 //     json,
 //   ],
