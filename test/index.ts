@@ -4,14 +4,14 @@ import { expect, it, vi } from 'vitest'
 // generates a request from a string like:
 // GET /whatever
 // /foo
-export const toReq = (methodAndPath: string) => {
+export const toReq = (methodAndPath: string, options: RequestInit = {}) => {
   let [method, path] = methodAndPath.split(' ')
   if (!path) {
     path = method
     method = 'GET'
   }
 
-  return new Request(`https://example.com${path}`, { method })
+  return new Request(`https://example.com${path}`, { method, ...options })
 }
 
 export const extract = ({ params, query }) => ({ params, query })

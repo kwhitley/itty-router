@@ -5,22 +5,14 @@ export type CorsOptions = {
   maxAge?: number
   methods?: string[]
   headers?: any
-  mirrorOrigin?: boolean
 }
 
 // Create CORS function with default options.
 export const createCors = (options: CorsOptions = {}) => {
   // Destructure and set defaults for options.
-  const {
-    origins = ['*'],
-    maxAge,
-    methods = ['GET'],
-    headers,
-  } = options
+  const { origins = ['*'], maxAge, methods = ['GET'], headers = {} } = options
 
   let allowOrigin: any
-  let allowAllOrigins = origins.includes?.('*')
-
   const isAllowOrigin = typeof origins === 'function'
     ? origins
     : (origin: string) => (origins.includes(origin) || origins.includes('*'))
@@ -42,9 +34,7 @@ export const createCors = (options: CorsOptions = {}) => {
     const origin = r.headers.get('origin') || ''
 
     // set allowOrigin globally
-    allowOrigin = allowAllOrigins
-    ? '*'
-    : isAllowOrigin(origin) && origin
+    allowOrigin = isAllowOrigin(origin) && { 'Access-Control-Allow-Origin': origin }
 
     // Check if method is OPTIONS.
     if (r.method === 'OPTIONS') {
@@ -54,7 +44,7 @@ export const createCors = (options: CorsOptions = {}) => {
         'Access-Control-Allow-Headers': r.headers.get(
           'Access-Control-Request-Headers'
         ),
-        'Access-Control-Allow-Origin': allowOrigin
+        ...allowOrigin,
       }
 
       // Handle CORS pre-flight request.
@@ -72,7 +62,9 @@ export const createCors = (options: CorsOptions = {}) => {
   // Corsify function.
   const corsify = (response: Response): Response => {
     if (!response)
-      throw new Error('No fetch handler responded and no upstream to proxy to specified.')
+      throw new Error(
+        'No fetch handler responded and no upstream to proxy to specified.'
+      )
 
     const { headers, status, body } = response
 
@@ -80,19 +72,18 @@ export const createCors = (options: CorsOptions = {}) => {
     if (
       [101, 301, 302, 308].includes(status) ||
       headers.get('access-control-allow-origin')
-    ) return response
-
-    const responseHeaders = {
-      ...Object.fromEntries(headers),
-      ...rHeaders,
-      ...allowOrigin,
-      'content-type': headers.get('content-type'),
-    }
+    )
+      return response
 
     // Return new response with CORS headers.
     return new Response(body, {
       status,
-      headers: responseHeaders
+      headers: {
+        ...Object.fromEntries(headers),
+        ...rHeaders,
+        ...allowOrigin,
+        'content-type': headers.get('content-type'),
+      },
     })
   }
 

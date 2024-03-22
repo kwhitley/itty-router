@@ -21,6 +21,11 @@
       "require": "./createCors.js",
       "types": "./createCors.d.ts"
     },
+    "./createCors.prev": {
+      "import": "./createCors.prev.mjs",
+      "require": "./createCors.prev.js",
+      "types": "./createCors.prev.d.ts"
+    },
     "./createResponse": {
       "import": "./createResponse.mjs",
       "require": "./createResponse.js",
