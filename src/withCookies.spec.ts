@@ -12,7 +12,7 @@ describe('withCookies (middleware)', () => {
       },
     })
 
-    await router.get('/', withCookies, handler).handle(request)
+    await router.get('/', withCookies, handler).fetch(request)
 
     expect(handler).toHaveReturnedWith({ foo: 'bar' })
   })
@@ -23,7 +23,7 @@ describe('withCookies (middleware)', () => {
     const request = new Request('https://foo.bar')
 
     expect(async () => {
-      await router.get('/', withCookies, handler).handle(request)
+      await router.get('/', withCookies, handler).fetch(request)
     }).not.toThrow()
   })
 })

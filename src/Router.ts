@@ -37,23 +37,22 @@ export const Router = <
     __proto__: new Proxy({}, {
       // @ts-expect-error (we're adding an expected prop "path" to the get)
       get: (target: any, prop: string, receiver: RouterType, path: string) =>
-        prop == 'handle' ? receiver.fetch :
-          // @ts-expect-error - unresolved type
-          (route: string, ...handlers: RouteHandler<I>[]) =>
-            routes.push(
-              [
-                prop.toUpperCase?.(),
-                RegExp(`^${(path = (base + route)
-                  .replace(/\/+(\/|$)/g, '$1'))                       // strip double & trailing splash
-                  .replace(/(\/?\.?):(\w+)\+/g, '($1(?<$2>*))')       // greedy params
-                  .replace(/(\/?\.?):(\w+)/g, '($1(?<$2>[^$1/]+?))')  // named params and image format
-                  .replace(/\./g, '\\.')                              // dot in path
-                  .replace(/(\/?)\*/g, '($1.*)?')                     // wildcard
-                }/*$`),
-                handlers,                                             // embed handlers
-                path,                                                 // embed clean route path
-              ]
-            ) && receiver
+        // @ts-expect-error - unresolved type
+        (route: string, ...handlers: RouteHandler<I>[]) =>
+          routes.push(
+            [
+              prop.toUpperCase?.(),
+              RegExp(`^${(path = (base + route)
+                .replace(/\/+(\/|$)/g, '$1'))                       // strip double & trailing splash
+                .replace(/(\/?\.?):(\w+)\+/g, '($1(?<$2>*))')       // greedy params
+                .replace(/(\/?\.?):(\w+)/g, '($1(?<$2>[^$1/]+?))')  // named params and image format
+                .replace(/\./g, '\\.')                              // dot in path
+                .replace(/(\/?)\*/g, '($1.*)?')                     // wildcard
+              }/*$`),
+              handlers,                                             // embed handlers
+              path,                                                 // embed clean route path
+            ]
+          ) && receiver
     }),
     routes,
     ...other,
