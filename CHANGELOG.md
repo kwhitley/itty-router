@@ -1,5 +1,7 @@
 ## Changelog
 
+- **v4.2.2**
+  - fixed: withContent should return undefined if request.body is undefined
 - **v4.2.1**
   - maintenance: updated deps, test coverage, removed isomorphic-fetch dev dep
 - **v4.2.0**
