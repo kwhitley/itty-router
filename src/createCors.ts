@@ -1,98 +1,84 @@
+import { StatusError } from 'StatusError'
 import { IRequest } from './IttyRouter'
 
 export type CorsOptions = {
-  origins?: string[] | ((origin: string) => boolean)
+  credentials?: boolean
+  origin?: string | string[] | RegExp | ((origin: string) => boolean)
   maxAge?: number
-  methods?: string[]
-  headers?: any
-  mirrorOrigin?: boolean
+  allowMethods?: string | string[]
+  allowHeaders?: any
+  exposeHeaders?: string | string[]
 }
+
+const AC_ALLOW_ORIGIN = 'access-control-allow-origin'
 
 // Create CORS function with default options.
 export const createCors = (options: CorsOptions = {}) => {
   // Destructure and set defaults for options.
   const {
-    origins = ['*'],
+    origin = '*',
+    credentials = false,
+    allowMethods = ['*'],
+    allowHeaders,
+    exposeHeaders,
     maxAge,
-    methods = ['GET'],
-    headers,
   } = options
 
-  let allowOrigin: any
-  let allowAllOrigins = origins.includes?.('*')
+  // const origin = options.origin // support either.  WASTED BYTES?
 
-  const isAllowOrigin = typeof origins === 'function'
-    ? origins
-    : (origin: string) => (origins.includes(origin) || origins.includes('*'))
-
-  // Initial response headers.
-  const rHeaders = {
-    'content-type': 'application/json',
-    'Access-Control-Allow-Methods': methods.join(', '),
-    ...headers,
+  const corsHeaders: Record<string, any> = {
+    'access-control-allow-headers': allowHeaders?.join(',') ?? allowHeaders, // include allowed headers
+    // @ts-ignore
+    'access-control-expose-headers': exposeHeaders?.join(',') ?? exposeHeaders, // include allowed headers
+    // @ts-ignore
+    'access-control-allow-methods': allowMethods.join(',') ?? allowMethods,  // include allowed methods
+    'access-control-max-age': maxAge,
+    'access-control-allow-credentials': credentials,
   }
 
-  // Set max age if provided.
-  if (maxAge) rHeaders['Access-Control-Max-Age'] = maxAge
+  const getAccessControlOrigin = (request?: Request) => {
+    const requestOrigin = request?.headers.get('origin')
 
-  // Pre-flight function.
-  const preflight = (r: IRequest) => {
-    // Use methods set.
-    const useMethods = [...new Set(['OPTIONS', ...methods])]
-    const origin = r.headers.get('origin') || ''
+    return {
+      // @ts-ignore
+      'access-control-allow-origin': origin.test?.(requestOrigin)
+      // @ts-ignore
+        ?? origin.join?.(',')
+        ?? origin instanceof Function
+          // @ts-ignore
+          ? origin(requestOrigin)
+          : origin
+    }
+  }
 
-    // set allowOrigin globally
-    allowOrigin = allowAllOrigins
-    ? '*'
-    : isAllowOrigin(origin) && origin
-
-    // Check if method is OPTIONS.
-    if (r.method === 'OPTIONS') {
-      const reqHeaders = {
-        ...rHeaders,
-        'Access-Control-Allow-Methods': useMethods.join(', '),
-        'Access-Control-Allow-Headers': r.headers.get(
-          'Access-Control-Request-Headers'
-        ),
-        'Access-Control-Allow-Origin': allowOrigin
-      }
-
-      // Handle CORS pre-flight request.
+  const preflight = (request: Request) => {
+    if (request.method == 'OPTIONS') {
       return new Response(null, {
-        headers:
-          r.headers.get('Origin') &&
-          r.headers.get('Access-Control-Request-Method') &&
-          r.headers.get('Access-Control-Request-Headers')
-            ? reqHeaders
-            : { Allow: useMethods.join(', ') },
+        status: 204,
+        headers: new Headers({
+          ...getAccessControlOrigin(request),
+          ...corsHeaders,
+        }),
       })
-    }
+    } // otherwise ignore
   }
 
-  // Corsify function.
-  const corsify = (response: Response): Response => {
-    if (!response)
-      throw new Error('No fetch handler responded and no upstream to proxy to specified.')
+  const corsify = (response: Response, request?: Request) => {
+    // check for no response?
+    if (!(response instanceof Response))
+      throw new Error('Corsify must receive a valid Response.')
 
-    const { headers, status, body } = response
-
-    // Bypass for protocol shifts or redirects, or if CORS is already set.
-    if (
-      [101, 301, 302, 308].includes(status) ||
-      headers.get('access-control-allow-origin')
-    ) return response
-
-    const responseHeaders = {
-      ...Object.fromEntries(headers),
-      ...rHeaders,
-      ...allowOrigin,
-      'content-type': headers.get('content-type'),
-    }
+    // ignore if already ahs CORS headers
+    if (response?.headers?.get(AC_ALLOW_ORIGIN)) return response
 
     // Return new response with CORS headers.
-    return new Response(body, {
-      status,
-      headers: responseHeaders
+    return new Response(response.body, {
+      ...response,
+      headers: {
+        ...getAccessControlOrigin(request),
+        ...Object.fromEntries(response.headers),
+        ...corsHeaders,
+      },
     })
   }
 

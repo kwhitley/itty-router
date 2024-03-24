@@ -1,5 +1,6 @@
 # OS ignores
 .DS_Store
+.vscode
 
 # Logs
 logs
