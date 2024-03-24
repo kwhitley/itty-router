@@ -10,10 +10,10 @@
     "lib": ["esnext", "dom", "dom.iterable"],
     "listEmittedFiles": false,
     "listFiles": false,
-    "moduleResolution": "nodeNext",
     "noFallthroughCasesInSwitch": true,
     "pretty": true,
-    "resolveJsonModule": true,
+    // "moduleResolution": "nodeNext",  // disabled to be compatible with module: "esnext"
+    // "resolveJsonModule": true,       // disabled to be compatible with module: "esnext"
     "rootDir": "src",
     "skipLibCheck": true,
     "strict": true,

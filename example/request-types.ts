@@ -1,4 +1,4 @@
-import { IRequest, IRequestStrict, Router } from '../src/Router'
+import { IRequest, IRequestStrict, Router } from '../src/IttyRouter'
 
 type FooRequest = {
   foo: string

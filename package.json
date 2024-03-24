@@ -1,6 +1,6 @@
 {
   "name": "itty-router",
-  "version": "4.2.2",
+  "version": "4.3.0-next.0",
   "description": "A tiny, zero-dependency router, designed to make beautiful APIs in any environment.",
   "main": "./index.js",
   "module": "./index.mjs",
@@ -10,6 +10,11 @@
       "import": "./index.mjs",
       "require": "./index.js",
       "types": "./index.d.ts"
+    },
+    "./AutoRouter": {
+      "import": "./AutoRouter.mjs",
+      "require": "./AutoRouter.js",
+      "types": "./AutoRouter.d.ts"
     },
     "./createCors": {
       "import": "./createCors.mjs",
@@ -30,6 +35,11 @@
       "import": "./html.mjs",
       "require": "./html.js",
       "types": "./html.d.ts"
+    },
+    "./IttyRouter": {
+      "import": "./IttyRouter.mjs",
+      "require": "./IttyRouter.js",
+      "types": "./IttyRouter.d.ts"
     },
     "./jpeg": {
       "import": "./jpeg.mjs",

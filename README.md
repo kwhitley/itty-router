@@ -1,11 +1,9 @@
 <p align="center">
   <a href="https://itty.dev/itty-router">
-     <img src="https://github.com/kwhitley/itty-router/assets/865416/15a90b05-344d-4135-a3f8-52a4d117250e" alt="Itty Router" />
+     <img src="https://github.com/kwhitley/itty-router/assets/865416/319e4148-0a2d-4396-b18b-9e1cbb8e27b6" alt="Itty Router" />
   </a>
+  <br /><br />
 <p>
-
-<h2 align="center"><a href="https://itty.dev/itty-router">v4.x Documentation @ itty.dev</a>
-<br /></h2>
 
 <p align="center">
   <a href="https://npmjs.com/package/itty-router" target="_blank">
@@ -26,20 +24,17 @@
   <a href="https://github.com/kwhitley/itty-router/issues" target="_blank">
     <img src="https://img.shields.io/github/issues/kwhitley/itty-router?style=flat-square" alt="open issues" />
   </a>
-  <a href="" target="_blank">
-    <img src="" alt="" />
-  </a>
-</p>
 
-<p align="center">
+  <br />
+
   <a href="https://discord.gg/53vyrZAu9u" target="_blank">
     <img src="https://img.shields.io/discord/832353585802903572?label=Discord&logo=Discord&style=flat-square&logoColor=fff" alt="join us on discord" />
   </a>
   <a href="https://github.com/kwhitley/itty-router" target="_blank">
     <img src="https://img.shields.io/github/stars/kwhitley/itty-router?style=social" alt="repo stars" />
   </a>
-  <a href="https://www.twitter.com/kevinrwhitley" target="_blank">
-    <img src="https://img.shields.io/twitter/follow/kevinrwhitley.svg?style=social&label=Follow" alt="follow the author" />
+  <a href="https://www.twitter.com/ittydev" target="_blank">
+    <img src="https://img.shields.io/twitter/follow/ittydev.svg?style=social&label=Follow" alt="follow ittydev" />
   </a>
   <a href="" target="_blank">
     <img src="" alt="" />
@@ -48,180 +43,40 @@
 
 ---
 
-Itty is arguably the smallest (~460 bytes) feature-rich JavaScript router available, while enabling dead-simple API code.
-
-Designed originally for [Cloudflare Workers](https://itty.dev/itty-router/runtimes#Cloudflare%20Workers), itty can be used in browsers, service workers, edge functions, or runtimes like [Node](https://itty.dev/itty-router/runtimes#Node), [Bun](https://itty.dev/itty-router/runtimes#Bun), etc.!
+An ultra-tiny API microrouter, for use when [size matters](https://github.com/TigersWay/cloudflare-playground) (e.g. [Cloudflare Workers](https://developers.cloudflare.com/workers/)).
 
 ## Features
 
-- Tiny. [~460](https://deno.bundlejs.com/?q=itty-router/Router) bytes for the Router itself, or [~1.6k](https://bundlephobia.com/package/itty-router) for the entire library (>100x smaller than [express.js](https://www.npmjs.com/package/express)).
-- [Fully-Typed](https://itty.dev/itty-router/typescript).
-- Shorter, simpler route code than most modern routers.
-- Dead-simple [middleware](https://itty.dev/itty-router/middleware) - use ours or write your own.
-- Supports [nested APIs](https://itty.dev/itty-router/nesting).
-- Platform agnostic (based on [Fetch API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API)) - use it [anywhere, in any environment](https://itty.dev/itty-router/runtimes).
-- Parses [route params](https://itty.dev/itty-router/route-patterns#params),
-  [optional params](https://itty.dev/itty-router/route-patterns#optional),
-  [wildcards](https://itty.dev/itty-router/route-patterns#wildcards),
-  [greedy params](https://itty.dev/itty-router/route-patterns#greedy),
-  [file formats](https://itty.dev/itty-router/route-patterns#file-formats)
-  and [query strings](https://itty.dev/itty-router/route-patterns#query).
-- Extremely extendable/flexible.  We leave you in complete control.
+- Tiny. We have routers from [~450 bytes](https://itty.dev/itty-router/routers/ittyrouter) to a [~1kB bytes](https://itty.dev/itty-router/routers/autorouter) batteries-included version.  For comparison, [express.js](https://www.npmjs.com/package/express) is over 200x as large.
+- Web Standards - Use it [anywhere, in any environment](https://itty.dev/itty-router/runtimes).
+- No assumptions. Return anything you like, pass in any arguments you like.
+- Future-proof.  HTTP methods not-yet-invented already work with it.
+- [Route-parsing](https://itty.dev/itty-router/route-patterns) & [query parsing](https://itty.dev/itty-router/route-patterns#query).
+- [Middleware](https://itty.dev/itty-router/middleware) - use ours or write your own.
+- [Nesting](https://itty.dev/itty-router/nesting).
 
-## [Full Documentation](https://itty.dev/itty-router)
+## Example (Cloudflare Worker or Bun)
+
+```js
+import { AutoRouter } from 'itty-router' // ~1kB
+
+export default AutoRouter()
+  .get('/hello/:name', ({ name }) => `Hello, ${name}!`)
+  .get('/json', () => [1,2,3])
+  .get('/promises', () => Promise.resolve('foo'))
+
+// that's it ^-^
+```
+
+# [Full Documentation](https://itty.dev/itty-router) @ [itty.dev](https://itty.dev)
 
 Complete API documentation is available at [itty.dev/itty-router](https://itty.dev/itty-router), or join our [Discord](https://discord.gg/53vyrZAu9u) channel to chat with community members for quick help!
 
-## Installation
-
-```
-npm install itty-router
-```
-
-## Example
-
-```js
-import {
-  error,      // creates error responses
-  json,       // creates JSON responses
-  Router,     // the ~440 byte router itself
-  withParams, // middleware: puts params directly on the Request
-} from 'itty-router'
-import { todos } from './external/todos'
-
-// create a new Router
-const router = Router()
-
-router
-  // add some middleware upstream on all routes
-  .all('*', withParams)
-
-  // GET list of todos
-  .get('/todos', () => todos)
-
-  // GET single todo, by ID
-  .get(
-    '/todos/:id',
-    ({ id }) => todos.getById(id) || error(404, 'That todo was not found')
-  )
-
-  // 404 for everything else
-  .all('*', () => error(404))
-
-// Example: Cloudflare Worker module syntax
-export default {
-  fetch: (request, ...args) =>
-    router
-      .handle(request, ...args)
-      .then(json)     // send as JSON
-      .catch(error),  // catch errors
-}
-```
-
-# What's different about itty? <a name="a-different-kind-of-router"></a>
-Itty does a few things very differently from other routers.  This allows itty route code to be shorter and more intuitive than most!
-
-### 1. Simpler handler/middleware flow.
-In itty, you simply return (anything) to exit the flow.  If any handler ever returns a thing, that's what the `router.handle` returns.  If it doesn't, it's considered middleware, and the next handler is called. 
-
-That's it!
-
-```ts
-// not middleware: any handler that returns (anything at all)
-(request) => [1, 4, 5, 1]
-
-// middleware: simply doesn't return
-const withUser = (request) => { 
-  request.user = 'Halsey'
-}
-
-// a middleware that *might* return
-const onlyHalsey = (request) => {
-  if (request.user !== 'Halsey') {
-    return error(403, 'Only Halsey is allowed to see this!')
-  }
-}
-
-// uses middleware, then returns something
-route.get('/secure', withUser, onlyHalsey,
-  ({ user }) => `Hey, ${user} - welcome back!`
-)
-```
-
-### 2. You don't have to build a response in each route handler.
-We've been stuck in this pattern for over a decade.  Almost every router still expects you to build and return a [Response](https://developer.mozilla.org/en-US/docs/Web/API/Response)... in every single route.  
-
-We think you should be able to do that once, at the end. In most modern APIs for instance, we're serving JSON in the majority of our routes.  So why handle that more than once?
-```ts
-router
-  // we can still do it the manual way
-  .get('/traditional', (request) => json([1, 2, 3]))
-
-  // or defer to later
-  .get('/easy-mode', (request) => [1, 2, 3])
-
-// later, when handling a request
-router
-  .handle(request)
-  .then(json) // we can turn any non-Response into valid JSON.
-```
-
-### 3. It's all Promises.
-itty `await`s every handler, looking for a return value.  If it gets one, it breaks the flow and returns the value.  If it doesn't, it continues processing handlers/routes until it does.  This means that every handler can either be synchronous or async - it's all the same.
-
-When paired with the fact that we can simply return raw data and transform it later, this is AWESOME for working with async APIs, database layers, etc.  We don't need to transform anything at the route, we can simply return the Promise (to data) itself!
-
-Check this out:
-```ts
-import { myDatabase } from './somewhere'
-
-router
-  // assumes getItems() returns a Promise to some data
-  .get('/items', () => myDatabase.getItems())
-
-// later, when handling a request
-router
-  .handle(request)
-  .then(json) // we can turn any non-Response into valid JSON.
-```
-
-### 4. Only one required argument.  The rest is up to you.
-itty only requires one argument - a Request-like object with the following shape: `{ url, method }` (usually a native [Request](https://developer.mozilla.org/en-US/docs/Web/API/Request)).  Because itty is not opinionated about [Response](https://developer.mozilla.org/en-US/docs/Web/API/Response) creation, there is not "response" argument built in.  Every other argument you pass to `route.handle` is given to each handler, in the same order.  
-
-> ### This makes itty one of the most platform-agnostic routers, *period*, as it's able to match up to any platform's signature.
-
-Here's an example using [Cloudflare Worker](https://workers.cloudflare.com/) arguments:
-```ts
-router
-  .get('/my-route', (request, environment, context) => {
-    // we can access anything here that was passed to `router.handle`.
-  })
-
-// Cloudflare gives us 3 arguments: request, environment, and context.
-// Passing them to `route.handle` gives every route handler (above) access to each.  
-export default {
-  fetch: (request, env, ctx) => router
-                                  .handle(request, env, ctx)
-                                  .then(json)
-                                  .catch(error)
-}
-```
-
 ## Join the Discussion!
 
-Have a question? Suggestion? Complaint? Want to send a gift basket?
+Have a question? Suggestion? Idea? Complaint? Want to send a gift basket?
 
 Join us on [Discord](https://discord.gg/53vyrZAu9u)!
-
-## Testing and Contributing
-
-1. Fork repo
-1. Install dev dependencies via `yarn`
-1. Start test runner/dev mode `yarn dev`
-1. Add your code and tests if needed - do NOT remove/alter existing tests
-1. Commit files
-1. Submit PR (and fill out the template)
-1. I'll add you to the credits! :)
 
 ## Special Thanks: Contributors
 
@@ -244,6 +99,7 @@ These folks are the real heroes, making open source the powerhouse that it is! H
 - [@technoyes](https://github.com/technoyes) - three kind-of-a-big-deal errors fixed. Imagine the look on my face... thanks man!! :)
 - [@roojay520](https://github.com/roojay520) - TS interface fixes
 - [@jahands](https://github.com/jahands) - v4.x TS fixes
+- and many, many others
 
 #### Documentation
 

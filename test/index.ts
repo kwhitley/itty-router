@@ -11,10 +11,7 @@ export const toReq = (methodAndPath: string) => {
     method = 'GET'
   }
 
-  return {
-    method,
-    url: `https://example.com${path}`
-  }
+  return new Request(`https://example.com${path}`, { method })
 }
 
 export const extract = ({ params, query }) => ({ params, query })
@@ -36,7 +33,7 @@ const testRoute = async (
     path,
   })
 
-  await router.handle(toReq(`${method.toUpperCase()} ${path}`))
+  await router.fetch(toReq(`${method.toUpperCase()} ${path}`))
 
   if (!returns) {
     expect(handler).not.toHaveBeenCalled()

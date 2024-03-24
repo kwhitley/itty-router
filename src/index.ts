@@ -1,4 +1,7 @@
+// routers
+export * from './IttyRouter'
 export * from './Router'
+export * from './AutoRouter'
 
 // classes
 export * from './StatusError'
