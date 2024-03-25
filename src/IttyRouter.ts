@@ -1,6 +1,4 @@
-export type GenericTraps = {
-  [key: string]: any
-}
+export type GenericTraps = Record<string, any>
 
 export type RequestLike = {
   method: string,
@@ -27,8 +25,8 @@ export type IttyRouterOptions = {
   routes?: RouteEntry[]
 } & Record<string, any>
 
-export type RouteHandler<I = IRequest, A extends any[] = any[]> = {
-  (request: I, ...args: A): any
+export type RouteHandler<R = IRequest, Args extends Array<any> = any[]> = {
+  (request: R, ...args: Args): any
 }
 
 export type RouteEntry = [
@@ -39,10 +37,10 @@ export type RouteEntry = [
 ]
 
 // this is the generic "Route", which allows per-route overrides
-export type Route = <RequestType = IRequest, Args extends any[] = any[], RT = IttyRouterType>(
+export type Route<R = IRequest, A extends Array<any> = any[]> = <RequestType = R, Args extends Array<any> = A>(
   path: string,
   ...handlers: RouteHandler<RequestType, Args>[]
-) => RT
+) => IttyRouterType<RequestType, Args>
 
 // this is an alternative UniveralRoute, accepting generics (from upstream), but without
 // per-route overrides
@@ -58,35 +56,32 @@ export type CustomRoutes<R = Route> = {
   [key: string]: R,
 }
 
-export type IttyRouterType<R = Route, Args extends any[] = any[]> = {
+export type IttyRouterType<R = IRequest, A extends any[] = any[], Output = any> = {
   __proto__: IttyRouterType<R>,
   routes: RouteEntry[],
-  fetch: <A extends any[] = Args>(request: RequestLike, ...extra: Equal<R, Args> extends true ? A : Args) => Promise<any>
-  all: R,
-  delete: R,
-  get: R,
-  head: R,
-  options: R,
-  patch: R,
-  post: R,
-  put: R,
-} & CustomRoutes<R> & Record<string, any>
+  fetch: <Args extends any[] = A>(request: RequestLike, ...extra: Args) => Promise<Output>
+  all: Route<R, A>,
+  delete: Route<R, A>,
+  get: Route<R, A>,
+  head: Route<R, A>,
+  options: Route<R, A>,
+  patch: Route<R, A>,
+  post: Route<R, A>,
+  put: Route<R, A>,
+} & CustomRoutes<Route<R, A>>
 
 export const IttyRouter = <
   RequestType = IRequest,
-  Args extends any[] = any[],
-  RouteType = Equal<RequestType, IRequest> extends true ? Route : UniversalRoute<RequestType, Args>
->({ base = '', routes = [], ...other }: IttyRouterOptions = {}): IttyRouterType<RouteType, Args> =>
-  // @ts-expect-error TypeScript doesn't know that Proxy makes this work
+  Args extends any[] = any[]
+>({ base = '', routes = [], ...other }: IttyRouterOptions = {}): IttyRouterType<RequestType, Args> =>
   ({
     __proto__: new Proxy({}, {
       // @ts-expect-error (we're adding an expected prop "path" to the get)
-      get: (target: any, prop: string, receiver: RouterType, path: string) =>
-        // @ts-expect-error - unresolved type
-        (route: string, ...handlers: RouteHandler<I>[]) =>
+      get: (target: any, prop: string, receiver: object, path: string) =>
+        (route: string, ...handlers: RouteHandler<RequestType, Args>[]) =>
           routes.push(
             [
-              prop.toUpperCase?.(),
+              prop.toUpperCase(),
               RegExp(`^${(path = (base + route)
                 .replace(/\/+(\/|$)/g, '$1'))                       // strip double & trailing splash
                 .replace(/(\/?\.?):(\w+)\+/g, '($1(?<$2>*))')       // greedy params
@@ -94,6 +89,7 @@ export const IttyRouter = <
                 .replace(/\./g, '\\.')                              // dot in path
                 .replace(/(\/?)\*/g, '($1.*)?')                     // wildcard
               }/*$`),
+              // @ts-expect-error - fiddly
               handlers,                                             // embed handlers
               path,                                                 // embed clean route path
             ]
@@ -120,4 +116,4 @@ export const IttyRouter = <
             if ((response = await handler(request.proxy ?? request, ...args)) != null) return response
         }
     },
-  })
+  } as IttyRouterType<RequestType, Args>)
