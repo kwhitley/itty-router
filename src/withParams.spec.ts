@@ -8,7 +8,7 @@ describe('withParams (middleware)', () => {
     const handler = vi.fn(({ id, method }) => ({ id, method }))
     const request = { method: 'GET', url: 'https://foo.bar/baz' }
 
-    await router.get('/:id', withParams, handler).handle(request)
+    await router.get('/:id', withParams, handler).fetch(request)
 
     expect(handler).toHaveReturnedWith({ id: 'baz', method: 'GET' })
   })
@@ -23,7 +23,7 @@ describe('withParams (middleware)', () => {
     }))
     const request = { method: 'GET', url: 'https://foo.bar/baz', foo: 'bar' }
 
-    await router.get('/:foo', withParams, handler).handle(request)
+    await router.get('/:foo', withParams, handler).fetch(request)
 
     // foo should be bar (from the original request), not baz (from the params)
     expect(handler).toHaveReturnedWith({
@@ -38,7 +38,7 @@ describe('withParams (middleware)', () => {
     const handler = vi.fn(({ id, method }) => ({ id, method }))
     const request = { method: 'GET', url: 'https://foo.bar/baz' }
 
-    await router.all('*', withParams).get('/:id', handler).handle(request)
+    await router.all('*', withParams).get('/:id', handler).fetch(request)
 
     expect(handler).toHaveReturnedWith({ id: 'baz', method: 'GET' })
   })
@@ -61,7 +61,7 @@ describe('withParams (middleware)', () => {
       testParam: 'testValue',
     }
 
-    await router.get('/:id', withParams, handler).handle(request)
+    await router.get('/:id', withParams, handler).fetch(request)
 
     expect(handler).toHaveReturnedWith({
       id: 'baz',

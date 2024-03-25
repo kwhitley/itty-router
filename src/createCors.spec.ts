@@ -34,7 +34,7 @@ describe('createCors(options)', () => {
           origin: 'http://localhost:3000',
         },
       })
-      const response = await router.handle(request)
+      const response = await router.fetch(request)
 
       expect(response.headers.get('Access-Control-Max-Age')).toBe('60')
     })
@@ -54,11 +54,11 @@ describe('createCors(options)', () => {
         }
       })
 
-      const response1 = await router.handle(generateRequest('http://localhost:3000'))
+      const response1 = await router.fetch(generateRequest('http://localhost:3000'))
       expect(response1.headers.get('Access-Control-Allow-Origin')).toBe('http://localhost:3000')
-      const response2 = await router.handle(generateRequest('http://localhost:4000'))
+      const response2 = await router.fetch(generateRequest('http://localhost:4000'))
       expect(response2.headers.get('Access-Control-Allow-Origin')).toBe('http://localhost:4000')
-      const response3 = await router.handle(generateRequest('http://localhost:5000'))
+      const response3 = await router.fetch(generateRequest('http://localhost:5000'))
       expect(response3.headers.get('Access-Control-Allow-Origin')).toBe(null)
     })
 
@@ -77,11 +77,11 @@ describe('createCors(options)', () => {
         }
       })
 
-      const response1 = await router.handle(generateRequest('https://secure.example.com'))
+      const response1 = await router.fetch(generateRequest('https://secure.example.com'))
       expect(response1.headers.get('Access-Control-Allow-Origin')).toBe('https://secure.example.com')
-      const response2 = await router.handle(generateRequest('https://another-secure.example.com'))
+      const response2 = await router.fetch(generateRequest('https://another-secure.example.com'))
       expect(response2.headers.get('Access-Control-Allow-Origin')).toBe('https://another-secure.example.com')
-      const response3 = await router.handle(generateRequest('http://unsecure.example.com'))
+      const response3 = await router.fetch(generateRequest('http://unsecure.example.com'))
       expect(response3.headers.get('Access-Control-Allow-Origin')).toBe(null)
     })
   })
@@ -98,7 +98,7 @@ describe('createCors(options)', () => {
           origin: 'http://localhost:3000',
         },
       })
-      const response = await router.handle(request)
+      const response = await router.fetch(request)
 
       expect(response.headers.get('Access-Control-Allow-Origin')).toBe(
         'http://localhost:3000'
@@ -109,7 +109,7 @@ describe('createCors(options)', () => {
       const { preflight } = createCors()
       const router = Router().all('*', preflight)
       const request = new Request('https://foo.bar', { method: 'OPTIONS' })
-      const response = await router.handle(request)
+      const response = await router.fetch(request)
 
       expect((response.headers.get('Allow') || '').includes('GET')).toBe(true)
     })
@@ -123,7 +123,7 @@ describe('createCors(options)', () => {
         .all('*', preflight)
         .get('/foo', () => json(13))
       const request = new Request('https://foo.bar/miss')
-      await router.handle(request).then(corsify).catch(catchError)
+      await router.fetch(request).then(corsify).catch(catchError)
 
       expect(catchError).toHaveBeenCalled()
     })
@@ -138,7 +138,7 @@ describe('createCors(options)', () => {
           origin: 'http://localhost:3000',
         },
       })
-      const response = await router.handle(request).then(corsify)
+      const response = await router.fetch(request).then(corsify)
 
       expect(response.headers.get('Access-Control-Allow-Origin')).toBe(
         'http://localhost:3000'
@@ -168,7 +168,7 @@ describe('createCors(options)', () => {
           origin: 'http://localhost:3000',
         },
       })
-      const response = await router.handle(request).then(corsify)
+      const response = await router.fetch(request).then(corsify)
 
       expect(response.headers.get('Access-Control-Allow-Origin')).toBe('*')
     })
@@ -183,7 +183,7 @@ describe('createCors(options)', () => {
           origin: 'http://localhost:3000',
         },
       })
-      const response = await router.handle(request).then(corsify)
+      const response = await router.fetch(request).then(corsify)
 
       expect(response.headers.get('Access-Control-Allow-Origin')).toBe(null)
     })
@@ -204,13 +204,13 @@ describe('createCors(options)', () => {
         })
 
       it('will work multiple times in a row', async () => {
-        const response1 = await router.handle(generateRequest())
+        const response1 = await router.fetch(generateRequest())
         expect(response1.status).toBe(200)
         expect(response1.headers.get('Access-Control-Allow-Origin')).toBe(
           origin
         )
 
-        const response2 = await router.handle(generateRequest())
+        const response2 = await router.fetch(generateRequest())
         expect(response2.status).toBe(200)
         expect(response2.headers.get('Access-Control-Allow-Origin')).toBe(
           origin
@@ -232,7 +232,7 @@ describe('createCors(options)', () => {
 
   //   await router
   //           .post('/', withContent, handler)
-  //           .handle(request)
+  //           .fetch(request)
 
   //   expect(handler).toHaveReturnedWith({ foo: 'bar' })
   // })
