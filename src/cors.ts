@@ -41,8 +41,11 @@ export const cors = (options: CorsOptions = {}) => {
     if (Array.isArray(origin)) return origin.includes(requestOrigin) ? requestOrigin : undefined
     // @ts-expect-error
     if (origin instanceof Function) return origin(requestOrigin)
+
     // @ts-expect-error
-    return origin
+    return origin == '*' && credentials
+    ? requestOrigin
+    : origin
   }
 
   const preflight = (request: Request) => {

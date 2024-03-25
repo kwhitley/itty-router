@@ -60,10 +60,14 @@ An ultra-tiny API microrouter, for use when [size matters](https://github.com/Ti
 ```js
 import { AutoRouter } from 'itty-router' // ~1kB
 
-export default AutoRouter()
+const router = AutoRouter()
+
+router
   .get('/hello/:name', ({ name }) => `Hello, ${name}!`)
   .get('/json', () => [1,2,3])
   .get('/promises', () => Promise.resolve('foo'))
+
+export default router
 
 // that's it ^-^
 ```
@@ -81,6 +85,9 @@ Join us on [Discord](https://discord.gg/53vyrZAu9u)!
 ## Special Thanks: Contributors
 
 These folks are the real heroes, making open source the powerhouse that it is! Help out and get your name added to this list! <3
+
+#### Constant Feedback, Suggestions, Moral Support & Community Building
+- TBD
 
 #### Core Concepts
 
