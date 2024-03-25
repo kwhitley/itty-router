@@ -8,7 +8,7 @@ export default defineConfig({
       reporter: ['text', 'lcov'],
       exclude: [
         '**/example/**',
-        '**/test/**',
+        '**/lib/**',
         'src/index.ts',
         'src/websocket.ts',
       ],

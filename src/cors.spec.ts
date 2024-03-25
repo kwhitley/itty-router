@@ -1,9 +1,8 @@
+import { describe, expect, it } from 'vitest'
+import { toReq } from '../lib'
 import { Router } from './Router'
 import { CorsOptions, cors } from './cors'
-import { toReq } from '../lib'
 import { text } from './text'
-import { describe, vi, expect, it } from 'vitest'
-
 
 // outputs a router with a single route at index
 const corsRouter = (options?: CorsOptions) => {
@@ -15,15 +14,20 @@ const corsRouter = (options?: CorsOptions) => {
   }).get('/', () => TEST_STRING)
 }
 
-const TEST_STRING = 'Hello World'
-const TEST_ORIGIN = 'https://foo.bar'
-
-const BASIC_OPTIONS_REQUEST = toReq('OPTIONS /')
-
 const DEFAULT_ROUTER = corsRouter()
-
 const HEADERS_AS_ARRAY = [ 'x-foo', 'x-bar' ]
 const HEADERS_AS_STRING = HEADERS_AS_ARRAY.join(',')
+const TEST_STRING = 'Hello World'
+const TEST_ORIGIN = 'https://foo.bar'
+const REGEXP_ORIGIN = /^(https:\/\/foo.bar)|(https:\/\/google.com)$/
+const REGEXP_DENY_ORIGIN = /^https:\/\/google.com$/
+const BASIC_OPTIONS_REQUEST = toReq('OPTIONS /', {
+  headers: { origin: TEST_ORIGIN },
+})
+const BASIC_REQUEST = toReq('/', {
+  headers: { origin: TEST_ORIGIN },
+})
+const NO_ORIGIN_REQUEST = toReq('/')
 
 describe('cors(options?: CorsOptions)', () => {
   describe('BEHAVIOR', () => {
@@ -45,6 +49,41 @@ describe('cors(options?: CorsOptions)', () => {
       it('can accept a string', async () => {
         const response = await corsRouter({ origin: TEST_ORIGIN }).fetch(BASIC_OPTIONS_REQUEST)
         expect(response.headers.get('access-control-allow-origin')).toBe(TEST_ORIGIN)
+      })
+
+      it('can accept a RegExp object (if test passes, reflect origin)', async () => {
+        const response = await corsRouter({ origin: /oo.bar$/ }).fetch(BASIC_OPTIONS_REQUEST)
+        expect(response.headers.get('access-control-allow-origin')).toBe(TEST_ORIGIN)
+      })
+
+      it('can accept a RegExp object (undefined if fails)', async () => {
+        const response = await corsRouter({ origin: REGEXP_DENY_ORIGIN }).fetch(BASIC_OPTIONS_REQUEST)
+        expect(response.headers.get('access-control-allow-origin')).toBeNull()
+      })
+
+      it('can accept true (reflect origin)', async () => {
+        const response = await corsRouter({ origin: true }).fetch(BASIC_OPTIONS_REQUEST)
+        expect(response.headers.get('access-control-allow-origin')).toBe(TEST_ORIGIN)
+      })
+
+      it('can accept a function (reflect origin if passes)', async () => {
+        const response = await corsRouter({ origin: (o) => TEST_ORIGIN.toUpperCase() }).fetch(BASIC_OPTIONS_REQUEST)
+        expect(response.headers.get('access-control-allow-origin')).toBe(TEST_ORIGIN.toUpperCase())
+      })
+
+      it('can accept a function (undefined if fails)', async () => {
+        const response = await corsRouter({ origin: () => undefined }).fetch(BASIC_OPTIONS_REQUEST)
+        expect(response.headers.get('access-control-allow-origin')).toBeNull()
+      })
+
+      it('can accept an array of strings (reflect origin if passes)', async () => {
+        const response = await corsRouter({ origin: [TEST_ORIGIN] }).fetch(BASIC_OPTIONS_REQUEST)
+        expect(response.headers.get('access-control-allow-origin')).toBe(TEST_ORIGIN)
+      })
+
+      it('can accept an array of strings (undefined if fails)', async () => {
+        const response = await corsRouter({ origin: [] }).fetch(BASIC_OPTIONS_REQUEST)
+        expect(response.headers.get('access-control-allow-origin')).toBeNull()
       })
     })
 
@@ -112,21 +151,59 @@ describe('cors(options?: CorsOptions)', () => {
     })
   })
 
-  // describe('OPTIONS', () => {
-  //   describe('DEFAULTS')
-  //   it('returns a { preflight, corsify } handler set', () => {
-  //     const { preflight, corsify } = cors()
-
-  //     expect(typeof preflight).toBe('function')
-  //     expect(typeof corsify).toBe('function')
-  //   })
-  // })
-
   describe('preflight', () => {
     describe('BEHAVIOR', () => {
-      it('intercepts OPTIONS requests', async () => {
+      it('responds to OPTIONS requests', async () => {
         const response = await DEFAULT_ROUTER.fetch(BASIC_OPTIONS_REQUEST)
         expect(response.headers.get('access-control-allow-origin')).toBe('*')
+      })
+
+      it('responds with status 204', async () => {
+        const response = await DEFAULT_ROUTER.fetch(BASIC_OPTIONS_REQUEST)
+        expect(response.status).toBe(204)
+      })
+    })
+  })
+
+  describe('corsify', () => {
+    describe('BEHAVIOR', () => {
+      it('adds cors headers to Response', async () => {
+        const { corsify } = cors()
+        const response = corsify(new Response(null))
+        expect(response.headers.get('access-control-allow-origin')).toBe('*')
+        expect(response.headers.get('access-control-allow-methods')).toBe('*')
+      })
+
+      it('will reflect origin (from request) if origin: true', async () => {
+        const { corsify } = cors({ origin: true })
+        const response = corsify(new Response(null))
+        const response2 = corsify(new Response(null), BASIC_REQUEST)
+        expect(response.headers.get('access-control-allow-origin')).toBeNull()
+        expect(response2.headers.get('access-control-allow-origin')).toBe(TEST_ORIGIN)
+      })
+
+      it('will reflect origin (from request) if origin is in array of origins', async () => {
+        const { corsify } = cors({ origin: [TEST_ORIGIN] })
+        const response = corsify(new Response(null))
+        const response2 = corsify(new Response(null), BASIC_REQUEST)
+        expect(response.headers.get('access-control-allow-origin')).toBeNull()
+        expect(response2.headers.get('access-control-allow-origin')).toBe(TEST_ORIGIN)
+      })
+
+      it('will reflect origin (from request) if origin passes RegExp origin test', async () => {
+        const { corsify } = cors({ origin: /oo.bar$/ })
+        const response = corsify(new Response(null))
+        const response2 = corsify(new Response(null), BASIC_REQUEST)
+        expect(response.headers.get('access-control-allow-origin')).toBeNull()
+        expect(response2.headers.get('access-control-allow-origin')).toBe(TEST_ORIGIN)
+      })
+
+      it('will pass origin as string if given', async () => {
+        const { corsify } = cors({ origin: TEST_ORIGIN })
+        const response = corsify(new Response(null))
+        const response2 = corsify(new Response(null), BASIC_REQUEST)
+        expect(response.headers.get('access-control-allow-origin')).toBe(TEST_ORIGIN)
+        expect(response2.headers.get('access-control-allow-origin')).toBe(TEST_ORIGIN)
       })
     })
   })

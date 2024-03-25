@@ -1,9 +1,6 @@
-import { StatusError } from 'StatusError'
-import { IRequest } from './IttyRouter'
-
 export type CorsOptions = {
   credentials?: true
-  origin?: string | string[] | RegExp | ((origin: string) => boolean)
+  origin?: boolean | string | string[] | RegExp | ((origin: string) => string | void)
   maxAge?: number
   allowMethods?: string | string[]
   allowHeaders?: any
@@ -36,19 +33,19 @@ export const cors = (options: CorsOptions = {}) => {
     'access-control-allow-credentials': credentials,
   }
 
-  const getAccessControlOrigin = (request?: Request) => {
+  const getAccessControlOrigin = (request?: Request): string => {
     const requestOrigin = request?.headers.get('origin') // may be null if no request passed
 
-    return {
-      // @ts-ignore
-      'access-control-allow-origin': origin.test?.(requestOrigin)
-      // @ts-ignore
-        ?? origin.join?.(',')
-        ?? origin instanceof Function
-          // @ts-ignore
-          ? origin(requestOrigin)
-          : origin
-    }
+    // @ts-expect-error
+    if (origin === true) return requestOrigin
+    // @ts-expect-error
+    if (origin instanceof RegExp) return origin.test(requestOrigin) ? requestOrigin : undefined
+    // @ts-expect-error
+    if (Array.isArray(origin)) return origin.includes(requestOrigin) ? requestOrigin : undefined
+    // @ts-expect-error
+    if (origin instanceof Function) return origin(requestOrigin)
+    // @ts-expect-error
+    return origin
   }
 
   const preflight = (request: Request) => {
@@ -56,7 +53,8 @@ export const cors = (options: CorsOptions = {}) => {
       return new Response(null, {
         status: 204,
         headers: Object.entries({
-          ...getAccessControlOrigin(request),
+          'access-control-allow-origin': getAccessControlOrigin(request),
+          // ...getAccessControlOrigin(request),
           ...corsHeaders,
         }).filter(v => v[1]),
       })
@@ -64,10 +62,6 @@ export const cors = (options: CorsOptions = {}) => {
   }
 
   const corsify = (response: Response, request?: Request) => {
-    // check for no response?
-    if (!(response instanceof Response))
-      throw new Error('Corsify must receive a valid Response.')
-
     // ignore if already has CORS headers
     if (response?.headers?.get('access-control-allow-origin')) return response
 
@@ -75,7 +69,7 @@ export const cors = (options: CorsOptions = {}) => {
     return new Response(response.body, {
       ...response,
       headers: Object.entries({
-        ...getAccessControlOrigin(request),
+        'access-control-allow-origin': getAccessControlOrigin(request),
         ...Object.fromEntries(response.headers),
         ...corsHeaders,
       }).filter(v => v[1]),
