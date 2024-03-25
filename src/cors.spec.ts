@@ -158,6 +158,11 @@ describe('cors(options?: CorsOptions)', () => {
         expect(response.headers.get('access-control-allow-origin')).toBe('*')
       })
 
+      it('ignores non-OPTIONS requests (does not return)', async () => {
+        const response = await DEFAULT_ROUTER.fetch(BASIC_REQUEST)
+        expect(response.status).toBe(200)
+      })
+
       it('responds with status 204', async () => {
         const response = await DEFAULT_ROUTER.fetch(BASIC_OPTIONS_REQUEST)
         expect(response.status).toBe(204)
