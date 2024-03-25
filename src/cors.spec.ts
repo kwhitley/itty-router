@@ -210,6 +210,19 @@ describe('cors(options?: CorsOptions)', () => {
         expect(response.headers.get('access-control-allow-origin')).toBe(TEST_ORIGIN)
         expect(response2.headers.get('access-control-allow-origin')).toBe(TEST_ORIGIN)
       })
+
+      it('will safely preserve multiple cookies', async () => {
+        const { corsify } = cors()
+        const response = new Response(null)
+        response.headers.append('Set-Cookie', 'cookie1=value1; Path=/; HttpOnly')
+        response.headers.append('Set-Cookie', 'cookie2=value2; Path=/; Secure')
+        const corsified = corsify(response.clone())
+
+        console.log('response1 headers', [...response.headers.entries()])
+        console.log('corsified headers', [...corsified.headers.entries()])
+        expect(response.headers.getSetCookie().length).toBe(2)
+        expect(corsified.headers.getSetCookie().length).toBe(2)
+      })
     })
   })
 })

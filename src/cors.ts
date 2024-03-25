@@ -54,7 +54,6 @@ export const cors = (options: CorsOptions = {}) => {
         status: 204,
         headers: Object.entries({
           'access-control-allow-origin': getAccessControlOrigin(request),
-          // ...getAccessControlOrigin(request),
           ...corsHeaders,
         }).filter(v => v[1]),
       })
@@ -65,14 +64,14 @@ export const cors = (options: CorsOptions = {}) => {
     // ignore if already has CORS headers
     if (response?.headers?.get('access-control-allow-origin')) return response
 
-    // Return new response with CORS headers.
     return new Response(response.body, {
       ...response,
-      headers: Object.entries({
-        'access-control-allow-origin': getAccessControlOrigin(request),
-        ...Object.fromEntries(response.headers),
-        ...corsHeaders,
-      }).filter(v => v[1]),
+      // @ts-expect-error
+      headers: [
+        ...response.headers,
+        ['access-control-allow-origin', getAccessControlOrigin(request)],
+        ...Object.entries(corsHeaders),
+      ].filter(v => v[1]),
     })
   }
 
