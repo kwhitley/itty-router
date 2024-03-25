@@ -1,3 +1,5 @@
+import { IRequest } from 'IttyRouter'
+
 export type CorsOptions = {
   credentials?: true
   origin?: boolean | string | string[] | RegExp | ((origin: string) => string | void)
@@ -5,6 +7,14 @@ export type CorsOptions = {
   allowMethods?: string | string[]
   allowHeaders?: any
   exposeHeaders?: string | string[]
+}
+
+export type Preflight = (request: IRequest) => Response | void
+export type Corsify = (response: Response, request?: IRequest) => Response
+
+export type CorsPair = {
+  preflight: Preflight
+  corsify: Corsify
 }
 
 // Create CORS function with default options.
