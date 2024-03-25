@@ -19,15 +19,12 @@ export const cors = (options: CorsOptions = {}) => {
     maxAge,
   } = options
 
-  // @ts-expect-error - this will be fine (ADD TESTS)
-  const allowAll = origin.includes?.('*') || origin === '*'
-
   // create generic CORS headers
   const corsHeaders: Record<string, any> = {
     'access-control-allow-headers': allowHeaders?.join?.(',') ?? allowHeaders, // include allowed headers
-    // @ts-ignore
+    // @ts-expect-error
     'access-control-expose-headers': exposeHeaders?.join?.(',') ?? exposeHeaders, // include allowed headers
-    // @ts-ignore
+    // @ts-expect-error
     'access-control-allow-methods': allowMethods?.join?.(',') ?? allowMethods,  // include allowed methods
     'access-control-max-age': maxAge,
     'access-control-allow-credentials': credentials,

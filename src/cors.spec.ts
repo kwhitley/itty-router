@@ -19,7 +19,6 @@ const HEADERS_AS_ARRAY = [ 'x-foo', 'x-bar' ]
 const HEADERS_AS_STRING = HEADERS_AS_ARRAY.join(',')
 const TEST_STRING = 'Hello World'
 const TEST_ORIGIN = 'https://foo.bar'
-const REGEXP_ORIGIN = /^(https:\/\/foo.bar)|(https:\/\/google.com)$/
 const REGEXP_DENY_ORIGIN = /^https:\/\/google.com$/
 const BASIC_OPTIONS_REQUEST = toReq('OPTIONS /', {
   headers: { origin: TEST_ORIGIN },
@@ -27,7 +26,6 @@ const BASIC_OPTIONS_REQUEST = toReq('OPTIONS /', {
 const BASIC_REQUEST = toReq('/', {
   headers: { origin: TEST_ORIGIN },
 })
-const NO_ORIGIN_REQUEST = toReq('/')
 
 describe('cors(options?: CorsOptions)', () => {
   describe('BEHAVIOR', () => {
@@ -67,7 +65,7 @@ describe('cors(options?: CorsOptions)', () => {
       })
 
       it('can accept a function (reflect origin if passes)', async () => {
-        const response = await corsRouter({ origin: (o) => TEST_ORIGIN.toUpperCase() }).fetch(BASIC_OPTIONS_REQUEST)
+        const response = await corsRouter({ origin: () => TEST_ORIGIN.toUpperCase() }).fetch(BASIC_OPTIONS_REQUEST)
         expect(response.headers.get('access-control-allow-origin')).toBe(TEST_ORIGIN.toUpperCase())
       })
 
