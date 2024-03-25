@@ -13,7 +13,7 @@ export const cors = (options: CorsOptions = {}) => {
   const {
     origin = '*',
     credentials = false,
-    allowMethods = ['*'],
+    allowMethods = '*',
     allowHeaders,
     exposeHeaders,
     maxAge,
