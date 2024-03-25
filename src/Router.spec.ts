@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
-import { toReq } from '../test'
+import { toReq } from '../lib'
 import { Router } from './Router'
 import { json } from './json'
 import { error } from './error'
@@ -115,11 +115,11 @@ describe(`SPECIFIC TESTS: Router`, () => {
     })
 
     // manipulate
-    router.finally.push(() => true)
+    router.finally?.push(() => true)
 
     const response = await router.fetch(toReq('/'))
-    expect(router.before.length).toBe(2)
-    expect(router.finally.length).toBe(3)
+    expect(router.before?.length).toBe(2)
+    expect(router.finally?.length).toBe(3)
     expect(response).toBe(true)
   })
 

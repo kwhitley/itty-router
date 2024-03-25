@@ -25,4 +25,4 @@ export * from './withCookies'
 export * from './withParams'
 
 // CORS
-export * from './createCors'
+export * from './cors'
