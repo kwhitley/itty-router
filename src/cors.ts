@@ -10,10 +10,8 @@ export type CorsOptions = {
   exposeHeaders?: string | string[]
 }
 
-const AC_ALLOW_ORIGIN = 'access-control-allow-origin'
-
 // Create CORS function with default options.
-export const createCors = (options: CorsOptions = {}) => {
+export const cors = (options: CorsOptions = {}) => {
   // Destructure and set defaults for options.
   const {
     origin = '*',
@@ -24,8 +22,10 @@ export const createCors = (options: CorsOptions = {}) => {
     maxAge,
   } = options
 
-  // const origin = options.origin // support either.  WASTED BYTES?
+  // @ts-expect-error - this will be fine (ADD TESTS)
+  const allowAll = origin.includes?.('*') || origin === '*'
 
+  // create generic CORS headers
   const corsHeaders: Record<string, any> = {
     'access-control-allow-headers': allowHeaders?.join(',') ?? allowHeaders, // include allowed headers
     // @ts-ignore
@@ -37,7 +37,7 @@ export const createCors = (options: CorsOptions = {}) => {
   }
 
   const getAccessControlOrigin = (request?: Request) => {
-    const requestOrigin = request?.headers.get('origin')
+    const requestOrigin = request?.headers.get('origin') // may be null if no request passed
 
     return {
       // @ts-ignore
@@ -68,8 +68,8 @@ export const createCors = (options: CorsOptions = {}) => {
     if (!(response instanceof Response))
       throw new Error('Corsify must receive a valid Response.')
 
-    // ignore if already ahs CORS headers
-    if (response?.headers?.get(AC_ALLOW_ORIGIN)) return response
+    // ignore if already has CORS headers
+    if (response?.headers?.get('access-control-allow-origin')) return response
 
     // Return new response with CORS headers.
     return new Response(response.body, {

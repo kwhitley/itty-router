@@ -16,15 +16,10 @@
       "require": "./AutoRouter.js",
       "types": "./AutoRouter.d.ts"
     },
-    "./createCors": {
-      "import": "./createCors.mjs",
-      "require": "./createCors.js",
-      "types": "./createCors.d.ts"
-    },
-    "./createCors.prev": {
-      "import": "./createCors.prev.mjs",
-      "require": "./createCors.prev.js",
-      "types": "./createCors.prev.d.ts"
+    "./cors": {
+      "import": "./cors.mjs",
+      "require": "./cors.js",
+      "types": "./cors.d.ts"
     },
     "./createResponse": {
       "import": "./createResponse.mjs",

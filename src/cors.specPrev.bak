@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
-import { createCors } from './createCors'
+import { cors } from './cors'
 import { json } from './json'
 import { Router } from './Router'
 import { toReq } from '../test'
