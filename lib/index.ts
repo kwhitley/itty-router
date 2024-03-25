@@ -11,11 +11,7 @@ export const toReq = (methodAndPath: string, options: RequestInit = {}) => {
     method = 'GET'
   }
 
-<<<<<<< HEAD:lib/index.ts
   return new Request(`https://example.com${path}`, { method, ...options })
-=======
-  return new Request(`https://example.com${path}`, { method })
->>>>>>> v5.x:test/index.ts
 }
 
 export const extract = ({ params, query }) => ({ params, query })
