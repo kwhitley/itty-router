@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-import { IRequest, IRequestStrict, Router } from '../src/IttyRouter'
-=======
 import { IRequest, IRequestStrict, IttyRouter } from '../src/IttyRouter'
->>>>>>> v5.x
 
 type FooRequest = {
   foo: string
