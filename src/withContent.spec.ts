@@ -15,7 +15,7 @@ describe('withContent (middleware)', () => {
       body: JSON.stringify(JSON_CONTENT),
     })
 
-    await router.post('/', withContent, handler).handle(request)
+    await router.post('/', withContent, handler).fetch(request)
 
     expect(handler).toHaveReturnedWith(JSON_CONTENT)
   })
@@ -28,7 +28,7 @@ describe('withContent (middleware)', () => {
       body: TEXT_CONTENT,
     })
 
-    await router.post('/', withContent, handler).handle(request)
+    await router.post('/', withContent, handler).fetch(request)
 
     expect(handler).toHaveReturnedWith(TEXT_CONTENT)
   })
@@ -40,18 +40,18 @@ describe('withContent (middleware)', () => {
     body.append('foo', 'bar')
 
     const request = new Request('https://foo.bar', { method: 'POST', body })
-    await router.post('/', withContent, handler).handle(request)
+    await router.post('/', withContent, handler).fetch(request)
 
     expect(handler).toHaveReturnedWith('bar')
   })
 
-  it('will return empty string (but not throw) if no body', async () => {
+  it('will return undefined (but not throw) if no body', async () => {
     const router = Router()
-    const handler = vi.fn(({ content }) => content ?? true)
+    const handler = vi.fn(({ content }) => content === undefined ? true : false)
     const request = new Request('https://foo.bar', { method: 'POST' })
 
-    await router.post('/', withContent, handler).handle(request)
+    await router.post('/', withContent, handler).fetch(request)
 
-    expect(handler).toHaveReturnedWith('')
+    expect(handler).toHaveReturnedWith(true)
   })
 })

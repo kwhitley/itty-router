@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 import { IRequest, IRequestStrict, Router } from '../src/IttyRouter'
+=======
+import { IRequest, IRequestStrict, IttyRouter } from '../src/IttyRouter'
+>>>>>>> v5.x
 
 type FooRequest = {
   foo: string
@@ -16,7 +20,7 @@ type Env = {
 type CF = [env: Env, ctx: ExecutionContext]
 
 // this router defines a global signature of <BarRequest, CF>
-const custom = Router<BarRequest, CF>()
+const custom = IttyRouter<BarRequest, CF>()
 
 custom
   .get('/', ({ bar, json }) => {
@@ -32,7 +36,11 @@ custom
     ctx.waitUntil
   })
 
-const router = Router({ base: '/' })
+  .get<FooRequest>('/', (request) => {
+    request.foo // found in FooRequest override
+  })
+
+const router = IttyRouter({ base: '/' })
 
 router
   // call custom HTTP method

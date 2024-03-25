@@ -1,12 +1,10 @@
 import {
-  Equal,
   IRequest,
   IttyRouterOptions,
   IttyRouterType,
   RequestLike,
   Route,
-  RouteHandler,
-  UniversalRoute
+  RouteHandler
 } from './IttyRouter'
 
 export type ResponseHandler<ResponseType = any, RequestType = IRequest, Args extends any[] = any[]> =
@@ -29,35 +27,32 @@ export type RouterOptions = {
 
 export const Router = <
   RequestType = IRequest,
-  Args extends any[] = any[],
-  RouteType = Equal<RequestType, IRequest> extends true ? Route : UniversalRoute<RequestType, Args>
->({ base = '', routes = [], ...other }: RouterOptions = {}): RouterType<RouteType, Args> =>
-  // @ts-expect-error TypeScript doesn't know that Proxy makes this work
+  Args extends any[] = any[]
+>({ base = '', routes = [], ...other }: RouterOptions = {}): RouterType<RequestType, Args> =>
   ({
     __proto__: new Proxy({}, {
       // @ts-expect-error (we're adding an expected prop "path" to the get)
-      get: (target: any, prop: string, receiver: RouterType, path: string) =>
-        prop == 'handle' ? receiver.fetch :
-          // @ts-expect-error - unresolved type
-          (route: string, ...handlers: RouteHandler<I>[]) =>
-            routes.push(
-              [
-                prop.toUpperCase?.(),
-                RegExp(`^${(path = (base + route)
-                  .replace(/\/+(\/|$)/g, '$1'))                       // strip double & trailing splash
-                  .replace(/(\/?\.?):(\w+)\+/g, '($1(?<$2>*))')       // greedy params
-                  .replace(/(\/?\.?):(\w+)/g, '($1(?<$2>[^$1/]+?))')  // named params and image format
-                  .replace(/\./g, '\\.')                              // dot in path
-                  .replace(/(\/?)\*/g, '($1.*)?')                     // wildcard
-                }/*$`),
-                handlers,                                             // embed handlers
-                path,                                                 // embed clean route path
-              ]
-            ) && receiver
+      get: (target: any, prop: string, receiver: object, path: string) =>
+        (route: string, ...handlers: RouteHandler<RequestType, Args>[]) =>
+          routes.push(
+            [
+              prop.toUpperCase?.(),
+              RegExp(`^${(path = (base + route)
+                .replace(/\/+(\/|$)/g, '$1'))                       // strip double & trailing splash
+                .replace(/(\/?\.?):(\w+)\+/g, '($1(?<$2>*))')       // greedy params
+                .replace(/(\/?\.?):(\w+)/g, '($1(?<$2>[^$1/]+?))')  // named params and image format
+                .replace(/\./g, '\\.')                              // dot in path
+                .replace(/(\/?)\*/g, '($1.*)?')                     // wildcard
+              }/*$`),
+              // @ts-expect-error - fiddly
+              handlers,                                             // embed handlers
+              path,                                                 // embed clean route path
+            ]
+          ) && receiver
     }),
     routes,
     ...other,
-    async fetch (request: RequestLike, ...args) {
+    async fetch (request: RequestLike, ...args: any) {
       let response,
           match,
           url = new URL(request.url),
@@ -95,27 +90,4 @@ export const Router = <
 
       return response
     },
-  })
-
-// const finallyHandler: RouteHandler<Response> = (response) => { response.headers }
-// const errorHandler: ErrorHandler<Error> = (err) => { err.message }
-
-// const router = Router({
-//   finally: [
-//     finallyHandler,
-//     (response: Response) => { response.headers },
-//   ],
-//   catch: errorHandler,
-// })
-
-// type CustomRequest = {
-//   foo: string
-// } & IRequest
-
-// router.before = [
-//   (r: CustomRequest | IRequest) => { r.foo }
-// ]
-
-// router.get<CustomRequest>('/', (r) => r.foo)
-
-
+  } as RouterType<RequestType, Args>)

@@ -5,11 +5,6 @@ import { json } from './json'
 import { error } from './error'
 
 describe(`SPECIFIC TESTS: Router`, () => {
-  it('supports both router.handle and router.fetch', () => {
-    const router = Router()
-    expect(router.fetch).toBe(router.handle)
-  })
-
   it('allows populating a before stage', async () => {
     const handler = vi.fn(r => typeof r.date)
     const router = Router({
@@ -120,11 +115,11 @@ describe(`SPECIFIC TESTS: Router`, () => {
     })
 
     // manipulate
-    router.finally.push(() => true)
+    router.finally?.push(() => true)
 
     const response = await router.fetch(toReq('/'))
-    expect(router.before.length).toBe(2)
-    expect(router.finally.length).toBe(3)
+    expect(router.before?.length).toBe(2)
+    expect(router.finally?.length).toBe(3)
     expect(response).toBe(true)
   })
 
