@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from 'vitest'
 import { cors } from './cors'
 import { json } from './json'
 import { Router } from './Router'
-import { toReq } from '../test'
+import { toReq } from '../lib'
 
 class WebSocketResponse {
   constructor(body, options = {}) {

@@ -2,7 +2,7 @@ import { StatusError } from 'StatusError'
 import { IRequest } from './IttyRouter'
 
 export type CorsOptions = {
-  credentials?: boolean
+  credentials?: true
   origin?: string | string[] | RegExp | ((origin: string) => boolean)
   maxAge?: number
   allowMethods?: string | string[]
@@ -27,11 +27,11 @@ export const cors = (options: CorsOptions = {}) => {
 
   // create generic CORS headers
   const corsHeaders: Record<string, any> = {
-    'access-control-allow-headers': allowHeaders?.join(',') ?? allowHeaders, // include allowed headers
+    'access-control-allow-headers': allowHeaders?.join?.(',') ?? allowHeaders, // include allowed headers
     // @ts-ignore
-    'access-control-expose-headers': exposeHeaders?.join(',') ?? exposeHeaders, // include allowed headers
+    'access-control-expose-headers': exposeHeaders?.join?.(',') ?? exposeHeaders, // include allowed headers
     // @ts-ignore
-    'access-control-allow-methods': allowMethods.join(',') ?? allowMethods,  // include allowed methods
+    'access-control-allow-methods': allowMethods?.join?.(',') ?? allowMethods,  // include allowed methods
     'access-control-max-age': maxAge,
     'access-control-allow-credentials': credentials,
   }
@@ -55,10 +55,10 @@ export const cors = (options: CorsOptions = {}) => {
     if (request.method == 'OPTIONS') {
       return new Response(null, {
         status: 204,
-        headers: new Headers({
+        headers: Object.entries({
           ...getAccessControlOrigin(request),
           ...corsHeaders,
-        }),
+        }).filter(v => v[1]),
       })
     } // otherwise ignore
   }
@@ -74,11 +74,11 @@ export const cors = (options: CorsOptions = {}) => {
     // Return new response with CORS headers.
     return new Response(response.body, {
       ...response,
-      headers: {
+      headers: Object.entries({
         ...getAccessControlOrigin(request),
         ...Object.fromEntries(response.headers),
         ...corsHeaders,
-      },
+      }).filter(v => v[1]),
     })
   }
 

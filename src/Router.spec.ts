@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
-import { toReq } from '../test'
+import { toReq } from '../lib'
 import { Router } from './Router'
 import { json } from './json'
 import { error } from './error'

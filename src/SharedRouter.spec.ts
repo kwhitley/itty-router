@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
-import { createTestRunner, extract, toReq } from '../test'
+import { createTestRunner, extract, toReq } from '../lib'
 import { IttyRouter } from './IttyRouter'
 import { Router as FlowRouter } from './Router'
 
