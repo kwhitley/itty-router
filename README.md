@@ -9,8 +9,8 @@
   <a href="https://npmjs.com/package/itty-router" target="_blank">
     <img src="https://img.shields.io/npm/v/itty-router.svg?style=flat-square" alt="npm version" />
   </a>
-  <a href="https://deno.bundlejs.com/?q=itty-router/Router" target="_blank">
-    <img src="https://deno.bundlejs.com/?q=itty-router/Router&badge&badge-style=flat-square" alt="bundle size" />
+  <a href="https://edge.bundlejs.com/?q=itty-router/Router" target="_blank">
+    <img src="https://edge.bundlejs.com/?q=itty-router/Router&badge&badge-style=flat-square" alt="bundle size" />
   </a>
   <a href="https://github.com/kwhitley/itty-router/actions/workflows/verify.yml" target="_blank">
     <img src="https://img.shields.io/github/actions/workflow/status/kwhitley/itty-router/verify.yml?branch=v4.x&style=flat-square" alt="build status" />
@@ -41,19 +41,25 @@
   </a>
 </p>
 
+###  [Documentation](https://itty.dev/itty-router) &nbsp; | &nbsp; [Discord](https://discord.gg/53vyrZAu9u)
+
 ---
 
 An ultra-tiny API microrouter, for use when [size matters](https://github.com/TigersWay/cloudflare-playground) (e.g. [Cloudflare Workers](https://developers.cloudflare.com/workers/)).
 
+
+
+
 ## Features
 
-- Tiny. We have routers from [~450 bytes](https://itty.dev/itty-router/routers/ittyrouter) to a [~1kB bytes](https://itty.dev/itty-router/routers/autorouter) batteries-included version.  For comparison, [express.js](https://www.npmjs.com/package/express) is over 200x as large.
-- Web Standards - Use it [anywhere, in any environment](https://itty.dev/itty-router/runtimes).
-- No assumptions. Return anything you like, pass in any arguments you like.
+- Tiny. Routers from [~450 bytes](https://itty.dev/itty-router/routers/ittyrouter) to a [~970 bytes](https://itty.dev/itty-router/routers/autorouter) batteries-included version (~240-500x smaller than Express.js).
+- Web Standards. Use it [anywhere, in any environment](https://itty.dev/itty-router/runtimes).
+- No assumptions. Return anything; pass in anything.
+- Dead-simple user-code.  We want _your_ code to be tiny too.
 - Future-proof.  HTTP methods not-yet-invented already work with it.
 - [Route-parsing](https://itty.dev/itty-router/route-patterns) & [query parsing](https://itty.dev/itty-router/route-patterns#query).
 - [Middleware](https://itty.dev/itty-router/middleware) - use ours or write your own.
-- [Nesting](https://itty.dev/itty-router/nesting).
+- [Supports Nesting](https://itty.dev/itty-router/nesting).
 
 ## Example (Cloudflare Worker or Bun)
 
@@ -72,9 +78,9 @@ export default router
 // that's it ^-^
 ```
 
-# [Full Documentation](https://itty.dev/itty-router) @ [itty.dev](https://itty.dev)
+## Need Help?
 
-Complete API documentation is available at [itty.dev/itty-router](https://itty.dev/itty-router), or join our [Discord](https://discord.gg/53vyrZAu9u) channel to chat with community members for quick help!
+[Complete API documentation](https://itty.dev/itty-router) is available on [itty.dev](https://itty.dev/itty-router), or join our [Discord](https://discord.gg/53vyrZAu9u) channel to chat with community members for quick help!
 
 ## Join the Discussion!
 
@@ -82,36 +88,10 @@ Have a question? Suggestion? Idea? Complaint? Want to send a gift basket?
 
 Join us on [Discord](https://discord.gg/53vyrZAu9u)!
 
-## Special Thanks: Contributors
+---
 
-These folks are the real heroes, making open source the powerhouse that it is! Help out and get your name added to this list! <3
+# A Special Thanks :heart:
 
-#### Constant Feedback, Suggestions, Moral Support & Community Building
-- TBD
+As the community and contributor list has grown (and thus an individualized list here is no longer easily maintainable), I'd like to thank each and every one of you for making itty far greater than its humble origins.  The robustness you see today, the careful consideration of every byte spent on features, the API choices, the code-golfing itself... are all thanks to the efforts and feedback from the community.  I'd especially like to thank the core contributors and PR-authors, as well as the fantastic folks on the [itty Discord](https://discord.gg/53vyrZAu9u) group, for their tireless work refining this little beast and answering community questions.
 
-#### Core Concepts
 
-- [@mvasigh](https://github.com/mvasigh) - proxy hack wizard behind itty, coding partner in crime, maker of the entire doc site, etc, etc.
-- [@hunterloftis](https://github.com/hunterloftis) - router.handle() method now accepts extra arguments and passed them to route functions
-- [@SupremeTechnopriest](https://github.com/SupremeTechnopriest) - improved TypeScript support and documentation! :D
-
-#### Code Golfing
-
-- [@taralx](https://github.com/taralx) - router internal code-golfing refactor for performance and character savings
-- [@DrLoopFall](https://github.com/DrLoopFall) - v4.x re-minification
-
-#### Fixes & Build
-
-- [@taralx](https://github.com/taralx) - QOL fixes for contributing (dev dep fix and test file consistency) <3
-- [@technoyes](https://github.com/technoyes) - three kind-of-a-big-deal errors fixed. Imagine the look on my face... thanks man!! :)
-- [@roojay520](https://github.com/roojay520) - TS interface fixes
-- [@jahands](https://github.com/jahands) - v4.x TS fixes
-- and many, many others
-
-#### Documentation
-
-- [@arunsathiya](https://github.com/arunsathiya),
-  [@poacher2k](https://github.com/poacher2k),
-  [@ddarkr](https://github.com/ddarkr),
-  [@kclauson](https://github.com/kclauson),
-  [@jcapogna](https://github.com/jcapogna)
