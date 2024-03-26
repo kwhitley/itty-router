@@ -1,7 +1,7 @@
 ## Changelog
 
 - **v5.0.0**
-  - BREAKING: router.handle is no longer supported, please use router.fetch.
+  - BREAKING: router.fetch replaces router.handle (now deprecated)
   - BREAKING: "createCors" has been deprecated in favor of "cors" (new options & requirements)
   - changed: previous Router (smallest) is now IttyRouter
   - added: Router (full backwards compatability with previous Router) has been added, including:
@@ -10,6 +10,7 @@
     - "catch" stage (single error handler)
   - added: AutoRouter (batteries-included Router)
   - fixed (TS): Routers types have been modified to allow both rotuer-level generics AND route-level generics in the same instance.
+  - docs: see Migration guide at http://localhost:5173/itty-router/migrations/v4-v5
 - **v4.2.2**
   - fixed: withContent should return undefined if request.body is undefined
 - **v4.2.1**
