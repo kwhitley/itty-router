@@ -178,8 +178,10 @@ describe('cors(options?: CorsOptions)', () => {
       it('adds cors headers to Response', async () => {
         const { corsify } = cors()
         const response = corsify(new Response(null))
+        const response2 = corsify(new Response(null), BASIC_REQUEST)
         expect(response.headers.get('access-control-allow-origin')).toBe('*')
         expect(response.headers.get('access-control-allow-methods')).toBe('*')
+        expect(response2.headers.get('access-control-allow-origin')).toBe('*')
       })
 
       it('will reflect origin (from request) if origin: true', async () => {
