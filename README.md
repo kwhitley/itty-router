@@ -61,7 +61,7 @@ An ultra-tiny API microrouter, for use when [size matters](https://github.com/Ti
 - [Middleware](https://itty.dev/itty-router/middleware) - use ours or write your own.
 - [Supports Nesting](https://itty.dev/itty-router/nesting).
 
-## Example (Cloudflare Worker or Bun)
+## Example
 
 ```js
 import { AutoRouter } from 'itty-router' // ~1kB
