@@ -78,17 +78,13 @@ export default router
 // that's it ^-^
 ```
 
-## Need Help?
+<br />
 
+## Need Help?
 [Complete API documentation](https://itty.dev/itty-router) is available on [itty.dev](https://itty.dev/itty-router), or join our [Discord](https://discord.gg/53vyrZAu9u) channel to chat with community members for quick help!
 
 ## Join the Discussion!
-
-Have a question? Suggestion? Idea? Complaint? Want to send a gift basket?
-
-Join us on [Discord](https://discord.gg/53vyrZAu9u)!
-
----
+Have a question? Suggestion? Idea? Complaint? Want to send a gift basket? Join us on [Discord](https://discord.gg/53vyrZAu9u)!
 
 # A Special Thanks :heart:
 
