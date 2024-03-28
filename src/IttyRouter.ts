@@ -1,21 +1,21 @@
 export type GenericTraps = Record<string, any>
 
 export type RequestLike = {
-  method: string,
-  url: string,
+  method: string
+  url: string
 } & GenericTraps
 
 export type IRequestStrict = {
-  method: string,
-  url: string,
-  route: string,
+  method: string
+  url: string
+  route: string
   params: {
-    [key: string]: string,
-  },
+    [key: string]: string
+  }
   query: {
-    [key: string]: string | string[] | undefined,
-  },
-  proxy?: any,
+    [key: string]: string | string[] | undefined
+  }
+  proxy?: any
 } & Request
 
 export type IRequest = IRequestStrict & GenericTraps
@@ -43,32 +43,22 @@ export type Route<R = IRequest, A extends Array<any> = any[]> = <RequestType = R
   ...handlers: RequestHandler<RequestType, Args>[]
 ) => IttyRouterType<RequestType, Args>
 
-// this is an alternative UniveralRoute, accepting generics (from upstream), but without
-// per-route overrides
-// export type UniversalRoute<RequestType extends IRequest = IRequest, Args extends any[] = any[]> = (
-//   path: string,
-//   ...handlers: RequestHandler<RequestType, Args>[]
-// ) => IttyRouterType<UniversalRoute<RequestType, Args>, Args>
-
-// helper function to detect equality in types (used to detect custom Request on router)
-export type Equal<X, Y> = (<T>() => T extends X ? 1 : 2) extends (<T>() => T extends Y ? 1 : 2) ? true : false;
-
 export type CustomRoutes<R = Route> = {
-  [key: string]: R,
+  [key: string]: R
 }
 
 export type IttyRouterType<R = IRequest, A extends any[] = any[], Output = any> = {
-  __proto__: IttyRouterType<R>,
-  routes: RouteEntry[],
+  __proto__: IttyRouterType<R>
+  routes: RouteEntry[]
   fetch: <Args extends any[] = A>(request: RequestLike, ...extra: Args) => Promise<Output>
-  all: Route<R, A>,
-  delete: Route<R, A>,
-  get: Route<R, A>,
-  head: Route<R, A>,
-  options: Route<R, A>,
-  patch: Route<R, A>,
-  post: Route<R, A>,
-  put: Route<R, A>,
+  all: Route<R, A>
+  delete: Route<R, A>
+  get: Route<R, A>
+  head: Route<R, A>
+  options: Route<R, A>
+  patch: Route<R, A>
+  post: Route<R, A>
+  put: Route<R, A>
 } & CustomRoutes<Route<R, A>>
 
 export const IttyRouter = <
