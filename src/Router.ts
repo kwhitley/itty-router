@@ -2,25 +2,24 @@ import {
   IRequest,
   IttyRouterOptions,
   IttyRouterType,
-  RequestLike,
-  Route,
-  RouteHandler
+  RequestHandler,
+  RequestLike
 } from './IttyRouter'
 
-export type ResponseHandler<ResponseType = any, RequestType = IRequest, Args extends any[] = any[]> =
-    (response: ResponseType, request: RequestType, ...args: Args) => any
+export type ResponseHandler<ResponseType = Response, RequestType = IRequest, Args extends any[] = any[]> =
+    (response: ResponseType & any, request: RequestType & any, ...args: Args) => any
 
 export type ErrorHandler<ErrorType = Error, RequestType = IRequest, Args extends any[] = any[]> =
     (response: ErrorType, request: RequestType, ...args: Args) => any
 
-export type RouterType<R = Route, Args extends any[] = any[]> = {
-  before?: RouteHandler[]
+export type RouterType<R = IRequest, Args extends any[] = any[]> = {
+  before?: RequestHandler<any>[]
   catch?: ErrorHandler
   finally?: ResponseHandler[]
 } & IttyRouterType<R, Args>
 
 export type RouterOptions = {
-  before?: RouteHandler[]
+  before?: RequestHandler<any>[]
   catch?: ErrorHandler
   finally?: ResponseHandler[]
 } & IttyRouterOptions
@@ -33,7 +32,7 @@ export const Router = <
     __proto__: new Proxy({}, {
       // @ts-expect-error (we're adding an expected prop "path" to the get)
       get: (target: any, prop: string, receiver: object, path: string) =>
-        (route: string, ...handlers: RouteHandler<RequestType, Args>[]) =>
+        (route: string, ...handlers: RequestHandler<RequestType, Args>[]) =>
           routes.push(
             [
               prop.toUpperCase?.(),
