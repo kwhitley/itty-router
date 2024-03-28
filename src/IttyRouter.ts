@@ -28,8 +28,6 @@ export type IttyRouterOptions = {
 export type RequestHandler<R = IRequest, Args extends Array<any> = any[]> =
   (request: R, ...args: Args) => any
 
-// export type RouteHandler = RouteHandler
-
 export type RouteEntry = [
   httpMethod: string,
   match: RegExp,
