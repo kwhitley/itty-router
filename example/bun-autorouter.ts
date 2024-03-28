@@ -1,6 +1,24 @@
 import { AutoRouter } from '../src/AutoRouter'
+import { IRequest, IRequestStrict, RequestHandler } from '../src/IttyRouter'
+import { ResponseHandler } from '../src/Router'
 
-const router = AutoRouter({ port: 3001 })
+type BenchmarkedRequest = {
+  start: number
+} & IRequestStrict
+
+const withBenchmarking: RequestHandler<BenchmarkedRequest> = (request) => {
+  request.start = Date.now()
+}
+
+const logger: ResponseHandler<Response, BenchmarkedRequest> = (response, request) => {
+  console.log(response.status, request.url, 'served in', Date.now() - request.start, 'ms')
+}
+
+const router = AutoRouter({
+  port: 3001,
+  before: [],
+  finally: [logger],
+})
 
 router
   .get('/basic', () => new Response('Success!'))
