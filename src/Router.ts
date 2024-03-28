@@ -2,9 +2,8 @@ import {
   IRequest,
   IttyRouterOptions,
   IttyRouterType,
-  RequestLike,
-  Route,
-  RequestHandler
+  RequestHandler,
+  RequestLike
 } from './IttyRouter'
 
 export type ResponseHandler<ResponseType = Response, RequestType = IRequest, Args extends any[] = any[]> =

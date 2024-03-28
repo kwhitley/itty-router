@@ -16,8 +16,8 @@ const logger: ResponseHandler<Response, BenchmarkedRequest> = (response, request
 
 const router = AutoRouter({
   port: 3001,
-  before: [],
-  finally: [logger],
+  before: [withBenchmarking, () => {}],
+  finally: [logger, () => {}],
 })
 
 router
