@@ -10,7 +10,7 @@
     - "catch" stage (single error handler)
   - added: AutoRouter (batteries-included Router)
   - fixed (TS): Routers types have been modified to allow both rotuer-level generics AND route-level generics in the same instance.
-  - docs: see Migration guide at http://localhost:5173/itty-router/migrations/v4-v5
+  - docs: see Migration guide at https://itty.dev/itty-router/migrations/v4-v5
 - **v4.2.2**
   - fixed: withContent should return undefined if request.body is undefined
 - **v4.2.1**
