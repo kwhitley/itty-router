@@ -7,104 +7,80 @@
   "types": "./index.d.ts",
   "exports": {
     ".": {
-      "import": "./index.mjs",
-      "require": "./index.js",
-      "types": "./index.d.ts"
+      "import": "./dist/index.mjs",
+      "types": "./dist/index.d.ts"
     },
     "./AutoRouter": {
-      "import": "./AutoRouter.mjs",
-      "require": "./AutoRouter.js",
-      "types": "./AutoRouter.d.ts"
+      "import": "./dist/AutoRouter.mjs",
+      "types": "./dist/AutoRouter.d.ts"
     },
     "./cors": {
-      "import": "./cors.mjs",
-      "require": "./cors.js",
-      "types": "./cors.d.ts"
+      "import": "./dist/cors.mjs",
+      "types": "./dist/cors.d.ts"
     },
     "./createResponse": {
-      "import": "./createResponse.mjs",
-      "require": "./createResponse.js",
-      "types": "./createResponse.d.ts"
+      "import": "./dist/createResponse.mjs",
+      "types": "./dist/createResponse.d.ts"
     },
     "./error": {
-      "import": "./error.mjs",
-      "require": "./error.js",
-      "types": "./error.d.ts"
+      "import": "./dist/error.mjs",
+      "types": "./dist/error.d.ts"
     },
     "./html": {
-      "import": "./html.mjs",
-      "require": "./html.js",
-      "types": "./html.d.ts"
+      "import": "./dist/html.mjs",
+      "types": "./dist/html.d.ts"
     },
     "./IttyRouter": {
-      "import": "./IttyRouter.mjs",
-      "require": "./IttyRouter.js",
-      "types": "./IttyRouter.d.ts"
+      "import": "./dist/IttyRouter.mjs",
+      "types": "./dist/IttyRouter.d.ts"
     },
     "./jpeg": {
-      "import": "./jpeg.mjs",
-      "require": "./jpeg.js",
-      "types": "./jpeg.d.ts"
+      "import": "./dist/jpeg.mjs",
+      "types": "./dist/jpeg.d.ts"
     },
     "./json": {
-      "import": "./json.mjs",
-      "require": "./json.js",
-      "types": "./json.d.ts"
+      "import": "./dist/json.mjs",
+      "types": "./dist/json.d.ts"
     },
     "./png": {
-      "import": "./png.mjs",
-      "require": "./png.js",
-      "types": "./png.d.ts"
+      "import": "./dist/png.mjs",
+      "types": "./dist/png.d.ts"
     },
     "./Router": {
-      "import": "./Router.mjs",
-      "require": "./Router.js",
-      "types": "./Router.d.ts"
+      "import": "./dist/Router.mjs",
+      "types": "./dist/Router.d.ts"
     },
     "./status": {
-      "import": "./status.mjs",
-      "require": "./status.js",
-      "types": "./status.d.ts"
+      "import": "./dist/status.mjs",
+      "types": "./dist/status.d.ts"
     },
     "./StatusError": {
-      "import": "./StatusError.mjs",
-      "require": "./StatusError.js",
-      "types": "./StatusError.d.ts"
+      "import": "./dist/StatusError.mjs",
+      "types": "./dist/StatusError.d.ts"
     },
     "./text": {
-      "import": "./text.mjs",
-      "require": "./text.js",
-      "types": "./text.d.ts"
-    },
-    "./types": {
-      "import": "./types.mjs",
-      "require": "./types.js",
-      "types": "./types.d.ts"
+      "import": "./dist/text.mjs",
+      "types": "./dist/text.d.ts"
     },
     "./webp": {
-      "import": "./webp.mjs",
-      "require": "./webp.js",
-      "types": "./webp.d.ts"
+      "import": "./dist/webp.mjs",
+      "types": "./dist/webp.d.ts"
     },
     "./websocket": {
-      "import": "./websocket.mjs",
-      "require": "./websocket.js",
-      "types": "./websocket.d.ts"
+      "import": "./dist/websocket.mjs",
+      "types": "./dist/websocket.d.ts"
     },
     "./withContent": {
-      "import": "./withContent.mjs",
-      "require": "./withContent.js",
-      "types": "./withContent.d.ts"
+      "import": "./dist/withContent.mjs",
+      "types": "./dist/withContent.d.ts"
     },
     "./withCookies": {
-      "import": "./withCookies.mjs",
-      "require": "./withCookies.js",
-      "types": "./withCookies.d.ts"
+      "import": "./dist/withCookies.mjs",
+      "types": "./dist/withCookies.d.ts"
     },
     "./withParams": {
-      "import": "./withParams.mjs",
-      "require": "./withParams.js",
-      "types": "./withParams.d.ts"
+      "import": "./dist/withParams.mjs",
+      "types": "./dist/withParams.d.ts"
     }
   },
   "keywords": [
@@ -121,23 +97,12 @@
     "nested"
   ],
   "scripts": {
-    "dev": "yarn test",
-    "lint": "yarn run eslint src",
-    "prettier": "prettier --write src test example",
-    "format": "yarn lint && yarn prettier",
-    "test": "vitest --config ./vitest.config.ts --coverage --reporter verbose",
-    "test:once": "vitest run",
-    "coverage": "vitest run --coverage",
-    "coveralls": "yarn coverage && cat ./coverage/lcov.info | coveralls",
-    "verify": "echo 'verifying module...' && yarn build && yarn test:once",
-    "prerelease": "yarn verify",
-    "prerelease:next": "yarn verify",
-    "prebuild": "rimraf dist && mkdir dist",
-    "build": "rollup -c",
-    "release": "release --tag --push --patch --src=dist",
-    "release:next": "release --tag --push --type=next --src=dist",
-    "runtime:bun": "bun example/bun.ts",
-    "runtime:node": "node example/node.js"
+    "dev": "bun test --watch --coverage",
+    "test": "bun test --coverage",
+    "lint": "itty lint",
+    "build": "itty lint && itty build --hybrid",
+    "release": "itty release --prepare --tag --push",
+    "release:next": "itty release --prepare --tag --push --type=next"
   },
   "repository": {
     "type": "git",
@@ -150,31 +115,7 @@
   },
   "homepage": "https://itty.dev/itty-router",
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20240405.0",
-    "@rollup/plugin-multi-entry": "^6.0.1",
-    "@rollup/plugin-terser": "^0.4.4",
-    "@rollup/plugin-typescript": "^11.1.6",
-    "@types/node": "^20.12.6",
-    "@typescript-eslint/eslint-plugin": "^7.6.0",
-    "@typescript-eslint/parser": "^7.6.0",
-    "@vitest/coverage-v8": "^1.4.0",
-    "@whatwg-node/server": "^0.9.32",
-    "coveralls": "^3.1.1",
-    "eslint": "^8.57.0",
-    "eslint-config-prettier": "^9.1.0",
-    "fs-extra": "^11.2.0",
-    "globby": "^14.0.1",
-    "http": "^0.0.1-security",
-    "jsdom": "^24.0.0",
-    "prettier": "^3.2.5",
-    "rimraf": "^5.0.5",
-    "rollup": "^4.14.1",
-    "rollup-plugin-bundle-size": "^1.0.3",
-    "rollup-plugin-copy": "^3.5.0",
-    "rollup-plugin-multi-input": "^1.4.1",
-    "typescript": "^5.4.4",
-    "vite": "^5.2.8",
-    "vitest": "^1.4.0",
-    "yarn-release": "^1.10.6"
+    "@types/bun": "^1.2.17",
+    "itty-packager": "^1.6.7"
   }
 }

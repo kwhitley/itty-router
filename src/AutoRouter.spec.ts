@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, mock } from 'bun:test'
 import { toReq } from '../lib'
 import { AutoRouter } from './AutoRouter'
 import { text } from './text'
@@ -25,11 +25,11 @@ describe(`SPECIFIC TESTS: AutoRouter`, () => {
       })
 
       it('includes withParams', async () => {
-        const handler = vi.fn(({ id }) => id)
+        const handler = mock(({ id }) => id)
         const router = AutoRouter().get('/:id', handler)
 
         await router.fetch(toReq('/foo'))
-        expect(handler).toHaveReturnedWith('foo')
+        expect(handler.mock.results[0].value).toEqual('foo')
       })
 
       it('catches errors by default', async () => {
@@ -56,7 +56,7 @@ describe(`SPECIFIC TESTS: AutoRouter`, () => {
       })
 
       it('missing: RouteHandler - receives request as the first parameter', async () => {
-        const missing = vi.fn(() => {})
+        const missing = mock(() => {})
         const router = AutoRouter({ missing })
         const request = toReq('/')
         await router.fetch(request)
@@ -64,7 +64,7 @@ describe(`SPECIFIC TESTS: AutoRouter`, () => {
       })
       
       it('before: RouteHandler - adds upstream middleware', async () => {
-        const handler = vi.fn(r => typeof r.date)
+        const handler = mock(r => typeof r.date)
         const router = AutoRouter({
           before: [
             r => { r.date = Date.now() }
@@ -72,7 +72,7 @@ describe(`SPECIFIC TESTS: AutoRouter`, () => {
         }).get('*', handler)
 
         await router.fetch(toReq('/'))
-        expect(handler).toHaveReturnedWith('number')
+        expect(handler.mock.results[0].value).toEqual('number')
       })
 
       describe('finally: (response: Response, request: IRequest, ...args) - ResponseHandler', async () => {

@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it } from 'bun:test'
 import { error } from './error'
 
 describe('error(status: number, body: string | object)', () => {

@@ -1,21 +1,21 @@
-import { describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, mock } from 'bun:test'
 import { Router } from './Router'
 import { withParams } from './withParams'
 
 describe('withParams (middleware)', () => {
   it('allows accessing route params from the request itself', async () => {
     const router = Router()
-    const handler = vi.fn(({ id, method }) => ({ id, method }))
+    const handler = mock(({ id, method }) => ({ id, method }))
     const request = { method: 'GET', url: 'https://foo.bar/baz' }
 
     await router.get('/:id', withParams, handler).fetch(request)
 
-    expect(handler).toHaveReturnedWith({ id: 'baz', method: 'GET' })
+    expect(handler.mock.results[0].value).toEqual({ id: 'baz', method: 'GET' })
   })
 
   it('will not interfere with existing props', async () => {
     const router = Router()
-    const handler = vi.fn(({ id, method, foo, testParam }) => ({
+    const handler = mock(({ id, method, foo, testParam }) => ({
       id,
       method,
       foo,
@@ -26,7 +26,7 @@ describe('withParams (middleware)', () => {
     await router.get('/:foo', withParams, handler).fetch(request)
 
     // foo should be bar (from the original request), not baz (from the params)
-    expect(handler).toHaveReturnedWith({
+    expect(handler.mock.results[0].value).toEqual({
       method: 'GET',
       foo: 'bar',
       testParam: undefined,
@@ -35,12 +35,12 @@ describe('withParams (middleware)', () => {
 
   it('can be used as global upstream middleware', async () => {
     const router = Router()
-    const handler = vi.fn(({ id, method }) => ({ id, method }))
+    const handler = mock(({ id, method }) => ({ id, method }))
     const request = { method: 'GET', url: 'https://foo.bar/baz' }
 
     await router.all('*', withParams).get('/:id', handler).fetch(request)
 
-    expect(handler).toHaveReturnedWith({ id: 'baz', method: 'GET' })
+    expect(handler.mock.results[0].value).toEqual({ id: 'baz', method: 'GET' })
   })
 
   it('binds a function property of request to the request object', async () => {
@@ -50,7 +50,7 @@ describe('withParams (middleware)', () => {
       return this.testParam
     }
 
-    const handler = vi.fn(({ id, method, myFunction }) => {
+    const handler = mock(({ id, method, myFunction }) => {
       return { id, method, testParam: myFunction() }
     })
 
@@ -63,7 +63,7 @@ describe('withParams (middleware)', () => {
 
     await router.get('/:id', withParams, handler).fetch(request)
 
-    expect(handler).toHaveReturnedWith({
+    expect(handler.mock.results[0].value).toEqual({
       id: 'baz',
       method: 'GET',
       testParam: 'testValue',

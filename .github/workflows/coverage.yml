@@ -1,0 +1,25 @@
+on: [push, pull_request]
+
+name: test
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - uses: oven-sh/setup-bun@v2.0.1
+
+      - name: Clean workspace and run tests
+        run: |
+          git clean -xfd       # Remove all untracked files, including stale tests
+          bun install
+          bun test --coverage --coverage-reporter=lcov
+
+      - name: Coveralls
+        uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
