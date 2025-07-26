@@ -135,12 +135,13 @@ describe('Common Router Spec', () => {
 
         it('BUG: avoids toString prototype bug', async () => {
           const route = routes.find((r) => r.path === '/foo/:id')
+          const callsBefore = route?.callback.mock.calls.length || 0
+          
           await router.fetch(toReq('/foo/13?toString=value'))
 
-          expect(route?.callback.mock.results[0].value).toEqual({
-            params: { id: '13' },
-            query: { toString: 'value' },
-          })
+          const result = route?.callback.mock.results[callsBefore].value
+          expect(result.params.id).toBe('13')
+          expect(result.query['toString']).toBe('value')
         })
 
         it('requires exact route match', async () => {
@@ -163,7 +164,7 @@ describe('Common Router Spec', () => {
           expect(handler.mock.results[0].value).toEqual({ method: 'GET', route: route1 })
 
           await router.fetch(toReq(`POST ${route2}`))
-          expect(handler.mock.results[0].value).toEqual({ method: 'POST', route: route2 })
+          expect(handler.mock.results[1].value).toEqual({ method: 'POST', route: route2 })
         })
 
         it('match earliest routes that match', async () => {

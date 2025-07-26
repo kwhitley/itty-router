@@ -1,5 +1,5 @@
 /* istanbul ignore file */
-import { expect, it, vi } from 'vitest'
+import { expect, it, mock } from 'bun:test'
 
 // generates a request from a string like:
 // GET /whatever
@@ -22,7 +22,7 @@ const testRoute = async (
 ) => {
   const routes = []
   const router = Router({ routes })
-  const handler = vi.fn((req) => req.params)
+  const handler = mock((req) => req.params)
 
   // register route
   router[method](route, handler)
@@ -41,7 +41,7 @@ const testRoute = async (
     expect(handler).toHaveBeenCalled()
 
     if (typeof returns === 'object') {
-      expect(handler).toHaveReturnedWith(returns)
+      expect(handler.mock.results[0].value).toEqual(returns)
     }
   }
 }
