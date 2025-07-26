@@ -1,86 +1,86 @@
 {
   "name": "itty-router",
-  "version": "5.0.18",
+  "version": "5.0.19",
   "description": "A tiny, zero-dependency router, designed to make beautiful APIs in any environment.",
   "main": "./index.js",
   "module": "./index.mjs",
   "types": "./index.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/index.mjs",
-      "types": "./dist/index.d.ts"
+      "import": "./index.mjs",
+      "types": "./index.d.ts"
     },
     "./AutoRouter": {
-      "import": "./dist/AutoRouter.mjs",
-      "types": "./dist/AutoRouter.d.ts"
+      "import": "./AutoRouter.mjs",
+      "types": "./AutoRouter.d.ts"
     },
     "./cors": {
-      "import": "./dist/cors.mjs",
-      "types": "./dist/cors.d.ts"
+      "import": "./cors.mjs",
+      "types": "./cors.d.ts"
     },
     "./createResponse": {
-      "import": "./dist/createResponse.mjs",
-      "types": "./dist/createResponse.d.ts"
+      "import": "./createResponse.mjs",
+      "types": "./createResponse.d.ts"
     },
     "./error": {
-      "import": "./dist/error.mjs",
-      "types": "./dist/error.d.ts"
+      "import": "./error.mjs",
+      "types": "./error.d.ts"
     },
     "./html": {
-      "import": "./dist/html.mjs",
-      "types": "./dist/html.d.ts"
+      "import": "./html.mjs",
+      "types": "./html.d.ts"
     },
     "./IttyRouter": {
-      "import": "./dist/IttyRouter.mjs",
-      "types": "./dist/IttyRouter.d.ts"
+      "import": "./IttyRouter.mjs",
+      "types": "./IttyRouter.d.ts"
     },
     "./jpeg": {
-      "import": "./dist/jpeg.mjs",
-      "types": "./dist/jpeg.d.ts"
+      "import": "./jpeg.mjs",
+      "types": "./jpeg.d.ts"
     },
     "./json": {
-      "import": "./dist/json.mjs",
-      "types": "./dist/json.d.ts"
+      "import": "./json.mjs",
+      "types": "./json.d.ts"
     },
     "./png": {
-      "import": "./dist/png.mjs",
-      "types": "./dist/png.d.ts"
+      "import": "./png.mjs",
+      "types": "./png.d.ts"
     },
     "./Router": {
-      "import": "./dist/Router.mjs",
-      "types": "./dist/Router.d.ts"
+      "import": "./Router.mjs",
+      "types": "./Router.d.ts"
     },
     "./status": {
-      "import": "./dist/status.mjs",
-      "types": "./dist/status.d.ts"
+      "import": "./status.mjs",
+      "types": "./status.d.ts"
     },
     "./StatusError": {
-      "import": "./dist/StatusError.mjs",
-      "types": "./dist/StatusError.d.ts"
+      "import": "./StatusError.mjs",
+      "types": "./StatusError.d.ts"
     },
     "./text": {
-      "import": "./dist/text.mjs",
-      "types": "./dist/text.d.ts"
+      "import": "./text.mjs",
+      "types": "./text.d.ts"
     },
     "./webp": {
-      "import": "./dist/webp.mjs",
-      "types": "./dist/webp.d.ts"
+      "import": "./webp.mjs",
+      "types": "./webp.d.ts"
     },
     "./websocket": {
-      "import": "./dist/websocket.mjs",
-      "types": "./dist/websocket.d.ts"
+      "import": "./websocket.mjs",
+      "types": "./websocket.d.ts"
     },
     "./withContent": {
-      "import": "./dist/withContent.mjs",
-      "types": "./dist/withContent.d.ts"
+      "import": "./withContent.mjs",
+      "types": "./withContent.d.ts"
     },
     "./withCookies": {
-      "import": "./dist/withCookies.mjs",
-      "types": "./dist/withCookies.d.ts"
+      "import": "./withCookies.mjs",
+      "types": "./withCookies.d.ts"
     },
     "./withParams": {
-      "import": "./dist/withParams.mjs",
-      "types": "./dist/withParams.d.ts"
+      "import": "./withParams.mjs",
+      "types": "./withParams.d.ts"
     }
   },
   "keywords": [
