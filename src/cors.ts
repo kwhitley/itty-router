@@ -41,10 +41,8 @@ export const cors = (options: CorsOptions = {}) => {
     // @ts-expect-error
     if (origin instanceof Function) return origin(requestOrigin)
 
-    // @ts-expect-error
-    return origin == '*' && credentials
-    ? requestOrigin
-    : origin
+    // @ts-ignore
+    return origin == '*' && credentials ? requestOrigin : origin
   }
 
   const appendHeadersAndReturn = (response: Response, headers: Record<string, any>): Response => {
