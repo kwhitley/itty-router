@@ -7,7 +7,6 @@ export default [
       'examples/**/*',
       'lib/**/*',
       'dist/**/*',
-      'node_modules/**/*'
     ]
   }
 ]
