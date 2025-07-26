@@ -8,98 +8,79 @@
   "exports": {
     ".": {
       "import": "./dist/index.mjs",
-      "types": "./dist/index.d.ts",
-      "require": "./dist/index.cjs"
+      "types": "./dist/index.d.ts"
     },
     "./AutoRouter": {
       "import": "./dist/AutoRouter.mjs",
-      "types": "./dist/AutoRouter.d.ts",
-      "require": "./dist/AutoRouter.cjs"
+      "types": "./dist/AutoRouter.d.ts"
     },
     "./cors": {
       "import": "./dist/cors.mjs",
-      "types": "./dist/cors.d.ts",
-      "require": "./dist/cors.cjs"
+      "types": "./dist/cors.d.ts"
     },
     "./createResponse": {
       "import": "./dist/createResponse.mjs",
-      "types": "./dist/createResponse.d.ts",
-      "require": "./dist/createResponse.cjs"
+      "types": "./dist/createResponse.d.ts"
     },
     "./error": {
       "import": "./dist/error.mjs",
-      "types": "./dist/error.d.ts",
-      "require": "./dist/error.cjs"
+      "types": "./dist/error.d.ts"
     },
     "./html": {
       "import": "./dist/html.mjs",
-      "types": "./dist/html.d.ts",
-      "require": "./dist/html.cjs"
+      "types": "./dist/html.d.ts"
     },
     "./IttyRouter": {
       "import": "./dist/IttyRouter.mjs",
-      "types": "./dist/IttyRouter.d.ts",
-      "require": "./dist/IttyRouter.cjs"
+      "types": "./dist/IttyRouter.d.ts"
     },
     "./jpeg": {
       "import": "./dist/jpeg.mjs",
-      "types": "./dist/jpeg.d.ts",
-      "require": "./dist/jpeg.cjs"
+      "types": "./dist/jpeg.d.ts"
     },
     "./json": {
       "import": "./dist/json.mjs",
-      "types": "./dist/json.d.ts",
-      "require": "./dist/json.cjs"
+      "types": "./dist/json.d.ts"
     },
     "./png": {
       "import": "./dist/png.mjs",
-      "types": "./dist/png.d.ts",
-      "require": "./dist/png.cjs"
+      "types": "./dist/png.d.ts"
     },
     "./Router": {
       "import": "./dist/Router.mjs",
-      "types": "./dist/Router.d.ts",
-      "require": "./dist/Router.cjs"
+      "types": "./dist/Router.d.ts"
     },
     "./status": {
       "import": "./dist/status.mjs",
-      "types": "./dist/status.d.ts",
-      "require": "./dist/status.cjs"
+      "types": "./dist/status.d.ts"
     },
     "./StatusError": {
       "import": "./dist/StatusError.mjs",
-      "types": "./dist/StatusError.d.ts",
-      "require": "./dist/StatusError.cjs"
+      "types": "./dist/StatusError.d.ts"
     },
     "./text": {
       "import": "./dist/text.mjs",
-      "types": "./dist/text.d.ts",
-      "require": "./dist/text.cjs"
+      "types": "./dist/text.d.ts"
     },
     "./webp": {
       "import": "./dist/webp.mjs",
-      "types": "./dist/webp.d.ts",
-      "require": "./dist/webp.cjs"
+      "types": "./dist/webp.d.ts"
     },
     "./websocket": {
       "import": "./dist/websocket.mjs",
-      "types": "./dist/websocket.d.ts",
-      "require": "./dist/websocket.cjs"
+      "types": "./dist/websocket.d.ts"
     },
     "./withContent": {
       "import": "./dist/withContent.mjs",
-      "types": "./dist/withContent.d.ts",
-      "require": "./dist/withContent.cjs"
+      "types": "./dist/withContent.d.ts"
     },
     "./withCookies": {
       "import": "./dist/withCookies.mjs",
-      "types": "./dist/withCookies.d.ts",
-      "require": "./dist/withCookies.cjs"
+      "types": "./dist/withCookies.d.ts"
     },
     "./withParams": {
       "import": "./dist/withParams.mjs",
-      "types": "./dist/withParams.d.ts",
-      "require": "./dist/withParams.cjs"
+      "types": "./dist/withParams.d.ts"
     }
   },
   "keywords": [
@@ -119,7 +100,7 @@
     "dev": "bun test --watch --coverage",
     "test": "bun test --coverage",
     "lint": "itty lint",
-    "build": "itty build --hybrid",
+    "build": "itty lint && itty build --hybrid",
     "release": "itty release --prepare --tag --push",
     "release:next": "itty release --prepare --tag --push --type=next"
   },
@@ -134,11 +115,7 @@
   },
   "homepage": "https://itty.dev/itty-router",
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20240405.0",
-    "@types/node": "^20.12.6",
-    "@whatwg-node/server": "^0.9.32",
-    "http": "^0.0.1-security",
-    "itty-packager": "^1.6.7",
-    "jsdom": "^24.0.0"
+    "@types/bun": "^1.2.17",
+    "itty-packager": "^1.6.7"
   }
 }

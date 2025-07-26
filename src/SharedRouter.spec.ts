@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, mock } from 'bun:test'
 import { createTestRunner, extract, toReq } from '../lib'
 import { IttyRouter } from './IttyRouter'
 import { Router as FlowRouter } from './Router'
@@ -16,13 +16,13 @@ describe('Common Router Spec', () => {
       const router = Router()
       const testRoutes = createTestRunner(Router)
       const routes = [
-        { path: '/', callback: vi.fn(extract), method: 'get' },
-        { path: '/foo/first', callback: vi.fn(extract), method: 'get' },
-        { path: '/foo/:id', callback: vi.fn(extract), method: 'get' },
-        { path: '/foo', callback: vi.fn(extract), method: 'post' },
+        { path: '/', callback: mock(extract), method: 'get' },
+        { path: '/foo/first', callback: mock(extract), method: 'get' },
+        { path: '/foo/:id', callback: mock(extract), method: 'get' },
+        { path: '/foo', callback: mock(extract), method: 'post' },
         {
           path: '/passthrough',
-          callback: vi.fn(r => r),
+          callback: mock(r => r),
           method: 'get',
         },
       ]
@@ -59,8 +59,8 @@ describe('Common Router Spec', () => {
       })
 
       it('allows preloading advanced routes', async () => {
-        const basicHandler = vi.fn((req) => req.params)
-        const customHandler = vi.fn((req) => req.params)
+        const basicHandler = mock((req) => req.params)
+        const customHandler = mock((req) => req.params)
 
         const router = Router({
           routes: [
@@ -70,17 +70,17 @@ describe('Common Router Spec', () => {
         })
 
         await router.fetch(toReq('/test.a.b'))
-        expect(basicHandler).toHaveReturnedWith({ x: 'a.b' })
+        expect(basicHandler.mock.results[0].value).toEqual({ x: 'a.b' })
 
         await router.fetch(toReq('/custom-12345'))
         expect(customHandler).not.toHaveBeenCalled() // custom route mismatch
 
         await router.fetch(toReq('/custom-123'))
-        expect(customHandler).toHaveReturnedWith({ custom: '123' }) // custom route hit
+        expect(customHandler.mock.results[0].value).toEqual({ custom: '123' }) // custom route hit
       })
 
       it('allows loading advanced routes after config', async () => {
-        const handler = vi.fn((req) => req.params)
+        const handler = mock((req) => req.params)
 
         const router = Router()
 
@@ -88,21 +88,21 @@ describe('Common Router Spec', () => {
         router.routes.push(['GET', /^\/custom2-(?<custom>\w\d{3})$/, [handler], '/custom'])
 
         await router.fetch(toReq('/custom2-a456'))
-        expect(handler).toHaveReturnedWith({ custom: 'a456' }) // custom route hit
+        expect(handler.mock.results[0].value).toEqual({ custom: 'a456' }) // custom route hit
       })
 
       describe('.{method}(route: string, handler1: function, ..., handlerN: function)', () => {
         it('can accept multiple handlers (each mutates request)', async () => {
           const r = Router()
-          const handler1 = vi.fn((req) => {
+          const handler1 = mock((req) => {
             req.a = 1
           })
-          const handler2 = vi.fn((req) => {
+          const handler2 = mock((req) => {
             req.b = 2
 
             return req
           })
-          const handler3 = vi.fn((req) => ({ c: 3, ...req }))
+          const handler3 = mock((req) => ({ c: 3, ...req }))
           r.get('/multi/:id', handler1, handler2, handler3)
 
           await r.fetch(toReq('/multi/foo'))
@@ -127,7 +127,7 @@ describe('Common Router Spec', () => {
           const route = routes.find((r) => r.path === '/foo/:id')
           await router.fetch(toReq('/foo/13?foo=bar&cat=dog'))
 
-          expect(route?.callback).toHaveReturnedWith({
+          expect(route?.callback.mock.results[0].value).toEqual({
             params: { id: '13' },
             query: { foo: 'bar', cat: 'dog' },
           })
@@ -137,7 +137,7 @@ describe('Common Router Spec', () => {
           const route = routes.find((r) => r.path === '/foo/:id')
           await router.fetch(toReq('/foo/13?toString=value'))
 
-          expect(route?.callback).toHaveReturnedWith({
+          expect(route?.callback.mock.results[0].value).toEqual({
             params: { id: '13' },
             query: { toString: 'value' },
           })
@@ -154,22 +154,22 @@ describe('Common Router Spec', () => {
         it('returns { method, route } from matched route', async () => {
           const route1 = '/foo/bar/:baz+'
           const route2 = '/items'
-          const handler = vi.fn(({ method, route }) => ({ method, route }))
+          const handler = mock(({ method, route }) => ({ method, route }))
 
           const router = Router()
           router.get(route1, handler).post(route2, handler)
 
           await router.fetch(toReq(route1))
-          expect(handler).toHaveReturnedWith({ method: 'GET', route: route1 })
+          expect(handler.mock.results[0].value).toEqual({ method: 'GET', route: route1 })
 
           await router.fetch(toReq(`POST ${route2}`))
-          expect(handler).toHaveReturnedWith({ method: 'POST', route: route2 })
+          expect(handler.mock.results[0].value).toEqual({ method: 'POST', route: route2 })
         })
 
         it('match earliest routes that match', async () => {
           const router = Router()
-          const handler1 = vi.fn(() => 1)
-          const handler2 = vi.fn(() => 1)
+          const handler1 = mock(() => 1)
+          const handler2 = mock(() => 1)
           router.get('/foo/static', handler1)
           router.get('/foo/:id', handler2)
 
@@ -194,12 +194,12 @@ describe('Common Router Spec', () => {
           const route = routes.find((r) => r.path === '/passthrough')
           await router.fetch(request)
 
-          expect(route?.callback).toHaveReturnedWith(request)
+          expect(route?.callback.mock.results[0].value).toEqual(request)
         })
 
         it('allows missing handler later in flow with "all" channel', async () => {
-          const missingHandler = vi.fn()
-          const matchHandler = vi.fn()
+          const missingHandler = mock()
+          const matchHandler = mock()
 
           const router1 = Router()
           const router2 = Router({ base: '/nested' })
@@ -227,7 +227,7 @@ describe('Common Router Spec', () => {
             req.user = { id: 13 }
           }
 
-          const handler = vi.fn((req) => req.user.id)
+          const handler = mock((req) => req.user.id)
 
           r.get('/middleware/*', middleware)
           r.get('/middleware/:id', handler)
@@ -235,12 +235,12 @@ describe('Common Router Spec', () => {
           await r.fetch(toReq('/middleware/foo'))
 
           expect(handler).toHaveBeenCalled()
-          expect(handler).toHaveReturnedWith(13)
+          expect(handler.mock.results[0].value).toEqual(13)
         })
 
         it('can accept a basepath for routes', async () => {
           const router = Router({ base: '/api' })
-          const handler = vi.fn()
+          const handler = mock()
           router.get('/foo/:id?', handler)
 
           await router.fetch(toReq('/api/foo'))
@@ -252,7 +252,7 @@ describe('Common Router Spec', () => {
 
         it('basepath works with "/"', async () => {
           const router = Router({ base: '/' })
-          const handler = vi.fn()
+          const handler = mock()
           router.get('/foo/:id?', handler)
 
           await router.fetch(toReq('/foo'))
@@ -261,17 +261,17 @@ describe('Common Router Spec', () => {
 
         it('can pull route params from the basepath as well', async () => {
           const router = Router({ base: '/:collection' })
-          const handler = vi.fn((req) => req.params)
+          const handler = mock((req) => req.params)
           router.get('/:id', handler)
 
           await router.fetch(toReq('/todos/13'))
           expect(handler).toHaveBeenCalled()
-          expect(handler).toHaveReturnedWith({ collection: 'todos', id: '13' })
+          expect(handler.mock.results[0].value).toEqual({ collection: 'todos', id: '13' })
         })
 
         it('allows any method to match an "all" route', async () => {
           const router = Router()
-          const handler = vi.fn()
+          const handler = mock()
           router.all('/crud/*', handler)
 
           await router.fetch(toReq('/crud/foo'))
@@ -283,11 +283,11 @@ describe('Common Router Spec', () => {
 
         it('stops at a handler that throws', async () => {
           const router = Router()
-          const handler1 = vi.fn()
-          const handler2 = vi.fn(() => {
+          const handler1 = mock()
+          const handler2 = mock(() => {
             throw new Error()
           })
-          const handler3 = vi.fn()
+          const handler3 = mock()
           router.get('/foo', handler1, handler2, handler3)
 
           const escape = (err) => err
@@ -301,10 +301,10 @@ describe('Common Router Spec', () => {
 
         it('can throw an error and still handle if using catch', async () => {
           const router = Router()
-          const handlerWithError = vi.fn(() => {
+          const handlerWithError = mock(() => {
             throw new Error(ERROR_MESSAGE)
           })
-          const errorHandler = vi.fn((err) => err.message)
+          const errorHandler = mock((err) => err.message)
 
           router.get('/foo', handlerWithError)
 
@@ -312,7 +312,7 @@ describe('Common Router Spec', () => {
 
           expect(handlerWithError).toHaveBeenCalled()
           expect(errorHandler).toHaveBeenCalled()
-          expect(errorHandler).toHaveReturnedWith(ERROR_MESSAGE)
+          expect(errorHandler.mock.results[0].value).toEqual(ERROR_MESSAGE)
         })
 
         it('can throw method not allowed error', async () => {
@@ -323,9 +323,9 @@ describe('Common Router Spec', () => {
             status: 405,
             statusText: 'Method not allowed',
           })
-          const handler = vi.fn(() => new Response(okText))
-          const middleware = vi.fn()
-          const errorHandler = vi.fn(() => errorResponse)
+          const handler = mock(() => new Response(okText))
+          const middleware = mock()
+          const errorHandler = mock(() => errorResponse)
 
           router.post('*', middleware, handler).all('*', errorHandler)
 
@@ -359,7 +359,7 @@ describe('Common Router Spec', () => {
           const router = Router()
 
           expect(() => {
-            router.get('/foo', vi.fn()).get('/foo', vi.fn())
+            router.get('/foo', mock()).get('/foo', mock())
           }).not.toThrow()
         })
       })
@@ -384,7 +384,7 @@ describe('Common Router Spec', () => {
 
         it('will pass request.proxy instead of request if found', async () => {
           const router = Router()
-          const handler = vi.fn((req) => req)
+          const handler = mock((req) => req)
           let proxy
 
           const withProxy = (request) => {
@@ -395,13 +395,13 @@ describe('Common Router Spec', () => {
 
           await router.fetch(toReq('/foo'))
 
-          expect(handler).toHaveReturnedWith(proxy)
+          expect(handler.mock.results[0].value).toEqual(proxy)
         })
 
         it('can handle POST body even if not used', async () => {
           const router = Router()
-          const handler = vi.fn((req) => req.json())
-          const errorHandler = vi.fn()
+          const handler = mock((req) => req.json())
+          const errorHandler = mock()
 
           router.post('/foo', handler).all('*', errorHandler)
 
@@ -425,7 +425,7 @@ describe('Common Router Spec', () => {
 
       it('can get query params', async () => {
         const router = Router()
-        const handler = vi.fn((req) => req.query)
+        const handler = mock((req) => req.query)
 
         router.get('/foo', handler)
 
@@ -434,7 +434,7 @@ describe('Common Router Spec', () => {
         )
 
         await router.fetch(request)
-        expect(handler).toHaveReturnedWith({
+        expect(handler.mock.results[0].value).toEqual({
           cat: 'dog',
           foo: ['bar', 'baz'],
           missing: '',
@@ -443,7 +443,7 @@ describe('Common Router Spec', () => {
 
       it('can still get query params with POST or non-GET HTTP methods', async () => {
         const router = Router()
-        const handler = vi.fn((req) => req.query)
+        const handler = mock((req) => req.query)
 
         router.post('/foo', handler)
 
@@ -456,7 +456,7 @@ describe('Common Router Spec', () => {
         })
 
         await router.fetch(request)
-        expect(handler).toHaveReturnedWith({ cat: 'dog', foo: ['bar', 'baz'] })
+        expect(handler.mock.results[0].value).toEqual({ cat: 'dog', foo: ['bar', 'baz'] })
       })
 
       // CUSTOM ROUTERS
@@ -485,7 +485,7 @@ describe('Common Router Spec', () => {
         })
 
         it('allows easy custom Router creation', async () => {
-          const logger = vi.fn() // vitest spy function
+          const logger = mock() // vitest spy function
 
           // create a CustomRouter that creates a Router with some predefined options
           const CustomRouter = (options = {}) => Router({
@@ -524,9 +524,9 @@ describe('Common Router Spec', () => {
         it('can handle legacy nested routers (with explicit base path)', async () => {
           const router1 = Router()
           const router2 = Router({ base: '/nested' })
-          const handler1 = vi.fn()
-          const handler2 = vi.fn()
-          const handler3 = vi.fn()
+          const handler1 = mock()
+          const handler2 = mock()
+          const handler3 = mock()
           router1.get('/pet', handler1)
           router1.get('/nested/*', router2.fetch)
           router2.get('/', handler3)
@@ -556,9 +556,9 @@ describe('Common Router Spec', () => {
       describe('MIDDLEWARE', () => {
         it('calls any handler until a return', async () => {
           const router = Router()
-          const h1 = vi.fn()
-          const h2 = vi.fn()
-          const h3 = vi.fn(() => true)
+          const h1 = mock()
+          const h2 = mock()
+          const h3 = mock(() => true)
 
           router.get('*', h1, h2, h3)
 

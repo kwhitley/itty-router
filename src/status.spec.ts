@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it } from 'bun:test'
 import { status } from './status'
 
 describe('status(code: number, options?: ResponseInit): Response', () => {

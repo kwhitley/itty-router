@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, mock } from 'bun:test'
 import { toReq } from '../lib'
 import { Router } from './Router'
 import { json } from './json'
@@ -6,7 +6,7 @@ import { error } from './error'
 
 describe(`SPECIFIC TESTS: Router`, () => {
   it('allows populating a before stage', async () => {
-    const handler = vi.fn(r => typeof r.date)
+    const handler = mock(r => typeof r.date)
     const router = Router({
       before: [
         (r) => { r.date = Date.now() },
@@ -14,13 +14,13 @@ describe(`SPECIFIC TESTS: Router`, () => {
     }).get('*', handler)
 
     await router.fetch(toReq('/'))
-    expect(handler).toHaveReturnedWith('number')
+    expect(handler.mock.results[0].value).toEqual('number')
   })
 
   it('before stage terminates on first response', async () => {
-    const handler1 = vi.fn(() => {})
-    const handler2 = vi.fn(() => true)
-    const handler3 = vi.fn(() => {})
+    const handler1 = mock(() => {})
+    const handler2 = mock(() => true)
+    const handler3 = mock(() => {})
     const router = Router({
       before: [
         handler1,
@@ -36,18 +36,18 @@ describe(`SPECIFIC TESTS: Router`, () => {
   })
 
   it('allows catching errors with a catch handler', async () => {
-    const handler = vi.fn(r => r instanceof Error)
+    const handler = mock(r => r instanceof Error)
     const router1 = Router({ catch: handler }).get('/', a => a.b.c)
     const router2 = Router().get('/', a => a.b.c)
 
     const response = await router1.fetch(toReq('/'))
-    expect(handler).toHaveReturnedWith(true)
+    expect(handler.mock.results[0].value).toEqual(true)
     expect(response).toBe(true)
     expect(router2.fetch(toReq('/'))).rejects.toThrow()
   })
 
   it('an error in the finally stage will still be caught with a catch handler', async () => {
-    const handler = vi.fn(r => r instanceof Error)
+    const handler = mock(r => r instanceof Error)
     const router1 = Router({
       finally: [a => a.b.c],
       catch: handler
@@ -57,7 +57,7 @@ describe(`SPECIFIC TESTS: Router`, () => {
     }).get('/', () => 'hey!')
 
     const response1 = await router1.fetch(toReq('/'))
-    expect(handler).toHaveReturnedWith(true)
+    expect(handler.mock.results[0].value).toEqual(true)
     expect(response1).toBe(true)
     expect(router2.fetch(toReq('/'))).rejects.toThrow()
   })
@@ -66,8 +66,8 @@ describe(`SPECIFIC TESTS: Router`, () => {
     const request = toReq('/')
     const arg1 = { foo: 'bar' }
 
-    const errorHandler = vi.fn((a,b,c) => [b.url, c])
-    const finallyHandler = vi.fn((a,b,c) => [a, b.url, c])
+    const errorHandler = mock((a,b,c) => [b.url, c])
+    const finallyHandler = mock((a,b,c) => [a, b.url, c])
     const router = Router({
       catch: errorHandler,
       finally: [ finallyHandler ],
@@ -75,8 +75,8 @@ describe(`SPECIFIC TESTS: Router`, () => {
     .get('/', a => a.b.c)
 
     await router.fetch(toReq('/'), arg1)
-    expect(errorHandler).toHaveReturnedWith([request.url, arg1])
-    expect(finallyHandler).toHaveReturnedWith([[request.url, arg1], request.url, arg1])
+    expect(errorHandler.mock.results[0].value).toEqual([request.url, arg1])
+    expect(finallyHandler.mock.results[0].value).toEqual([[request.url, arg1], request.url, arg1])
   })
 
   it('allows modifying responses in an finally stage', async () => {
@@ -92,7 +92,7 @@ describe(`SPECIFIC TESTS: Router`, () => {
   })
 
   it('finally stages that return nothing will not modify response', async () => {
-    const handler = vi.fn(() => {})
+    const handler = mock(() => {})
     const router = Router({
       finally: [
         handler,
@@ -107,8 +107,8 @@ describe(`SPECIFIC TESTS: Router`, () => {
   })
 
   it('can introspect/modify before/finally/catch stages finally initialization', async () => {
-    const handler1 = vi.fn(() => {})
-    const handler2 = vi.fn(() => {})
+    const handler1 = mock(() => {})
+    const handler2 = mock(() => {})
     const router = Router({
       before: [ handler1, handler2 ],
       finally: [ handler1, handler2 ],
