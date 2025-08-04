@@ -1,4 +1,7 @@
 ## Changelog
+
+#### v5.0.20
+  - docs: export default { ...router } as README example
 #### v5.0.17
   - fixed: corsify should clone response before appending headers
 #### v5.0.16
