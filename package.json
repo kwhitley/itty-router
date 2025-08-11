@@ -7,80 +7,99 @@
   "types": "./index.d.ts",
   "exports": {
     ".": {
-      "import": "./index.mjs",
-      "types": "./index.d.ts"
+      "import": "./dist/index.mjs",
+      "types": "./dist/index.d.ts",
+      "require": "./dist/index.js"
     },
     "./AutoRouter": {
-      "import": "./AutoRouter.mjs",
-      "types": "./AutoRouter.d.ts"
+      "import": "./dist/AutoRouter.mjs",
+      "types": "./dist/AutoRouter.d.ts",
+      "require": "./dist/AutoRouter.js"
     },
     "./cors": {
-      "import": "./cors.mjs",
-      "types": "./cors.d.ts"
+      "import": "./dist/cors.mjs",
+      "types": "./dist/cors.d.ts",
+      "require": "./dist/cors.js"
     },
     "./createResponse": {
-      "import": "./createResponse.mjs",
-      "types": "./createResponse.d.ts"
+      "import": "./dist/createResponse.mjs",
+      "types": "./dist/createResponse.d.ts",
+      "require": "./dist/createResponse.js"
     },
     "./error": {
-      "import": "./error.mjs",
-      "types": "./error.d.ts"
+      "import": "./dist/error.mjs",
+      "types": "./dist/error.d.ts",
+      "require": "./dist/error.js"
     },
     "./html": {
-      "import": "./html.mjs",
-      "types": "./html.d.ts"
+      "import": "./dist/html.mjs",
+      "types": "./dist/html.d.ts",
+      "require": "./dist/html.js"
     },
     "./IttyRouter": {
-      "import": "./IttyRouter.mjs",
-      "types": "./IttyRouter.d.ts"
+      "import": "./dist/IttyRouter.mjs",
+      "types": "./dist/IttyRouter.d.ts",
+      "require": "./dist/IttyRouter.js"
     },
     "./jpeg": {
-      "import": "./jpeg.mjs",
-      "types": "./jpeg.d.ts"
+      "import": "./dist/jpeg.mjs",
+      "types": "./dist/jpeg.d.ts",
+      "require": "./dist/jpeg.js"
     },
     "./json": {
-      "import": "./json.mjs",
-      "types": "./json.d.ts"
+      "import": "./dist/json.mjs",
+      "types": "./dist/json.d.ts",
+      "require": "./dist/json.js"
     },
     "./png": {
-      "import": "./png.mjs",
-      "types": "./png.d.ts"
+      "import": "./dist/png.mjs",
+      "types": "./dist/png.d.ts",
+      "require": "./dist/png.js"
     },
     "./Router": {
-      "import": "./Router.mjs",
-      "types": "./Router.d.ts"
+      "import": "./dist/Router.mjs",
+      "types": "./dist/Router.d.ts",
+      "require": "./dist/Router.js"
     },
     "./status": {
-      "import": "./status.mjs",
-      "types": "./status.d.ts"
+      "import": "./dist/status.mjs",
+      "types": "./dist/status.d.ts",
+      "require": "./dist/status.js"
     },
     "./StatusError": {
-      "import": "./StatusError.mjs",
-      "types": "./StatusError.d.ts"
+      "import": "./dist/StatusError.mjs",
+      "types": "./dist/StatusError.d.ts",
+      "require": "./dist/StatusError.js"
     },
     "./text": {
-      "import": "./text.mjs",
-      "types": "./text.d.ts"
+      "import": "./dist/text.mjs",
+      "types": "./dist/text.d.ts",
+      "require": "./dist/text.js"
     },
     "./webp": {
-      "import": "./webp.mjs",
-      "types": "./webp.d.ts"
+      "import": "./dist/webp.mjs",
+      "types": "./dist/webp.d.ts",
+      "require": "./dist/webp.js"
     },
     "./websocket": {
-      "import": "./websocket.mjs",
-      "types": "./websocket.d.ts"
+      "import": "./dist/websocket.mjs",
+      "types": "./dist/websocket.d.ts",
+      "require": "./dist/websocket.js"
     },
     "./withContent": {
-      "import": "./withContent.mjs",
-      "types": "./withContent.d.ts"
+      "import": "./dist/withContent.mjs",
+      "types": "./dist/withContent.d.ts",
+      "require": "./dist/withContent.js"
     },
     "./withCookies": {
-      "import": "./withCookies.mjs",
-      "types": "./withCookies.d.ts"
+      "import": "./dist/withCookies.mjs",
+      "types": "./dist/withCookies.d.ts",
+      "require": "./dist/withCookies.js"
     },
     "./withParams": {
-      "import": "./withParams.mjs",
-      "types": "./withParams.d.ts"
+      "import": "./dist/withParams.mjs",
+      "types": "./dist/withParams.d.ts",
+      "require": "./dist/withParams.js"
     }
   },
   "keywords": [
