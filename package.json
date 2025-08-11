@@ -1,105 +1,105 @@
 {
   "name": "itty-router",
-  "version": "5.0.21",
+  "version": "5.0.22",
   "description": "A tiny, zero-dependency router, designed to make beautiful APIs in any environment.",
   "main": "./index.js",
   "module": "./index.mjs",
   "types": "./index.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/index.mjs",
-      "types": "./dist/index.d.ts",
-      "require": "./dist/index.js"
+      "import": "./index.mjs",
+      "types": "./index.d.ts",
+      "require": "./index.js"
     },
     "./AutoRouter": {
-      "import": "./dist/AutoRouter.mjs",
-      "types": "./dist/AutoRouter.d.ts",
-      "require": "./dist/AutoRouter.js"
+      "import": "./AutoRouter.mjs",
+      "types": "./AutoRouter.d.ts",
+      "require": "./AutoRouter.js"
     },
     "./cors": {
-      "import": "./dist/cors.mjs",
-      "types": "./dist/cors.d.ts",
-      "require": "./dist/cors.js"
+      "import": "./cors.mjs",
+      "types": "./cors.d.ts",
+      "require": "./cors.js"
     },
     "./createResponse": {
-      "import": "./dist/createResponse.mjs",
-      "types": "./dist/createResponse.d.ts",
-      "require": "./dist/createResponse.js"
+      "import": "./createResponse.mjs",
+      "types": "./createResponse.d.ts",
+      "require": "./createResponse.js"
     },
     "./error": {
-      "import": "./dist/error.mjs",
-      "types": "./dist/error.d.ts",
-      "require": "./dist/error.js"
+      "import": "./error.mjs",
+      "types": "./error.d.ts",
+      "require": "./error.js"
     },
     "./html": {
-      "import": "./dist/html.mjs",
-      "types": "./dist/html.d.ts",
-      "require": "./dist/html.js"
+      "import": "./html.mjs",
+      "types": "./html.d.ts",
+      "require": "./html.js"
     },
     "./IttyRouter": {
-      "import": "./dist/IttyRouter.mjs",
-      "types": "./dist/IttyRouter.d.ts",
-      "require": "./dist/IttyRouter.js"
+      "import": "./IttyRouter.mjs",
+      "types": "./IttyRouter.d.ts",
+      "require": "./IttyRouter.js"
     },
     "./jpeg": {
-      "import": "./dist/jpeg.mjs",
-      "types": "./dist/jpeg.d.ts",
-      "require": "./dist/jpeg.js"
+      "import": "./jpeg.mjs",
+      "types": "./jpeg.d.ts",
+      "require": "./jpeg.js"
     },
     "./json": {
-      "import": "./dist/json.mjs",
-      "types": "./dist/json.d.ts",
-      "require": "./dist/json.js"
+      "import": "./json.mjs",
+      "types": "./json.d.ts",
+      "require": "./json.js"
     },
     "./png": {
-      "import": "./dist/png.mjs",
-      "types": "./dist/png.d.ts",
-      "require": "./dist/png.js"
+      "import": "./png.mjs",
+      "types": "./png.d.ts",
+      "require": "./png.js"
     },
     "./Router": {
-      "import": "./dist/Router.mjs",
-      "types": "./dist/Router.d.ts",
-      "require": "./dist/Router.js"
+      "import": "./Router.mjs",
+      "types": "./Router.d.ts",
+      "require": "./Router.js"
     },
     "./status": {
-      "import": "./dist/status.mjs",
-      "types": "./dist/status.d.ts",
-      "require": "./dist/status.js"
+      "import": "./status.mjs",
+      "types": "./status.d.ts",
+      "require": "./status.js"
     },
     "./StatusError": {
-      "import": "./dist/StatusError.mjs",
-      "types": "./dist/StatusError.d.ts",
-      "require": "./dist/StatusError.js"
+      "import": "./StatusError.mjs",
+      "types": "./StatusError.d.ts",
+      "require": "./StatusError.js"
     },
     "./text": {
-      "import": "./dist/text.mjs",
-      "types": "./dist/text.d.ts",
-      "require": "./dist/text.js"
+      "import": "./text.mjs",
+      "types": "./text.d.ts",
+      "require": "./text.js"
     },
     "./webp": {
-      "import": "./dist/webp.mjs",
-      "types": "./dist/webp.d.ts",
-      "require": "./dist/webp.js"
+      "import": "./webp.mjs",
+      "types": "./webp.d.ts",
+      "require": "./webp.js"
     },
     "./websocket": {
-      "import": "./dist/websocket.mjs",
-      "types": "./dist/websocket.d.ts",
-      "require": "./dist/websocket.js"
+      "import": "./websocket.mjs",
+      "types": "./websocket.d.ts",
+      "require": "./websocket.js"
     },
     "./withContent": {
-      "import": "./dist/withContent.mjs",
-      "types": "./dist/withContent.d.ts",
-      "require": "./dist/withContent.js"
+      "import": "./withContent.mjs",
+      "types": "./withContent.d.ts",
+      "require": "./withContent.js"
     },
     "./withCookies": {
-      "import": "./dist/withCookies.mjs",
-      "types": "./dist/withCookies.d.ts",
-      "require": "./dist/withCookies.js"
+      "import": "./withCookies.mjs",
+      "types": "./withCookies.d.ts",
+      "require": "./withCookies.js"
     },
     "./withParams": {
-      "import": "./dist/withParams.mjs",
-      "types": "./dist/withParams.d.ts",
-      "require": "./dist/withParams.js"
+      "import": "./withParams.mjs",
+      "types": "./withParams.d.ts",
+      "require": "./withParams.js"
     }
   },
   "keywords": [
