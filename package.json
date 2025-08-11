@@ -1,6 +1,6 @@
 {
   "name": "itty-router",
-  "version": "5.0.20",
+  "version": "5.0.22",
   "description": "A tiny, zero-dependency router, designed to make beautiful APIs in any environment.",
   "main": "./index.js",
   "module": "./index.mjs",
@@ -8,98 +8,79 @@
   "exports": {
     ".": {
       "import": "./index.mjs",
-      "types": "./index.d.ts",
-      "require": "./index.cjs"
+      "types": "./index.d.ts"
     },
     "./AutoRouter": {
       "import": "./AutoRouter.mjs",
-      "types": "./AutoRouter.d.ts",
-      "require": "./AutoRouter.cjs"
+      "types": "./AutoRouter.d.ts"
     },
     "./cors": {
       "import": "./cors.mjs",
-      "types": "./cors.d.ts",
-      "require": "./cors.cjs"
+      "types": "./cors.d.ts"
     },
     "./createResponse": {
       "import": "./createResponse.mjs",
-      "types": "./createResponse.d.ts",
-      "require": "./createResponse.cjs"
+      "types": "./createResponse.d.ts"
     },
     "./error": {
       "import": "./error.mjs",
-      "types": "./error.d.ts",
-      "require": "./error.cjs"
+      "types": "./error.d.ts"
     },
     "./html": {
       "import": "./html.mjs",
-      "types": "./html.d.ts",
-      "require": "./html.cjs"
+      "types": "./html.d.ts"
     },
     "./IttyRouter": {
       "import": "./IttyRouter.mjs",
-      "types": "./IttyRouter.d.ts",
-      "require": "./IttyRouter.cjs"
+      "types": "./IttyRouter.d.ts"
     },
     "./jpeg": {
       "import": "./jpeg.mjs",
-      "types": "./jpeg.d.ts",
-      "require": "./jpeg.cjs"
+      "types": "./jpeg.d.ts"
     },
     "./json": {
       "import": "./json.mjs",
-      "types": "./json.d.ts",
-      "require": "./json.cjs"
+      "types": "./json.d.ts"
     },
     "./png": {
       "import": "./png.mjs",
-      "types": "./png.d.ts",
-      "require": "./png.cjs"
+      "types": "./png.d.ts"
     },
     "./Router": {
       "import": "./Router.mjs",
-      "types": "./Router.d.ts",
-      "require": "./Router.cjs"
+      "types": "./Router.d.ts"
     },
     "./status": {
       "import": "./status.mjs",
-      "types": "./status.d.ts",
-      "require": "./status.cjs"
+      "types": "./status.d.ts"
     },
     "./StatusError": {
       "import": "./StatusError.mjs",
-      "types": "./StatusError.d.ts",
-      "require": "./StatusError.cjs"
+      "types": "./StatusError.d.ts"
     },
     "./text": {
       "import": "./text.mjs",
-      "types": "./text.d.ts",
-      "require": "./text.cjs"
+      "types": "./text.d.ts"
     },
     "./webp": {
       "import": "./webp.mjs",
-      "types": "./webp.d.ts",
-      "require": "./webp.cjs"
+      "types": "./webp.d.ts"
     },
     "./websocket": {
       "import": "./websocket.mjs",
-      "types": "./websocket.d.ts",
-      "require": "./websocket.cjs"
+      "types": "./websocket.d.ts"
     },
     "./withContent": {
       "import": "./withContent.mjs",
-      "types": "./withContent.d.ts",
-      "require": "./withContent.cjs"
+      "types": "./withContent.d.ts"
     },
     "./withCookies": {
       "import": "./withCookies.mjs",
-      "types": "./withCookies.d.ts",
-      "require": "./withCookies.cjs"
+      "types": "./withCookies.d.ts"
     },
     "./withParams": {
       "import": "./withParams.mjs",
-      "types": "./withParams.d.ts",
-      "require": "./withParams.cjs"
+      "types": "./withParams.d.ts"
     }
   },
   "keywords": [
