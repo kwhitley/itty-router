@@ -33,6 +33,14 @@ describe('withParams (middleware)', () => {
     })
   })
 
+  it('exposes request.raw', async () => {
+    const router = Router()
+    const handler = mock(request => request.raw)
+    const request = { method: 'GET', url: 'https://foo.bar/baz' }
+    await router.get('/:id', withParams, withParams, withParams, handler).fetch(request)
+    expect(handler.mock.results[0].value).toBe(request)
+  })
+
   it('can be used as global upstream middleware', async () => {
     const router = Router()
     const handler = mock(({ id, method }) => ({ id, method }))

@@ -7,99 +7,80 @@
   "types": "./index.d.ts",
   "exports": {
     ".": {
-      "import": "./index.mjs",
-      "types": "./index.d.ts",
-      "require": "./index.js"
+      "import": "./dist/index.mjs",
+      "types": "./dist/index.d.ts"
     },
     "./AutoRouter": {
-      "import": "./AutoRouter.mjs",
-      "types": "./AutoRouter.d.ts",
-      "require": "./AutoRouter.js"
+      "import": "./dist/AutoRouter.mjs",
+      "types": "./dist/AutoRouter.d.ts"
     },
     "./cors": {
-      "import": "./cors.mjs",
-      "types": "./cors.d.ts",
-      "require": "./cors.js"
+      "import": "./dist/cors.mjs",
+      "types": "./dist/cors.d.ts"
     },
     "./createResponse": {
-      "import": "./createResponse.mjs",
-      "types": "./createResponse.d.ts",
-      "require": "./createResponse.js"
+      "import": "./dist/createResponse.mjs",
+      "types": "./dist/createResponse.d.ts"
     },
     "./error": {
-      "import": "./error.mjs",
-      "types": "./error.d.ts",
-      "require": "./error.js"
+      "import": "./dist/error.mjs",
+      "types": "./dist/error.d.ts"
     },
     "./html": {
-      "import": "./html.mjs",
-      "types": "./html.d.ts",
-      "require": "./html.js"
+      "import": "./dist/html.mjs",
+      "types": "./dist/html.d.ts"
     },
     "./IttyRouter": {
-      "import": "./IttyRouter.mjs",
-      "types": "./IttyRouter.d.ts",
-      "require": "./IttyRouter.js"
+      "import": "./dist/IttyRouter.mjs",
+      "types": "./dist/IttyRouter.d.ts"
     },
     "./jpeg": {
-      "import": "./jpeg.mjs",
-      "types": "./jpeg.d.ts",
-      "require": "./jpeg.js"
+      "import": "./dist/jpeg.mjs",
+      "types": "./dist/jpeg.d.ts"
     },
     "./json": {
-      "import": "./json.mjs",
-      "types": "./json.d.ts",
-      "require": "./json.js"
+      "import": "./dist/json.mjs",
+      "types": "./dist/json.d.ts"
     },
     "./png": {
-      "import": "./png.mjs",
-      "types": "./png.d.ts",
-      "require": "./png.js"
+      "import": "./dist/png.mjs",
+      "types": "./dist/png.d.ts"
     },
     "./Router": {
-      "import": "./Router.mjs",
-      "types": "./Router.d.ts",
-      "require": "./Router.js"
+      "import": "./dist/Router.mjs",
+      "types": "./dist/Router.d.ts"
     },
     "./status": {
-      "import": "./status.mjs",
-      "types": "./status.d.ts",
-      "require": "./status.js"
+      "import": "./dist/status.mjs",
+      "types": "./dist/status.d.ts"
     },
     "./StatusError": {
-      "import": "./StatusError.mjs",
-      "types": "./StatusError.d.ts",
-      "require": "./StatusError.js"
+      "import": "./dist/StatusError.mjs",
+      "types": "./dist/StatusError.d.ts"
     },
     "./text": {
-      "import": "./text.mjs",
-      "types": "./text.d.ts",
-      "require": "./text.js"
+      "import": "./dist/text.mjs",
+      "types": "./dist/text.d.ts"
     },
     "./webp": {
-      "import": "./webp.mjs",
-      "types": "./webp.d.ts",
-      "require": "./webp.js"
+      "import": "./dist/webp.mjs",
+      "types": "./dist/webp.d.ts"
     },
     "./websocket": {
-      "import": "./websocket.mjs",
-      "types": "./websocket.d.ts",
-      "require": "./websocket.js"
+      "import": "./dist/websocket.mjs",
+      "types": "./dist/websocket.d.ts"
     },
     "./withContent": {
-      "import": "./withContent.mjs",
-      "types": "./withContent.d.ts",
-      "require": "./withContent.js"
+      "import": "./dist/withContent.mjs",
+      "types": "./dist/withContent.d.ts"
     },
     "./withCookies": {
-      "import": "./withCookies.mjs",
-      "types": "./withCookies.d.ts",
-      "require": "./withCookies.js"
+      "import": "./dist/withCookies.mjs",
+      "types": "./dist/withCookies.d.ts"
     },
     "./withParams": {
-      "import": "./withParams.mjs",
-      "types": "./withParams.d.ts",
-      "require": "./withParams.js"
+      "import": "./dist/withParams.mjs",
+      "types": "./dist/withParams.d.ts"
     }
   },
   "keywords": [

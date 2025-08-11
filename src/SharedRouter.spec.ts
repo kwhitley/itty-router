@@ -1,13 +1,13 @@
 import { describe, expect, it, mock } from 'bun:test'
 import { createTestRunner, extract, toReq } from '../lib'
 import { IttyRouter } from './IttyRouter'
-import { Router as FlowRouter } from './Router'
+import { Router } from './Router'
 
 const ERROR_MESSAGE = 'Error Message'
 
 const RoutersToTest = [
   { routerName: 'IttyRouter', Router: IttyRouter },
-  { routerName: 'Router', Router: FlowRouter },
+  { routerName: 'Router', Router },
 ]
 
 describe('Common Router Spec', () => {
@@ -136,7 +136,7 @@ describe('Common Router Spec', () => {
         it('BUG: avoids toString prototype bug', async () => {
           const route = routes.find((r) => r.path === '/foo/:id')
           const callsBefore = route?.callback.mock.calls.length || 0
-          
+
           await router.fetch(toReq('/foo/13?toString=value'))
 
           const result = route?.callback.mock.results[callsBefore].value
