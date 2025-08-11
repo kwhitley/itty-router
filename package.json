@@ -135,6 +135,6 @@
   "homepage": "https://itty.dev/itty-router",
   "devDependencies": {
     "@types/bun": "^1.2.17",
-    "itty-packager": "^1.6.10"
+    "itty-packager": "^1.6.12"
   }
 }
