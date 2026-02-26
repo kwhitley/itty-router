@@ -120,8 +120,9 @@
     "test": "bun test --coverage",
     "lint": "itty lint",
     "build": "itty lint && itty build --hybrid",
-    "release": "itty release --prepare --tag --push",
-    "release:next": "itty release --prepare --tag --push --type=next"
+    "release": "itty release --prepare --tag --push --otp",
+    "release:dry": "itty release --prepare --type=dry --otp --dry-run",
+    "release:next": "itty release --prepare --tag --push --type=next --otp"
   },
   "repository": {
     "type": "git",
@@ -135,6 +136,6 @@
   "homepage": "https://itty.dev/itty-router",
   "devDependencies": {
     "@types/bun": "^1.2.17",
-    "itty-packager": "^1.6.12"
+    "itty-packager": "^1.8.1"
   }
 }
