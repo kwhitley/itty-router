@@ -1,5 +1,7 @@
 ## Changelog
 
+#### v5.0.23
+  - fixed: cors/corsify should no longer throw immutable headers error (edge case fix)
 #### v5.0.20
   - docs: export default { ...router } as README example
 #### v5.0.17
