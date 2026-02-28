@@ -70,7 +70,7 @@ export const Router = <
     },
   } as RouterType<RequestType, Args, ResponseType>
 
-  for (let m of 'delete,get,head,options,patch,post,put,all'.split(','))
+  for (let m of ['delete','get','head','options','patch','post','put','all'])
     (r as any)[m] = route(m.toUpperCase())
 
   return r
