@@ -52,7 +52,7 @@ export const Router = <
 
             for (let handler of handlers)
               if ((response = await (handler.fetch
-                ? handler.fetch(Object.assign(new Request(url.origin + (match.at(-1) || '/') + url.search, request), request), ...args)
+                ? handler.fetch({ ...request, url: url.origin + (match.at(-1) || '/') + url.search, method: request.method, headers: request.headers }, ...args)
                 : handler(request, ...args)
               )) != null) break outer
           }
