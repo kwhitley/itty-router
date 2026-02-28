@@ -1,6 +1,7 @@
 import { describe, expect, it, mock } from 'bun:test'
 import { toReq } from '../lib'
 import { AutoRouter } from './AutoRouter'
+import { cors } from './cors'
 import { text } from './text'
 import { error } from './error'
 
@@ -73,6 +74,67 @@ describe(`SPECIFIC TESTS: AutoRouter`, () => {
 
         await router.fetch(toReq('/'))
         expect(handler.mock.results[0].value).toEqual('number')
+      })
+
+      describe('cors: CorsPair - adds CORS support via cors() output', () => {
+        it('adds CORS headers to responses', async () => {
+          const router = AutoRouter({ cors: cors() }).get('/', () => 'hello')
+
+          const response = await router.fetch(toReq('/', { headers: { origin: 'https://foo.bar' } }))
+          expect(response.headers.get('access-control-allow-origin')).toBe('*')
+        })
+
+        it('handles preflight OPTIONS requests', async () => {
+          const router = AutoRouter({ cors: cors() }).get('/', () => 'hello')
+
+          const response = await router.fetch(toReq('OPTIONS /', { headers: { origin: 'https://foo.bar' } }))
+          expect(response.status).toBe(204)
+          expect(response.headers.get('access-control-allow-origin')).toBe('*')
+        })
+
+        it('passes cors options through', async () => {
+          const origin = 'https://foo.bar'
+          const router = AutoRouter({ cors: cors({ origin }) }).get('/', () => 'hello')
+
+          const response = await router.fetch(toReq('/', { headers: { origin } }))
+          expect(response.headers.get('access-control-allow-origin')).toBe(origin)
+        })
+
+        it('works alongside other before/finally handlers', async () => {
+          const handler = mock(r => typeof r.date)
+          const router = AutoRouter({
+            cors: cors(),
+            before: [r => { r.date = Date.now() }],
+          }).get('*', handler)
+
+          const response = await router.fetch(toReq('/', { headers: { origin: 'https://foo.bar' } }))
+          expect(handler.mock.results[0].value).toEqual('number')
+          expect(response.headers.get('access-control-allow-origin')).toBe('*')
+        })
+
+        it('behaves identically to manual before/finally wiring', async () => {
+          const origin = 'https://foo.bar'
+          const opts = { origin, credentials: true as const }
+          const req = toReq('/', { headers: { origin } })
+
+          // Manual wiring
+          const { preflight, corsify } = cors(opts)
+          const manual = AutoRouter({
+            before: [preflight],
+            finally: [corsify],
+          }).get('/', () => 'hello')
+
+          // cors option
+          const auto = AutoRouter({ cors: cors(opts) }).get('/', () => 'hello')
+
+          const manualRes = await manual.fetch(req)
+          const autoRes = await auto.fetch(toReq('/', { headers: { origin } }))
+
+          expect(autoRes.headers.get('access-control-allow-origin'))
+            .toBe(manualRes.headers.get('access-control-allow-origin'))
+          expect(autoRes.headers.get('access-control-allow-credentials'))
+            .toBe(manualRes.headers.get('access-control-allow-credentials'))
+        })
       })
 
       describe('finally: (response: Response, request: IRequest, ...args) - ResponseHandler', async () => {
