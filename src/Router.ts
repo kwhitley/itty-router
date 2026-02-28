@@ -50,8 +50,13 @@ export const Router = <
             for (let k in (request.params = match.groups || {})) (request as any)[k] = request.params[k]
             request.route = path
 
-            for (let handler of handlers)
-              if ((response = await handler(request, ...args)) != null) break outer
+            for (let handler of handlers) {
+              let f = handler.fetch
+              if ((response = await (f || handler)(
+                f ? Object.assign(new Request(url.origin + (match.at(-1) || '/') + url.search, request), request) : request,
+                ...args
+              )) != null) break outer
+            }
           }
       } catch (err: any) {
         if (!other.catch) throw err

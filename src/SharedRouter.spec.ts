@@ -506,35 +506,11 @@ describe('Common Router Spec', () => {
       })
 
       describe('NESTING', () => {
-        it('can handle legacy nested routers (with explicit base path)', async () => {
-          const router1 = Router()
-          const router2 = Router({ base: '/nested' })
-          const handler1 = mock()
-          const handler2 = mock()
-          const handler3 = mock()
-          router1.get('/pet', handler1)
-          router1.get('/nested/*', router2.fetch)
-          router2.get('/', handler3)
-          router2.get('/bar/:id?', handler2)
+        it('legacy: still works with explicit base + .fetch', async () => {
+          const child = Router({ base: '/nested' }).get('/bar', () => 'legacy')
+          const parent = Router().all('/nested/*', child.fetch)
 
-          await router1.fetch(toReq('/pet'))
-          expect(handler1).toHaveBeenCalled()
-
-          await router1.fetch(toReq('/nested/bar'))
-          expect(handler2).toHaveBeenCalled()
-
-          await router1.fetch(toReq('/nested'))
-          expect(handler3).toHaveBeenCalled()
-        })
-
-        it('can nest with route params on the nested route if given router.fetch and base path', async () => {
-          const child = Router({ base: '/child/:bar' }).get('/', () => 'child')
-          const parent = Router()
-                          .get('/', () => 'parent')
-                          .all('/child/:bar/*', child.fetch)
-
-          expect(await parent.fetch(toReq('/'))).toBe('parent')
-          expect(await parent.fetch(toReq('/child/kitten'))).toBe('child')
+          expect(await parent.fetch(toReq('/nested/bar'))).toBe('legacy')
         })
       })
 

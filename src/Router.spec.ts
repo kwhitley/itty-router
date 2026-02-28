@@ -145,5 +145,80 @@ describe(`SPECIFIC TESTS: Router`, () => {
     expect(response.headers.get('foo')).toBe(null)
     expect(response.status).toBe(500)
   })
+
+  describe('BASE-FREE NESTING', () => {
+    it('can nest child routers without base (pass router object)', async () => {
+      const handler1 = mock()
+      const handler2 = mock()
+      const handler3 = mock()
+      const child = Router()
+      child.get('/', handler3)
+      child.get('/bar/:id?', handler2)
+
+      const parent = Router()
+      parent.get('/pet', handler1)
+      parent.all('/nested/*', child)
+
+      await parent.fetch(toReq('/pet'))
+      expect(handler1).toHaveBeenCalled()
+
+      await parent.fetch(toReq('/nested/bar'))
+      expect(handler2).toHaveBeenCalled()
+
+      await parent.fetch(toReq('/nested'))
+      expect(handler3).toHaveBeenCalled()
+    })
+
+    it('can nest with route params on the parent route', async () => {
+      const child = Router().get('/', () => 'child')
+      const parent = Router()
+                      .get('/', () => 'parent')
+                      .all('/child/:bar/*', child)
+
+      expect(await parent.fetch(toReq('/'))).toBe('parent')
+      expect(await parent.fetch(toReq('/child/kitten'))).toBe('child')
+    })
+
+    it('preserves query params through nesting', async () => {
+      const child = Router().get('/', (r) => r.query.foo)
+      const parent = Router().all('/child/*', child)
+
+      expect(await parent.fetch(toReq('/child/?foo=bar'))).toBe('bar')
+    })
+
+    it('can deeply nest routers', async () => {
+      const grandchild = Router().get('/hello', () => 'deep')
+      const child = Router().all('/b/*', grandchild)
+      const parent = Router().all('/a/*', child)
+
+      expect(await parent.fetch(toReq('/a/b/hello'))).toBe('deep')
+    })
+
+    it('child params are accessible', async () => {
+      const child = Router().get('/:id', ({ id }) => id)
+      const parent = Router().all('/api/*', child)
+
+      expect(await parent.fetch(toReq('/api/42'))).toBe('42')
+    })
+
+    it('parent and child params are both accessible', async () => {
+      const child = Router().get('/:itemSlug', ({ collectionSlug, itemSlug }) =>
+        JSON.stringify({ collectionSlug, itemSlug })
+      )
+      const parent = Router().all('/collection/:collectionSlug/*', child)
+
+      expect(await parent.fetch(toReq('/collection/shoes/sandals')))
+        .toBe('{"collectionSlug":"shoes","itemSlug":"sandals"}')
+    })
+
+    it('parent middleware properties are forwarded to child', async () => {
+      const child = Router().get('/', (r) => r.user)
+      const parent = Router({
+        before: [(r) => { r.user = 'alice' }],
+      }).all('/api/*', child)
+
+      expect(await parent.fetch(toReq('/api/'))).toBe('alice')
+    })
+  })
 })
 
