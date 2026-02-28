@@ -10,7 +10,7 @@ export type RouterOptions<
   Args extends any[] = [],
 > = {
   before?: RequestHandler<RequestType, Args>[]
-  catch?: ErrorHandler<StatusError, RequestType, Args>
+  catch?: ErrorHandler<StatusError, RequestType, Args> | false
   after?: ResponseHandler<any, RequestType, Args>[]
   /** @deprecated Use `after` instead */
   finally?: ResponseHandler<any, RequestType, Args>[]

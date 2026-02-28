@@ -137,6 +137,57 @@ describe(`SPECIFIC TESTS: AutoRouter`, () => {
         })
       })
 
+      describe('catch: false - lets errors bubble to parent router', () => {
+        it('child AutoRouter with catch:false lets parent handle errors', async () => {
+          const parentCatch = mock((err) =>
+            new Response(err.message, { status: 503 })
+          )
+
+          const child = AutoRouter({ base: '/api', catch: false })
+            .get('/fail', () => { throw new Error('child error') })
+
+          const parent = AutoRouter({ catch: parentCatch })
+            .all('/api/*', child.fetch)
+
+          const response = await parent.fetch(toReq('/api/fail'))
+          expect(parentCatch).toHaveBeenCalled()
+          expect(response.status).toBe(503)
+        })
+
+        it('without catch:false, child eats the error (default behavior)', async () => {
+          const parentCatch = mock(() => new Response(null, { status: 503 }))
+
+          const child = AutoRouter({ base: '/api' })
+            .get('/fail', () => { throw new Error('child error') })
+
+          const parent = AutoRouter({ catch: parentCatch })
+            .all('/api/*', child.fetch)
+
+          const response = await parent.fetch(toReq('/api/fail'))
+          expect(parentCatch).not.toHaveBeenCalled()
+          expect(response.status).toBe(500)
+        })
+
+        it('errors bubble through multiple levels of nesting', async () => {
+          const rootCatch = mock((err) =>
+            new Response(err.message, { status: 502 })
+          )
+
+          const grandchild = AutoRouter({ base: '/api/v2', catch: false })
+            .get('/fail', () => { throw new Error('deep error') })
+
+          const child = AutoRouter({ base: '/api', catch: false })
+            .all('/v2/*', grandchild.fetch)
+
+          const parent = AutoRouter({ catch: rootCatch })
+            .all('/api/*', child.fetch)
+
+          const response = await parent.fetch(toReq('/api/v2/fail'))
+          expect(rootCatch).toHaveBeenCalled()
+          expect(response.status).toBe(502)
+        })
+      })
+
       describe('after: (response: Response, request: IRequest, ...args) - ResponseHandler', async () => {
         it('modifies the response if returning non-null value', async () => {
           const router = AutoRouter({
