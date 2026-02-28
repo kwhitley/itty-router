@@ -59,7 +59,7 @@ export const Router = <
       }
 
       try {
-        for (let handler of other.finally || [])
+        for (let handler of other.after || [])
           response = await handler(response, request, ...args) ?? response
       } catch(err: any) {
         if (!other.catch) throw err

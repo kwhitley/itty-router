@@ -10,7 +10,7 @@ const corsRouter = (options?: CorsOptions) => {
 
   return Router({
     before: [preflight],
-    finally: [text, corsify],
+    after: [text, corsify],
   }).get('/', () => TEST_STRING)
 }
 

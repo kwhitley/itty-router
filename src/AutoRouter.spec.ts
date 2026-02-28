@@ -100,7 +100,7 @@ describe(`SPECIFIC TESTS: AutoRouter`, () => {
           expect(response.headers.get('access-control-allow-origin')).toBe(origin)
         })
 
-        it('works alongside other before/finally handlers', async () => {
+        it('works alongside other before/after handlers', async () => {
           const handler = mock(r => typeof r.date)
           const router = AutoRouter({
             cors: cors(),
@@ -112,7 +112,7 @@ describe(`SPECIFIC TESTS: AutoRouter`, () => {
           expect(response.headers.get('access-control-allow-origin')).toBe('*')
         })
 
-        it('behaves identically to manual before/finally wiring', async () => {
+        it('behaves identically to manual before/after wiring', async () => {
           const origin = 'https://foo.bar'
           const opts = { origin, credentials: true as const }
           const req = toReq('/', { headers: { origin } })
@@ -121,7 +121,7 @@ describe(`SPECIFIC TESTS: AutoRouter`, () => {
           const { preflight, corsify } = cors(opts)
           const manual = AutoRouter({
             before: [preflight],
-            finally: [corsify],
+            after: [corsify],
           }).get('/', () => 'hello')
 
           // cors option
@@ -137,10 +137,10 @@ describe(`SPECIFIC TESTS: AutoRouter`, () => {
         })
       })
 
-      describe('finally: (response: Response, request: IRequest, ...args) - ResponseHandler', async () => {
+      describe('after: (response: Response, request: IRequest, ...args) - ResponseHandler', async () => {
         it('modifies the response if returning non-null value', async () => {
           const router = AutoRouter({
-            finally: [ () => true ]
+            after: [ () => true ]
           }).get('*', () => 314)
 
           const response = await router.fetch(toReq('/'))
@@ -149,7 +149,7 @@ describe(`SPECIFIC TESTS: AutoRouter`, () => {
 
         it('does not modify the response if returning null values', async () => {
           const router = AutoRouter({
-            finally: [
+            after: [
               () => {},
               () => undefined,
               () => null,

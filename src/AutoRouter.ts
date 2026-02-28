@@ -13,13 +13,13 @@ export const AutoRouter = <
   format = json,
   missing = () => error(404),
   before: b = [],
-  finally: f = [],
+  after: f = [],
   ...options }: AutoRouterOptions<RequestType, Args> & { cors?: CorsPair } = {}
 ) => Router<RequestType, Args, ResponseType>({
   // @ts-ignore
   catch: error,
   before: [...(c ? [c.preflight] : []), ...b],
-  finally: [
+  after: [
     // @ts-ignore
     (r: any, ...args) => r ?? missing(...args),
     format,

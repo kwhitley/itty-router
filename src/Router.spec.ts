@@ -46,14 +46,14 @@ describe(`SPECIFIC TESTS: Router`, () => {
     expect(router2.fetch(toReq('/'))).rejects.toThrow()
   })
 
-  it('an error in the finally stage will still be caught with a catch handler', async () => {
+  it('an error in the after stage will still be caught with a catch handler', async () => {
     const handler = mock(r => r instanceof Error)
     const router1 = Router({
-      finally: [a => a.b.c],
+      after: [a => a.b.c],
       catch: handler
     }).get('/', () => 'hey!')
     const router2 = Router({
-      finally: [a => a.b.c],
+      after: [a => a.b.c],
     }).get('/', () => 'hey!')
 
     const response1 = await router1.fetch(toReq('/'))
@@ -62,7 +62,7 @@ describe(`SPECIFIC TESTS: Router`, () => {
     expect(router2.fetch(toReq('/'))).rejects.toThrow()
   })
 
-  it('catch and finally stages have access to request and args', async () => {
+  it('catch and after stages have access to request and args', async () => {
     const request = toReq('/')
     const arg1 = { foo: 'bar' }
 
@@ -70,7 +70,7 @@ describe(`SPECIFIC TESTS: Router`, () => {
     const finallyHandler = mock((a,b,c) => [a, b.url, c])
     const router = Router({
       catch: errorHandler,
-      finally: [ finallyHandler ],
+      after: [ finallyHandler ],
     })
     .get('/', a => a.b.c)
 
@@ -79,9 +79,9 @@ describe(`SPECIFIC TESTS: Router`, () => {
     expect(finallyHandler.mock.results[0].value).toEqual([[request.url, arg1], request.url, arg1])
   })
 
-  it('allows modifying responses in an finally stage', async () => {
+  it('allows modifying responses in an after stage', async () => {
     const router = Router({
-      finally: [r => Number(r) || 0],
+      after: [r => Number(r) || 0],
     }).get('/:id?', r => r.params.id)
 
     const response1 = await router.fetch(toReq('/13'))
@@ -91,10 +91,10 @@ describe(`SPECIFIC TESTS: Router`, () => {
     expect(response2).toBe(0)
   })
 
-  it('finally stages that return nothing will not modify response', async () => {
+  it('after stages that return nothing will not modify response', async () => {
     const handler = mock(() => {})
     const router = Router({
-      finally: [
+      after: [
         handler,
         r => Number(r) || 0,
       ],
@@ -106,26 +106,26 @@ describe(`SPECIFIC TESTS: Router`, () => {
     expect(handler).toHaveBeenCalled()
   })
 
-  it('can introspect/modify before/finally/catch stages finally initialization', async () => {
+  it('can introspect/modify before/after/catch stages after initialization', async () => {
     const handler1 = mock(() => {})
     const handler2 = mock(() => {})
     const router = Router({
       before: [ handler1, handler2 ],
-      finally: [ handler1, handler2 ],
+      after: [ handler1, handler2 ],
     })
 
     // manipulate
-    router.finally?.push(() => true)
+    router.after?.push(() => true)
 
     const response = await router.fetch(toReq('/'))
     expect(router.before?.length).toBe(2)
-    expect(router.finally?.length).toBe(3)
+    expect(router.after?.length).toBe(3)
     expect(response).toBe(true)
   })
 
   it('response-handler pollution tests - (createResponse)', async () => {
     const router = Router({
-      finally: [json]
+      after: [json]
     }).get('/', () => [1,2,3])
     const request = toReq('/')
     request.headers.append('foo', 'bar')

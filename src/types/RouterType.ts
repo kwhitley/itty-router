@@ -12,5 +12,7 @@ export type RouterType<
 > = {
   before?: RequestHandler<RequestType, Args>[]
   catch?: ErrorHandler<StatusError, RequestType, Args>
+  after?: ResponseHandler<any, RequestType, Args>[]
+  /** @deprecated Use `after` instead */
   finally?: ResponseHandler<any, RequestType, Args>[]
 } & IttyRouterType<RequestType, Args, ResponseType>
