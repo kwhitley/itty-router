@@ -11,17 +11,15 @@ export const Router = <
   RequestType = IRequest,
   Args extends any[] = any[],
   ResponseType = any
->({ base = '', routes = [], ...other }: RouterOptions<RequestType, Args> = {}): RouterType<RequestType, Args, ResponseType> =>
-  ({
-    __proto__: new Proxy({}, {
-      // @ts-expect-error (we're adding an expected prop "path" to the get)
-      get: (target: any, prop: string, receiver: object) =>
-        (route: string, ...handlers: RequestHandler<RequestType, Args>[]) => {
-          const [regex, path] = buildRoute(base, route)
-          routes.push([prop.toUpperCase(), regex, handlers, path])
-          return receiver
-        }
-    }),
+>({ base = '', routes = [], ...other }: RouterOptions<RequestType, Args> = {}): RouterType<RequestType, Args, ResponseType> => {
+  const route = (method: string) =>
+    (path: string, ...handlers: RequestHandler<RequestType, Args>[]) => {
+      const [regex, clean] = buildRoute(base, path)
+      routes.push([method, regex, handlers, clean])
+      return r
+    }
+
+  const r = {
     routes,
     ...other,
     async fetch (request: RequestLike, ...args: any) {
@@ -30,19 +28,17 @@ export const Router = <
           url = new URL(request.url),
           query: Record<string, any> = request.query = { __proto__: null }
 
-      // 1. parse query params
       for (let [k, v] of url.searchParams)
-        query[k] = query[k] ? ([] as string[]).concat(query[k], v) : v
+        query[k] = query[k] ? [query[k], v].flat() : v
 
       t: try {
         for (let handler of other.before || [])
           if ((response = await handler(request, ...args)) != null) break t
 
-        // 2. then test routes
         outer: for (let [method, regex, handlers, path] of routes)
           if ((method == request.method || method == 'ALL') && (match = url.pathname.match(regex))) {
-            Object.assign(request, request.params = match.groups || {})   // embed params in request
-            request.route = path                                          // embed route path in request
+            Object.assign(request, request.params = match.groups || {})
+            request.route = path
 
             for (let handler of handlers)
               if ((response = await handler(request, ...args)) != null) break outer
@@ -62,4 +58,10 @@ export const Router = <
 
       return response
     },
-  } as RouterType<RequestType, Args, ResponseType>)
+  } as RouterType<RequestType, Args, ResponseType>
+
+  for (let m of 'delete,get,head,options,patch,post,put,all'.split(','))
+    (r as any)[m] = route(m.toUpperCase())
+
+  return r
+}

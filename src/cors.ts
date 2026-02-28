@@ -35,19 +35,19 @@ export const cors = (options: CorsOptions = {}) => {
     // @ts-expect-error
     if (origin === true) return requestOrigin
     // @ts-expect-error
-    if (origin instanceof RegExp) return origin.test(requestOrigin) ? requestOrigin : undefined
+    if ((origin as any).test) return (origin as any).test(requestOrigin) && requestOrigin
     // @ts-expect-error
-    if (Array.isArray(origin)) return origin.includes(requestOrigin) ? requestOrigin : undefined
+    if ((origin as any).forEach) return (origin as any).includes(requestOrigin) && requestOrigin
     // @ts-expect-error
-    if (origin instanceof Function) return origin(requestOrigin)
+    if ((origin as any).call) return (origin as any)(requestOrigin)
 
     // @ts-ignore
     return origin == '*' && credentials ? requestOrigin : origin
   }
 
   const appendHeadersAndReturn = (response: Response, headers: Record<string, any>): Response => {
-    for (const [key, value] of Object.entries(headers)) {
-      if (value) response.headers.append(key, value)
+    for (const key in headers) {
+      if (headers[key]) response.headers.append(key, headers[key])
     }
     return response
   }
@@ -72,7 +72,7 @@ export const cors = (options: CorsOptions = {}) => {
   const corsify = (response: Response, request?: Request) => {
     // ignore if already has CORS headers
     if (
-      response?.headers?.get('access-control-allow-origin')
+      response.headers.get('access-control-allow-origin')
       || response.status == 101
     ) return response
 

@@ -1,11 +1,9 @@
 import {
   IRequest,
-  RequestHandler,
   RequestLike,
   RouterOptions,
   RouterType
 } from './types'
-import { buildRoute } from './buildRoute'
 
 export const Router = <
   RequestType = IRequest,
@@ -13,25 +11,36 @@ export const Router = <
   ResponseType = any
 >({ base = '', routes = [], ...other }: RouterOptions<RequestType, Args> = {}): RouterType<RequestType, Args, ResponseType> =>
   ({
+    // @ts-expect-error (Proxy-based method registration)
     __proto__: new Proxy({}, {
-      // @ts-expect-error (we're using a 4th param as free local variable)
-      get: (target: any, prop: string, receiver: object, _r: any) =>
-        (route: string, ...handlers: RequestHandler<RequestType, Args>[]) => (
-          _r = buildRoute(base, route),
-          routes.push([prop.toUpperCase(), _r[0], handlers, _r[1]]),
-          receiver
-        )
+      // @ts-expect-error (we're using a 4th param as free local variable for path)
+      get: (target: any, prop: string, receiver: object, path: string) =>
+        (route: string, ...handlers: any[]) =>
+          (routes.push(
+            [
+              prop.toUpperCase(),
+              RegExp(`^${(path = (base + route)
+                .replace(/\/+(\/|$)/g, '$1'))                       // strip double & trailing slash
+                .replace(/(\/?\.?):(\w+)\+/g, '($1(?<$2>*))')       // greedy params
+                .replace(/(\/?\.?):(\w+)/g, '($1(?<$2>[^$1/]+?))')  // named params and image format
+                .replace(/\./g, '\\.')                              // dot in path
+                .replace(/(\/?)\*/g, '($1.*)?')                     // wildcard
+              }/*$`),
+              handlers,
+              path,
+            ]
+          ), receiver)
     }),
     routes,
     ...other,
     async fetch (request: RequestLike, ...args: any) {
       let response,
           match,
-          url = new URL(request.url),
-          query: Record<string, any> = request.query = { __proto__: null }
+          url = new URL(request.url)
 
+      request.query = { __proto__: null }
       for (let [k, v] of url.searchParams)
-        query[k] = query[k] ? [query[k], v].flat() : v
+        (request.query as any)[k] = (request.query as any)[k] ? [(request.query as any)[k], v].flat() : v
 
       t: try {
         for (let handler of other.before || [])
@@ -39,7 +48,7 @@ export const Router = <
 
         outer: for (let [method, regex, handlers, path] of routes)
           if ((method == request.method || method == 'ALL') && (match = url.pathname.match(regex))) {
-            Object.assign(request, request.params = match.groups || {})
+            for (let k in (request.params = match.groups || {})) (request as any)[k] = request.params[k]
             request.route = path
 
             for (let handler of handlers)
