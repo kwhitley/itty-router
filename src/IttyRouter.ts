@@ -48,10 +48,10 @@ export const IttyRouter = <
       // 2. then test routes
       for (let [method, regex, handlers, path] of routes)
         if ((method == request.method || method == 'ALL') && (match = url.pathname.match(regex))) {
-          request.params = match.groups || {}                                     // embed params in request
+          Object.assign(request, request.params = match.groups || {})             // embed params in request
           request.route = path                                                    // embed route path in request
           for (let handler of handlers)
-            if ((response = await handler(request.proxy ?? request, ...args)) != null) return response
+            if ((response = await handler(request, ...args)) != null) return response
         }
     },
   })

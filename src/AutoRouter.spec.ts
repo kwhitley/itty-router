@@ -60,7 +60,7 @@ describe(`SPECIFIC TESTS: AutoRouter`, () => {
         const router = AutoRouter({ missing })
         const request = toReq('/')
         await router.fetch(request)
-        expect(missing).toBeCalledWith(request['proxy'])
+        expect(missing).toBeCalledWith(request)
       })
       
       it('before: RouteHandler - adds upstream middleware', async () => {

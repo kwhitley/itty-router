@@ -383,22 +383,6 @@ describe('Common Router Spec', () => {
           expect(req.b).toBe(originalB)
         })
 
-        it('will pass request.proxy instead of request if found', async () => {
-          const router = Router()
-          const handler = mock((req) => req)
-          let proxy
-
-          const withProxy = (request) => {
-            request.proxy = proxy = new Proxy(request, {})
-          }
-
-          router.get('/foo', withProxy, handler)
-
-          await router.fetch(toReq('/foo'))
-
-          expect(handler.mock.results[0].value).toEqual(proxy)
-        })
-
         it('can handle POST body even if not used', async () => {
           const router = Router()
           const handler = mock((req) => req.json())

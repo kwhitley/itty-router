@@ -46,28 +46,28 @@ export const Router = <
 
       t: try {
         for (let handler of other.before || [])
-          if ((response = await handler(request.proxy ?? request, ...args)) != null) break t
+          if ((response = await handler(request, ...args)) != null) break t
 
         // 2. then test routes
         outer: for (let [method, regex, handlers, path] of routes)
           if ((method == request.method || method == 'ALL') && (match = url.pathname.match(regex))) {
-            request.params = match.groups || {}                                     // embed params in request
-            request.route = path                                                    // embed route path in request
+            Object.assign(request, request.params = match.groups || {})   // embed params in request
+            request.route = path                                          // embed route path in request
 
             for (let handler of handlers)
-              if ((response = await handler(request.proxy ?? request, ...args)) != null) break outer
+              if ((response = await handler(request, ...args)) != null) break outer
           }
       } catch (err: any) {
         if (!other.catch) throw err
-        response = await other.catch(err, request.proxy ?? request, ...args)
+        response = await other.catch(err, request, ...args)
       }
 
       try {
         for (let handler of other.finally || [])
-          response = await handler(response, request.proxy ?? request, ...args) ?? response
+          response = await handler(response, request, ...args) ?? response
       } catch(err: any) {
         if (!other.catch) throw err
-          response = await other.catch(err, request.proxy ?? request, ...args)
+          response = await other.catch(err, request, ...args)
       }
 
       return response

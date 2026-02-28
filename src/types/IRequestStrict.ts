@@ -6,5 +6,4 @@ export type IRequestStrict = {
   query: {
     [key: string]: string | string[] | undefined
   }
-  proxy?: any
 } & Request
