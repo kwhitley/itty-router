@@ -49,19 +49,19 @@ describe(`SPECIFIC TESTS: AutoRouter`, () => {
         expect(response.headers.get('content-type').includes('text')).toBe(true)
       })
 
-      it('missing: RouteHandler - replaces default missing error', async () => {
-        const router = AutoRouter({ missing: () => error(418) })
+      it('notFound: RouteHandler - replaces default 404 handler', async () => {
+        const router = AutoRouter({ notFound: () => error(418) })
 
         const response = await router.fetch(toReq('/'))
         expect(response.status).toBe(418)
       })
 
-      it('missing: RouteHandler - receives request as the first parameter', async () => {
-        const missing = mock(() => {})
-        const router = AutoRouter({ missing })
+      it('notFound: RouteHandler - receives request as the first parameter', async () => {
+        const notFound = mock(() => {})
+        const router = AutoRouter({ notFound })
         const request = toReq('/')
         await router.fetch(request)
-        expect(missing).toBeCalledWith(request)
+        expect(notFound).toBeCalledWith(request)
       })
       
       it('before: RouteHandler - adds upstream middleware', async () => {

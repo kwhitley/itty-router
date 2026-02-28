@@ -2,12 +2,9 @@ import { json } from './json'
 import { ErrorFormatter } from './types'
 
 const getMessage = (code: number): string => ({
-  400: 'Bad Request',
-  401: 'Unauthorized',
-  403: 'Forbidden',
   404: 'Not Found',
   500: 'Internal Server Error',
-})[code] || 'Unknown Error'
+})[code]
 
 export const error: ErrorFormatter = (a = 500, b?) => {
   // handle passing an Error | StatusError directly in

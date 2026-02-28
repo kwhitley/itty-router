@@ -22,7 +22,6 @@ export * from './webp'
 // middleware
 export * from './withContent'
 export * from './withCookies'
-export * from './withParams'
 
 // CORS
 export * from './cors'

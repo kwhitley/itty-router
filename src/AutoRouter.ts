@@ -11,7 +11,7 @@ export const AutoRouter = <
 >({
   cors: c,
   format = json,
-  missing = () => error(404),
+  notFound = () => error(404),
   before: b = [],
   after: f = [],
   ...options }: AutoRouterOptions<RequestType, Args> & { cors?: CorsPair } = {}
@@ -21,7 +21,7 @@ export const AutoRouter = <
   before: [...(c ? [c.preflight] : []), ...b],
   after: [
     // @ts-ignore
-    (r: any, ...args) => r ?? missing(...args),
+    (r: any, ...args) => r ?? notFound(...args),
     format,
     ...(c ? [c.corsify] : []),
     ...f,

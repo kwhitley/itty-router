@@ -18,12 +18,12 @@ describe('error(status: number, body: string | object)', () => {
     expect(response.status).toBe(400)
   })
 
-  it('handles unknown error codes', async () => {
+  it('unknown codes omit error message (status only)', async () => {
     const response = error(418)
     const payload = await response.json()
 
     expect(response.status).toBe(418)
-    expect(payload).toEqual({ status: 418, error: 'Unknown Error' })
+    expect(payload).toEqual({ status: 418 })
   })
 
   it('can set an error message as string', async () => {

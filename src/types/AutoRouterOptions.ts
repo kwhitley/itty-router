@@ -6,6 +6,8 @@ export type AutoRouterOptions<
   RequestType,
   Args extends any[],
 > = {
+  notFound?: RequestHandler<RequestType, Args>
+  /** @deprecated Use `notFound` instead */
   missing?: RequestHandler<RequestType, Args>
   format?: ResponseHandler
 } & RouterOptions<RequestType, Args>
