@@ -16,6 +16,11 @@
       "types": "./AutoRouter.d.ts",
       "require": "./AutoRouter.js"
     },
+    "./buildRoute": {
+      "import": "./buildRoute.mjs",
+      "types": "./buildRoute.d.ts",
+      "require": "./buildRoute.js"
+    },
     "./cors": {
       "import": "./cors.mjs",
       "types": "./cors.d.ts",

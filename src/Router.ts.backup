@@ -14,13 +14,13 @@ export const Router = <
 >({ base = '', routes = [], ...other }: RouterOptions<RequestType, Args> = {}): RouterType<RequestType, Args, ResponseType> =>
   ({
     __proto__: new Proxy({}, {
-      // @ts-expect-error (we're using a 4th param as free local variable)
-      get: (target: any, prop: string, receiver: object, _r: any) =>
-        (route: string, ...handlers: RequestHandler<RequestType, Args>[]) => (
-          _r = buildRoute(base, route),
-          routes.push([prop.toUpperCase(), _r[0], handlers, _r[1]]),
-          receiver
-        )
+      // @ts-expect-error (we're adding an expected prop "path" to the get)
+      get: (target: any, prop: string, receiver: object) =>
+        (route: string, ...handlers: RequestHandler<RequestType, Args>[]) => {
+          const [regex, path] = buildRoute(base, route)
+          routes.push([prop.toUpperCase(), regex, handlers, path])
+          return receiver
+        }
     }),
     routes,
     ...other,
@@ -30,17 +30,19 @@ export const Router = <
           url = new URL(request.url),
           query: Record<string, any> = request.query = { __proto__: null }
 
+      // 1. parse query params
       for (let [k, v] of url.searchParams)
-        query[k] = query[k] ? [query[k], v].flat() : v
+        query[k] = query[k] ? ([] as string[]).concat(query[k], v) : v
 
       t: try {
         for (let handler of other.before || [])
           if ((response = await handler(request, ...args)) != null) break t
 
+        // 2. then test routes
         outer: for (let [method, regex, handlers, path] of routes)
           if ((method == request.method || method == 'ALL') && (match = url.pathname.match(regex))) {
-            Object.assign(request, request.params = match.groups || {})
-            request.route = path
+            Object.assign(request, request.params = match.groups || {})   // embed params in request
+            request.route = path                                          // embed route path in request
 
             for (let handler of handlers)
               if ((response = await handler(request, ...args)) != null) break outer

@@ -5,6 +5,7 @@ import {
   RequestHandler,
   RequestLike,
 } from './types'
+import { buildRoute } from './buildRoute'
 
 export const IttyRouter = <
   RequestType extends IRequest = IRequest,
@@ -14,24 +15,13 @@ export const IttyRouter = <
 // @ts-ignore
   ({
     __proto__: new Proxy({}, {
-      // @ts-expect-error (we're adding an expected prop "path" to the get)
-      get: (target: any, prop: string, receiver: object, path: string) =>
-        (route: string, ...handlers: RequestHandler<RequestType, Args>[]) =>
-          routes.push(
-            [
-              prop.toUpperCase(),
-              RegExp(`^${(path = (base + route)
-                .replace(/\/+(\/|$)/g, '$1'))                       // strip double & trailing splash
-                .replace(/(\/?\.?):(\w+)\+/g, '($1(?<$2>*))')       // greedy params
-                .replace(/(\/?\.?):(\w+)/g, '($1(?<$2>[^$1/]+?))')  // named params and image format
-                .replace(/\./g, '\\.')                              // dot in path
-                .replace(/(\/?)\*/g, '($1.*)?')                     // wildcard
-              }/*$`),
-              // @ts-ignore
-              handlers,                                             // embed handlers
-              path,                                                 // embed clean route path
-            ]
-          ) && receiver
+      // @ts-expect-error (we're using a 4th param as free local variable)
+      get: (target: any, prop: string, receiver: object, _r: any) =>
+        (route: string, ...handlers: RequestHandler<RequestType, Args>[]) => (
+          _r = buildRoute(base, route),
+          routes.push([prop.toUpperCase(), _r[0], handlers, _r[1]]),
+          receiver
+        )
     }),
     routes,
     ...other,
@@ -43,7 +33,7 @@ export const IttyRouter = <
 
       // 1. parse query params
       for (let [k, v] of url.searchParams)
-        query[k] = query[k] ? ([] as string[]).concat(query[k], v) : v
+        query[k] = query[k] ? [query[k], v].flat() : v
 
       // 2. then test routes
       for (let [method, regex, handlers, path] of routes)

@@ -7,6 +7,7 @@ export default [
       'examples/**/*',
       'lib/**/*',
       'dist/**/*',
+      '.claude/**/*',
     ]
   }
 ]

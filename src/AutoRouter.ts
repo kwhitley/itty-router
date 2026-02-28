@@ -11,12 +11,8 @@ export const AutoRouter = <
   format = json,
   missing = () => error(404),
   finally: f = [],
-  before = [],
   ...options }: AutoRouterOptions<RequestType, Args> = {}
 ) => Router<RequestType, Args, ResponseType>({
-  before: [
-    ...before
-  ],
   // @ts-ignore
   catch: error,
   finally: [
