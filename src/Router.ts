@@ -9,28 +9,27 @@ export const Router = <
   RequestType = IRequest,
   Args extends any[] = any[],
   ResponseType = any
->({ base = '', routes = [], ...other }: RouterOptions<RequestType, Args> = {}): RouterType<RequestType, Args, ResponseType> =>
-  ({
-    // @ts-expect-error (Proxy-based method registration)
-    __proto__: new Proxy({}, {
-      // @ts-expect-error (we're using a 4th param as free local variable for path)
-      get: (target: any, prop: string, receiver: object, path: string) =>
-        (route: string, ...handlers: any[]) =>
-          (routes.push(
-            [
-              prop.toUpperCase(),
-              RegExp(`^${(path = (base + route)
-                .replace(/\/+(\/|$)/g, '$1'))                       // strip double & trailing slash
-                .replace(/(\/?\.?):(\w+)\+/g, '($1(?<$2>*))')       // greedy params
-                .replace(/(\/?\.?):(\w+)/g, '($1(?<$2>[^$1/]+?))')  // named params and image format
-                .replace(/\./g, '\\.')                              // dot in path
-                .replace(/(\/?)\*/g, '($1.*)?')                     // wildcard
-              }/*$`),
-              handlers,
-              path,
-            ]
-          ), receiver)
-    }),
+>({ base = '', routes = [], ...other }: RouterOptions<RequestType, Args> = {}): RouterType<RequestType, Args, ResponseType> => {
+  const route = (method: string) =>
+    (path: string, ...handlers: any[]) => (
+      routes.push(
+        [
+          method,
+          RegExp(`^${(path = (base + path)
+            .replace(/\/+(\/|$)/g, '$1'))                       // strip double & trailing slash
+            .replace(/(\/?\.?):(\w+)\+/g, '($1(?<$2>*))')       // greedy params
+            .replace(/(\/?\.?):(\w+)/g, '($1(?<$2>[^$1/]+?))')  // named params and image format
+            .replace(/\./g, '\\.')                              // dot in path
+            .replace(/(\/?)\*/g, '($1.*)?')                     // wildcard
+          }/*$`),
+          handlers,
+          path,
+        ]
+      ),
+      r
+    )
+
+  const r = {
     routes,
     ...other,
     async fetch (request: RequestLike, ...args: any) {
@@ -69,4 +68,10 @@ export const Router = <
 
       return response
     },
-  } as RouterType<RequestType, Args, ResponseType>)
+  } as RouterType<RequestType, Args, ResponseType>
+
+  for (let m of 'delete,get,head,options,patch,post,put,all'.split(','))
+    (r as any)[m] = route(m.toUpperCase())
+
+  return r
+}
