@@ -7,12 +7,12 @@ import {
 
 type TrieNode = [
   Record<string, TrieNode>,
-  [string, TrieNode] | 0,
-  Record<string, any[][]> | 0,
-  Record<string, any[][]> | 0,
+  [string, TrieNode] | null,
+  Record<string, any[][]> | null,
+  Record<string, any[][]> | null,
 ]
 
-const N = (): TrieNode => [{}, 0, 0, 0]
+const N = (): TrieNode => [{}, null, null, null]
 
 export const FastRouter = <
   RequestType = IRequest,
@@ -30,12 +30,12 @@ export const FastRouter = <
 
       for (let s of segments)
         node = s[0] == ':'
-          ? (node[1] ||= [s.slice(1), N()] as any, node[1][1])
+          ? (node[1] ||= [s.slice(1), N()], node[1]![1])
           : (node[0][s] ||= N(), node[0][s])
 
-      let m = node[w ? 2 : 3] ||= {} as any
+      let m: Record<string, any[]> = node[w ? 2 : 3] ||= {}
       ;(m[method] ||= []).push(handlers)
-      routes.push([method, 0, handlers, path])
+      routes.push([method, /(?:)/, handlers, path])
       return r
     }
 
@@ -63,7 +63,7 @@ export const FastRouter = <
 
       t: try {
         for (let handler of other.before || [])
-          if ((response = await handler(request, ...args)) != null) break t
+          if ((response = await handler(request as RequestType, ...args)) != null) break t
 
         for (let i = 0; node && i < len; i++) {
           let s = segments[i]
@@ -88,22 +88,22 @@ export const FastRouter = <
 
         o: for (let [handlers, depth] of collected)
           for (let handler of handlers)
-            if ((response = await (handler.fetch
-              ? handler.fetch({ ...request, url: origin + '/' + segments.slice(depth).join('/') + search, method, headers: request.headers }, ...args)
-              : handler(request, ...args)
+            if ((response = await ((handler as any).fetch
+              ? (handler as any).fetch({ ...request, url: origin + '/' + segments.slice(depth).join('/') + search, method, headers: request.headers }, ...args)
+              : handler(request as RequestType, ...args)
             )) != null) break o
 
       } catch (err: any) {
         if (!other.catch) throw err
-        response = await other.catch(err, request, ...args)
+        response = await other.catch(err, request as RequestType, ...args)
       }
 
       try {
         for (let handler of other.after || [])
-          response = await handler(response, request, ...args) ?? response
+          response = await handler(response, request as RequestType, ...args) ?? response
       } catch(err: any) {
         if (!other.catch) throw err
-          response = await other.catch(err, request, ...args)
+          response = await other.catch(err, request as RequestType, ...args)
       }
 
       return response

@@ -8,6 +8,6 @@ import { ResponseFormatter } from './types'
   // @ts-ignore
   (body, options = {}, response?) =>
     body === undefined || body instanceof Response ? body
-    : (response = new Response(transform?.(body) ?? body, options.url ? undefined : options),
+    : (response = new Response(transform?.(body) ?? body, (options as any).url ? undefined : options),
        response.headers.set('content-type', format),
        response)

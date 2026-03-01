@@ -50,7 +50,7 @@ export const IttyRouter = <
           Object.assign(request, request.params = match.groups || {})             // embed params in request
           request.route = path                                                    // embed route path in request
           for (let handler of handlers)
-            if ((response = await handler(request, ...args)) != null) return response
+            if ((response = await handler(request as RequestType, ...args)) != null) return response
         }
     },
   })

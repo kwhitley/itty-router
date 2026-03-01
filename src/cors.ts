@@ -9,8 +9,8 @@ export type CorsOptions = {
   exposeHeaders?: string | string[]
 }
 
-export type Preflight = (request: IRequest) => Response | void
-export type Corsify = (response: Response, request?: IRequest) => Response
+export type Preflight = (request: IRequest, ...args: any[]) => Response | void
+export type Corsify = (response: Response, request?: IRequest, ...args: any[]) => Response
 
 export type CorsPair = {
   preflight: Preflight
@@ -34,11 +34,8 @@ export const cors = (options: CorsOptions = {}) => {
 
     // @ts-expect-error
     if (origin === true) return requestOrigin
-    // @ts-expect-error
     if ((origin as any).test) return (origin as any).test(requestOrigin) && requestOrigin
-    // @ts-expect-error
     if ((origin as any).forEach) return (origin as any).includes(requestOrigin) && requestOrigin
-    // @ts-expect-error
     if ((origin as any).call) return (origin as any)(requestOrigin)
 
     // @ts-ignore

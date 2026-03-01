@@ -48,7 +48,7 @@ export const TunedRouter = <
 
       t: try {
         for (let handler of other.before || [])
-          if ((response = await handler(request, ...args)) != null) break t
+          if ((response = await handler(request as RequestType, ...args)) != null) break t
 
         outer: for (let [method, regex, handlers, path] of routes)
           if ((method == request.method || method == 'ALL') && (match = pathname.match(regex))) {
@@ -56,22 +56,22 @@ export const TunedRouter = <
             request.route = path
 
             for (let handler of handlers)
-              if ((response = await (handler.fetch
-                ? handler.fetch({ ...request, url: origin + (match.at(-1) || '/') + search, method: request.method, headers: request.headers }, ...args)
-                : handler(request, ...args)
+              if ((response = await ((handler as any).fetch
+                ? (handler as any).fetch({ ...request, url: origin + (match.at(-1) || '/') + search, method: request.method, headers: request.headers }, ...args)
+                : handler(request as IRequest, ...args)
               )) != null) break outer
           }
       } catch (err: any) {
         if (!other.catch) throw err
-        response = await other.catch(err, request, ...args)
+        response = await other.catch(err, request as RequestType, ...args)
       }
 
       try {
         for (let handler of other.after || [])
-          response = await handler(response, request, ...args) ?? response
+          response = await handler(response, request as RequestType, ...args) ?? response
       } catch(err: any) {
         if (!other.catch) throw err
-          response = await other.catch(err, request, ...args)
+          response = await other.catch(err, request as RequestType, ...args)
       }
 
       return response
