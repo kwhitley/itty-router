@@ -87,7 +87,7 @@ export const FastRouter = <
           search = q < 0 ? '' : raw.slice(q),
           query: Record<string, any> = request.query = { __proto__: null },
           params: Record<string, string> = {},
-          collected: any[][] = [],
+          collected: [any[], number][] = [],
           segments = pathname.split('/').filter(Boolean),
           node: TrieNode | undefined = root,
           method = request.method
@@ -104,8 +104,8 @@ export const FastRouter = <
           let s = segments[i]
           // collect wildcard handlers at this depth
           if (node[2]) {
-            for (let h of node[2][method] || []) collected.push(h)
-            for (let h of node[2]['ALL'] || []) collected.push(h)
+            for (let h of node[2][method] || []) collected.push([h, i])
+            for (let h of node[2]['ALL'] || []) collected.push([h, i])
           }
           // walk: prefer static > param
           if (node[0][s]) {
@@ -120,23 +120,23 @@ export const FastRouter = <
 
         // collect wildcard handlers at leaf depth too
         if (node?.[2]) {
-          for (let h of node[2][method] || []) collected.push(h)
-          for (let h of node[2]['ALL'] || []) collected.push(h)
+          for (let h of node[2][method] || []) collected.push([h, segments.length])
+          for (let h of node[2]['ALL'] || []) collected.push([h, segments.length])
         }
 
         // collect leaf handlers
         if (node?.[3]) {
-          for (let h of node[3][method] || []) collected.push(h)
-          for (let h of node[3]['ALL'] || []) collected.push(h)
+          for (let h of node[3][method] || []) collected.push([h, segments.length])
+          for (let h of node[3]['ALL'] || []) collected.push([h, segments.length])
         }
 
         Object.assign(request, request.params = params)
         request.route = pathname
 
-        outer: for (let handlers of collected)
+        outer: for (let [handlers, depth] of collected)
           for (let handler of handlers)
             if ((response = await (handler.fetch
-              ? handler.fetch({ ...request, url: origin + '/' + segments.slice(segments.indexOf('*')).join('/') + search, method, headers: request.headers }, ...args)
+              ? handler.fetch({ ...request, url: origin + '/' + segments.slice(depth).join('/') + search, method, headers: request.headers }, ...args)
               : handler(request, ...args)
             )) != null) break outer
 
