@@ -2,6 +2,8 @@
 export * from './IttyRouter'
 export * from './Router'
 export * from './AutoRouter'
+export * from './TunedRouter'
+export * from './FastRouter'
 
 // classes
 export * from './StatusError'

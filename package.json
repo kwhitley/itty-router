@@ -36,6 +36,11 @@
       "types": "./error.d.ts",
       "require": "./error.js"
     },
+    "./FastRouter": {
+      "import": "./FastRouter.mjs",
+      "types": "./FastRouter.d.ts",
+      "require": "./FastRouter.js"
+    },
     "./html": {
       "import": "./html.mjs",
       "types": "./html.d.ts",
@@ -80,6 +85,11 @@
       "import": "./text.mjs",
       "types": "./text.d.ts",
       "require": "./text.js"
+    },
+    "./TunedRouter": {
+      "import": "./TunedRouter.mjs",
+      "types": "./TunedRouter.d.ts",
+      "require": "./TunedRouter.js"
     },
     "./webp": {
       "import": "./webp.mjs",
