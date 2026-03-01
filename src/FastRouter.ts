@@ -53,16 +53,10 @@ export const FastRouter = <
           query: Record<string, any> = request.query = { __proto__: null },
           params: Record<string, string> = {},
           collected: [any[], number][] = [],
-          segments = pathname.match(/[^/]+/g) || [],
+          segments = pathname.split('/').filter(Boolean),
           node: TrieNode | undefined = root,
           method = request.method,
           len = segments.length
-
-      const collect = (map: any, depth: number) => {
-        if (!map) return
-        for (let h of map[method] || []) collected.push([h, depth])
-        for (let h of map['ALL'] || []) collected.push([h, depth])
-      }
 
       for (let [k, v] of new URLSearchParams(search))
         query[k] = query[k] ? [query[k], v].flat() : v
@@ -73,12 +67,21 @@ export const FastRouter = <
 
         for (let i = 0; node && i < len; i++) {
           let s = segments[i]
-          collect(node[2], i)
+          if (node[2]) {
+            for (let h of node[2][method] || []) collected.push([h, i])
+            for (let h of node[2]['ALL'] || []) collected.push([h, i])
+          }
           node = node[0][s] || node[1] && (params[node[1][0]] = s, node[1][1])
         }
 
-        collect(node?.[2], len)
-        collect(node?.[3], len)
+        if (node && node[2]) {
+          for (let h of node[2][method] || []) collected.push([h, len])
+          for (let h of node[2]['ALL'] || []) collected.push([h, len])
+        }
+        if (node && node[3]) {
+          for (let h of node[3][method] || []) collected.push([h, len])
+          for (let h of node[3]['ALL'] || []) collected.push([h, len])
+        }
 
         Object.assign(request, request.params = params)
         request.route = pathname
