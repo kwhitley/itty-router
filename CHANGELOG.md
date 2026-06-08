@@ -1,5 +1,7 @@
 ## Changelog
 
+#### v5.0.24
+  - fixed: greedy param (/a/:b+) would reject /a but accept /a/ (bad)
 #### v5.0.23
   - fixed: cors/corsify should no longer throw immutable headers error (edge case fix)
 #### v5.0.20
