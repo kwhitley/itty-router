@@ -587,6 +587,7 @@ describe('Common Router Spec', () => {
         describe('greedy params', () => {
           testRoutes([
             { route: '/foo/:id+', path: '/foo/14', returns: { id: '14' } },
+            { route: '/foo/:id+', path: '/foo/', returns: false },
             { route: '/foo/:id+', path: '/foo/bar/baz', returns: { id: 'bar/baz' } },
             {
               route: '/foo/:id+',
