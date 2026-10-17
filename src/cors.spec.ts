@@ -163,6 +163,25 @@ describe('cors(options?: CorsOptions)', () => {
         const response = await corsRouter({ credentials: true }).fetch(BASIC_OPTIONS_REQUEST)
         expect(response.headers.get('access-control-allow-origin')).toBe(TEST_ORIGIN)
       })
+
+      for (const [name, origin] of Object.entries({ function: () => undefined, regexp: REGEXP_DENY_ORIGIN, array: [] })) {
+        it(`does not duplicate credentials when ${name} origin rejects preflight`, async () => {
+          const response = await corsRouter({ origin, credentials: true }).fetch(BASIC_OPTIONS_REQUEST)
+
+          expect(response.status).toBe(204)
+          expect(response.headers.get('access-control-allow-origin')).toBeNull()
+          expect(response.headers.get('access-control-allow-credentials')).toBe('true')
+          expect(response.headers.get('access-control-allow-methods')).toBe('*')
+        })
+      }
+
+      it('does not duplicate credentials when a preflight request has no origin', async () => {
+        const response = await corsRouter({ credentials: true }).fetch(REQUEST_HEADERS_REQUEST)
+
+        expect(response.headers.get('access-control-allow-origin')).toBeNull()
+        expect(response.headers.get('access-control-allow-credentials')).toBe('true')
+        expect(response.headers.get('access-control-allow-headers')).toBe('x-foo')
+      })
     })
   })
 
@@ -281,6 +300,21 @@ describe('cors(options?: CorsOptions)', () => {
         const originalResponse = new Response(null)
         const corsified = corsify(originalResponse)
         expect(originalResponse).not.toBe(corsified)
+      })
+
+      it('keeps credentials singular across repeated rejected-origin corsification', async () => {
+        const { corsify } = cors({ origin: () => undefined, credentials: true })
+        const originalResponse = new Response('Hello', { status: 403 })
+        originalResponse.headers.append('Set-Cookie', 'a=1; HttpOnly')
+        originalResponse.headers.append('Set-Cookie', 'b=2; Secure')
+        const response = corsify(corsify(originalResponse, BASIC_REQUEST), BASIC_REQUEST)
+
+        expect(response.headers.get('access-control-allow-origin')).toBeNull()
+        expect(response.headers.get('access-control-allow-credentials')).toBe('true')
+        expect(response.headers.getSetCookie()).toEqual(['a=1; HttpOnly', 'b=2; Secure'])
+        expect(response.status).toBe(403)
+        expect(await response.text()).toBe('Hello')
+        expect(originalResponse.headers.has('access-control-allow-credentials')).toBe(false)
       })
     })
   })

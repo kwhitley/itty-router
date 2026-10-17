@@ -45,9 +45,9 @@ export const cors = (options: CorsOptions = {}) => {
     return origin == '*' && credentials ? requestOrigin : origin
   }
 
-  const appendHeadersAndReturn = (response: Response, headers: Record<string, any>): Response => {
+  const setHeadersAndReturn = (response: Response, headers: Record<string, any>): Response => {
     for (const [key, value] of Object.entries(headers)) {
-      if (value) response.headers.append(key, value)
+      if (value) response.headers.set(key, value)
     }
     return response
   }
@@ -56,7 +56,7 @@ export const cors = (options: CorsOptions = {}) => {
     if (request.method == 'OPTIONS') {
       const response = new Response(null, { status: 204 })
 
-      return appendHeadersAndReturn(response, {
+      return setHeadersAndReturn(response, {
         'access-control-allow-origin': getAccessControlOrigin(request),
         // @ts-ignore
         'access-control-allow-methods': allowMethods?.join?.(',') ?? allowMethods,  // include allowed methods
@@ -76,7 +76,7 @@ export const cors = (options: CorsOptions = {}) => {
       || response.status == 101
     ) return response
 
-    return appendHeadersAndReturn(new Response(response.body, response), {
+    return setHeadersAndReturn(new Response(response.body, response), {
       'access-control-allow-origin': getAccessControlOrigin(request),
       'access-control-allow-credentials': credentials,
     })
