@@ -69,4 +69,36 @@ describe('withParams (middleware)', () => {
       testParam: 'testValue',
     })
   })
+
+  it('preserves non-function properties with their own bind method', async () => {
+    const router = Router()
+    const bind = mock(() => ({ bound: true }))
+    const fetcher = { bind }
+    const handler = mock(({ fetcher }) => fetcher)
+    const request = { method: 'GET', url: 'https://foo.bar/baz', fetcher }
+
+    await router.get('/:id', withParams, handler).fetch(request)
+
+    expect(handler.mock.results[0].value).toBe(fetcher)
+    expect(bind).not.toHaveBeenCalled()
+  })
+
+  it('preserves non-function properties with a non-callable bind member', async () => {
+    const router = Router()
+    const value = { bind: true }
+    const handler = mock(({ value }) => value)
+    const request = { method: 'GET', url: 'https://foo.bar/baz', value }
+
+    await router.get('/:id', withParams, handler).fetch(request)
+
+    expect(handler.mock.results[0].value).toBe(value)
+  })
+
+  it('keeps native Request methods bound to the original request', async () => {
+    const router = Router()
+    const handler = mock(({ text }) => text())
+    const request = new Request('https://foo.bar/baz', { method: 'POST', body: 'request body' })
+
+    expect(await router.post('/:id', withParams, handler).fetch(request)).toBe('request body')
+  })
 })
