@@ -442,6 +442,20 @@ describe('Common Router Spec', () => {
         })
       })
 
+      it('preserves leading empty values in repeated query params', async () => {
+        const router = Router().get('/foo', req => req.query)
+
+        for (const [query, values] of [
+          ['a=&a=1', ['', '1']],
+          ['a&a=1', ['', '1']],
+          ['a=&a=&a=1', ['', '', '1']],
+          ['a=1&a=', ['1', '']],
+        ] as const) {
+          const request = new Request(`https://foo.com/foo?${query}`)
+          expect(await router.fetch(request)).toEqual({ a: [...values] })
+        }
+      })
+
       it('can still get query params with POST or non-GET HTTP methods', async () => {
         const router = Router()
         const handler = mock((req) => req.query)

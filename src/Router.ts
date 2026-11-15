@@ -42,7 +42,7 @@ export const Router = <
 
       // 1. parse query params
       for (let [k, v] of url.searchParams)
-        query[k] = query[k] ? ([] as string[]).concat(query[k], v) : v
+        query[k] = k in query ? ([] as string[]).concat(query[k], v) : v
 
       t: try {
         for (let handler of other.before || [])
